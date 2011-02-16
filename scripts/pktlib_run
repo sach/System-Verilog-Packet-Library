@@ -1,0 +1,3 @@
+#/bin/bash
+vcs -sverilog -f pktlib.vf -R test/$1.sv -l log/$1.log 
+

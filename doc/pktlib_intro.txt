@@ -1,0 +1,206 @@
+/*
+Copyright (c) 2011, Sachin Gandhi
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+*/
+
+// ----------------------------------------------------------------------
+// Introduction to pktlib
+// ----------------------------------------------------------------------
+
+#. Introduction :
+   ============
+   Pktlib is a class based library which does the following
+   1. Configure different networking headers 
+   2. Randomize all the headers which need to be configured.
+   3. Corrupt any fields as per the test requirement.
+   4. Pack them into array of packets
+   5. Smartly unpack an array(pkt) to different headers  
+   6. Deep and shallow copy entire library to new library
+   7. Smartly compares to array by unpacking them and pointing out error in a
+      particular field
+   8. Displays pkt contents along with all the header contents.
+   And many more features :-)
+
+#. Headers supported :
+   ================
+   Currently Pktlib supports the following headers. 
+   1.  eth (Basic Ethernet Header)
+   2.  snap (IEEE 802.3 LLC/SNAP Header)
+   2.  dot1q (IEEE 802.1q C-Tag and IEEE 802.1ad S-Tag) 
+   3.  itag (IEEE 802.1ah I-Tag)
+   4.  mpls, mmpls (MPLS and Multicast MPLS)
+   5.  ipv4, ipv6 (IPV4 and IPV6 IP Headers)
+   6.  ptp (IEEE 1588 PTP header - Version 1 and 2)
+   7.  ntp (RFC 4330 - NTP version 4 Header) 
+   8.  gre (different GRE headers)
+   9.  udp, tcp (UDP and TCP protocols Headers)
+   10. data (Pkt Payload)
+   11. pth, ptl2, ptip (Proprietary headers :
+                          a. pth -> Slapped in front of pkt
+                          b. ptl2 -> Any proprietary L2 Headers
+                          c. ptip -> Any proprietary L3/IP Headers)
+    All the headers are in hdr_db directory. Each header file describes all 
+    the fields and all the control variables that can be used to constrain 
+    any field.
+    Any new headers can easily be coded and integrated in the library. 
+
+#. Using the Pktlib :
+   ===============
+   Once entire library is downloaded, use following command
+   scripts/pktlib_run <test_name>
+      - currently script uses VCS. Make changes as per the license available
+      - There are two tests in test directory
+               - pktlib_test : Will give an idea about the capability of the
+                 pktlib
+               - pktlib_dump_unpack : just covers two functionality of the
+                 pktlib
+      - All the log files will be saved in log directory.
+
+#. Directory Structure :
+   ===================
+   Class base structure is defined below :
+
+                 pktlib_object_class
+                         |
+                  |----------------|
+         pktlib_main_class    hdr_class (in hdr_db)
+                  |                |       
+            pktlib_class  (all the header database)  
+                  |
+   All the tasks which are called by the test is in this class
+
+   In addition to above other classes are
+   1. pktlib_array_class -> byte manipulations,
+                            array to vector,
+                            vector to array
+   2. pktlib_crc_chksm_class -> class to compute and corrupt
+                                CRC, Checksum32, Checksum16
+   3. pktlib_display_class -> class to display and compare field, array, etc
+
+#. Test Flow :
+   ==========
+   (Check test pkt_test in test directory)
+   1. Example  for pack_hdr:
+   // declaration
+   pktlib_class p;
+   bit [7:0] pkt [];
+
+   // new the class
+   p = new ();
+
+   // config the headers needed.
+   p.cfg_hdr ({p.eth[0], p.dot1q[0], p.itag[0]. p.eth[1], p.ipv4[0], p.ipv4[1], p.gre[0], 
+               p.mpls[0], p.ipv6[0], p.tcp[0], p.data[0]}); 
+
+   // set max/min packet length
+   p.toh.max_plen = 300;
+   p.toh.min_plen = 32;
+
+   // set any control variables
+   p.toh.corrupt_crc = 1'b1;
+   p.ipv4[0].corrupt_IP_chksm = 1;b1;
+
+   // randomize pktlib with constraints needed
+   p.randomize with
+   {
+     eth[0].da == 48'hdeadbeef;
+     data[0].data_len < 20;
+   };
+
+   // pack all the hdrs to pkt
+   p.pack_hdr (pkt);
+
+   // display hdr and pkt content
+   p.display_hdr_pkt (pkt);
+
+   2. Example  for unpack_hdr:               
+   // declaration
+   pktlib_class p;
+   bit [7:0] pkt [];
+
+   // new the class
+   p = new ();
+
+   // set any control variables
+   p.toh.corrupt_crc = 1'b1;
+   p.ipv4[0].corrupt_IP_chksm = 1;b1;
+
+   // pack all the hdrs to pkt
+   p.unpack_hdr (pkt, SMART_UNPACK);
+
+   // display hdr and pkt content
+   p.display_hdr_pkt (pkt);
+
+   3. Example  for compare_pkt
+   // declaration
+   pktlib_class p;
+   bit [7:0] ppkt []i, cpkt;
+
+   // new the class
+   p = new ();
+
+   // pack all the hdrs to pkt
+   p.compare_pkt (ppkt, cpkt);
+
+#. How to add new header?
+   =====================
+   1. Open file pktlib_include.svh
+       a> Every header has id call HID. eg. eth_hdr_class is ETH_HID.
+          Search for XXX_HID and replace with new HID of the new header.
+       d> All the header classes need to be typedef and included.
+          search for xxx_class and replace with the new class.
+       c> All the header classes need to declared and newed.
+           i>.  Search for HDR_DECLARATION and declare the instances for 
+                the class before eoh declaration.
+           ii>. Search for NEW_HDR and new the class before toh and eoh.
+
+   2. If hdr is L2 header based on ethertype, 
+       a> Open file hdr_db/include/hdr_l2_include.svh
+       b> Define ethertype and modify this file to include this ethertype 
+          in all the tasks, functions, defines. 
+          (look for dot1q_etype for example)
+
+   3. If hdr is IP header based on protocol/nxt_hdr,
+       a> Open file hdr_db/include/hdr_IP_include.svh
+       b> Define protocol and modify this file to include this protocol
+          in all the tasks, functions, defines. 
+          (look for ipv4_prot for example)
+
+   4. Similarly do the modification to the udp, ptp, mpls include files if
+      header is based on udp, ptp, mpls respectively.
+
+   5. If header is based on new includes, 
+        a> Open file hdr_db/include/hdr_common_include.svh
+        b> search for xxx and XXX, replace them appropriately.
+        c> cp hdr_db/include/hdr_xxx_include.svh to the new header 
+
+   6. Creating actual header :-)
+        a>. xxx_hdr_class.sv is the template header.
+        b>. copy to new header you want to create.
+        c>. Add class members, control variables, constraints
+        b>. Code all the tasks and you are ready to go :-)
+
+#. Disclaimers :
+   ===========
+   1. The documentation is minimum and may be incomplete at places.
+   2. Only tested on VCS Version A-2008.09. The verification is on going.
+   
+#. Future Releases :
+   ===============
+   1. Adding more headers. For Example : Pause Frames, FCOE, ICMP, IPV6
+      extension etc..
+   2. Adding Encryption/decryption support and adding support for IEEE 802.1AE
+      MACSEC, IPSEC, DTLS
+   3. Scripts to add new headers.
+   4. Convert it to UVM, OVM and VMM.
+   And many more ... Please contribute :-)
+   
+
