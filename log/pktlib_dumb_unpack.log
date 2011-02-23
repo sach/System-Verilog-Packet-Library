@@ -1,7 +1,7 @@
 Command: vcs -sverilog -f pktlib.vf -R test/pktlib_dumb_unpack.sv -l log/pktlib_dumb_unpack.log \
 
                          Chronologic VCS (TM)
-            Version A-2008.09 -- Wed Feb 16 06:18:17 2011
+            Version A-2008.09 -- Tue Feb 22 22:07:47 2011
                Copyright (c) 1991-2008 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -97,7 +97,7 @@ may conflict with libstdc++.so.6
 Command: ./simv -a log/pktlib_dumb_unpack.log
 Chronologic VCS simulator copyright 1991-2008
 Contains Synopsys proprietary information.
-Compiler version A-2008.09; Runtime version A-2008.09;  Feb 16 06:18 2011
+Compiler version A-2008.09; Runtime version A-2008.09;  Feb 22 22:07 2011
 
 0 : INFO    : TEST      : Pack Pkt 0
     cfg_hdr : {pth[0], eth[0], data[0]}
@@ -1581,5 +1581,5 @@ $finish called from file "test/pktlib_dumb_unpack.sv", line 133.
 $finish at simulation time                    0
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 0
-CPU Time:      0.350 seconds;       Data structure size:   0.0Mb
-Wed Feb 16 06:18:20 2011
+CPU Time:      0.370 seconds;       Data structure size:   0.0Mb
+Tue Feb 22 22:07:50 2011
