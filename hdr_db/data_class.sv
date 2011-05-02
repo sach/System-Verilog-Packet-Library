@@ -158,8 +158,8 @@ class data_class extends hdr_class; // {
     data_class lcl;
     $cast (lcl, cmp_cls);
 `ifdef DEBUG_CHKSM
-    hdis.display_fld (mode, hdr_name, "hdr_len",  16, HEX, BIT_VEC, hdr_len,   lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, "total_hdr_len",  16, HEX, BIT_VEC, total_hdr_len,   lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, "hdr_len",       16, HEX, BIT_VEC, hdr_len,      lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, "total_hdr_len", 16, HEX, BIT_VEC, total_hdr_len,lcl.total_hdr_len);
 `endif
     if ((mode == COMPARE_FULL) | (mode == DISPLAY_FULL))
         hdis.display_fld (mode, hdr_name, "data", 0, DEF, ARRAY, 0, 0, data, lcl.data);

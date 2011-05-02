@@ -48,7 +48,7 @@ class pktlib_array_class;
   // this task converts bit vector into pkt array of 8 bit
   task pack_bit (ref   bit [7:0]         pkt [],       // Output array
                  input bit [`VEC_SZ-1:0] bit_vec,      // bit vector to pack 
-                 ref   int               start_offset, // starting offset
+                 ref   int               start_offset, // starting offset in bits
                  input int               length);      // how much data to pack {
     bit [7:0] hold_reg;
     int       i;
@@ -67,18 +67,13 @@ class pktlib_array_class;
     start_offset += length;
   endtask : pack_bit // }
 
-  // this tasks converts 8 byte array into pkt array
+  // this tasks replaces bytes of pkt array from start offset with array_8
   task pack_array_8 (    bit [7:0] array_8 [],
                      ref bit [7:0] pkt     [],
-                     ref int       start_offset); // {
-    bit [`VEC_SZ-1:0] tmp_vec;
-    int               tmp_pack_len = 8;
-    int               i;
-    for (i = 0; i < array_8.size(); i++)
-    begin // {
-        tmp_vec = array_8[i];
-        this.pack_bit (pkt, tmp_vec, start_offset, tmp_pack_len);
-    end // }
+                     ref int       start_offset); // starting offset in bytes {
+    foreach (array_8[a_ls])
+        pkt [start_offset + a_ls] = array_8[a_ls];
+    start_offset += array_8.size;
   endtask : pack_array_8 // }
 
   // this tasks converts 8 byte array into unpack vector

@@ -1,8 +1,8 @@
-Command: vcs -sverilog -f pktlib.vf -R test/pktlib_test.sv -l log/pktlib_test.log \
-
+Command: vcs -sverilog -full64 -f pktlib.vf -R test/pktlib_test.sv +define+NO_PROCESS_AE \
+-l log/pktlib_test.log
                          Chronologic VCS (TM)
-            Version A-2008.09 -- Tue Feb 22 22:06:18 2011
-               Copyright (c) 1991-2008 by Synopsys Inc.
+         Version D-2009.12_Full64 -- Mon May  2 16:18:27 2011
+               Copyright (c) 1991-2009 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
 This program is proprietary and confidential information of Synopsys Inc.
@@ -25,11 +25,15 @@ Parsing included file 'hdr_db/hdr_class.sv'.
 Parsing included file 'hdr_db/include/hdr_common_include.svh'.
 Parsing included file 'hdr_db/include/hdr_l2_include.svh'.
 Back to file 'hdr_db/include/hdr_common_include.svh'.
+Parsing included file 'hdr_db/include/hdr_macsec_include.svh'.
+Back to file 'hdr_db/include/hdr_common_include.svh'.
 Parsing included file 'hdr_db/include/hdr_ptp_include.svh'.
 Back to file 'hdr_db/include/hdr_common_include.svh'.
 Parsing included file 'hdr_db/include/hdr_mpls_include.svh'.
 Back to file 'hdr_db/include/hdr_common_include.svh'.
 Parsing included file 'hdr_db/include/hdr_ip_include.svh'.
+Back to file 'hdr_db/include/hdr_common_include.svh'.
+Parsing included file 'hdr_db/include/hdr_ipsec_include.svh'.
 Back to file 'hdr_db/include/hdr_common_include.svh'.
 Parsing included file 'hdr_db/include/hdr_udp_include.svh'.
 Back to file 'hdr_db/include/hdr_common_include.svh'.
@@ -43,6 +47,8 @@ Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/pt_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/eth_hdr_class.sv'.
+Back to file 'pktlib_include.svh'.
+Parsing included file 'hdr_db/macsec_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/dot1q_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
@@ -59,6 +65,8 @@ Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/ipv6_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/ptip_hdr_class.sv'.
+Back to file 'pktlib_include.svh'.
+Parsing included file 'hdr_db/ipsec_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
 Parsing included file 'hdr_db/tcp_hdr_class.sv'.
 Back to file 'pktlib_include.svh'.
@@ -77,2059 +85,2001 @@ Back to file 'pktlib_include.svh'.
 Back to file 'pktlib_class.sv'.
 Back to file 'test/pktlib_test.sv'.
 Top Level Modules:
-       $root
        my_test
 No TimeScale specified
 Starting vcs inline pass...
 2 modules and 0 UDP read.
 recompiling module my_test
 Both modules done.
-gcc  -pipe -O -I/usr/local/edatools/vcs/A-2008.09/include   -c -o rmapats.o rmapats.c \
-
 if [ -x ../simv ]; then chmod -x ../simv; fi
-g++  -o ../simv  5NrI_d.o 5NrIB_d.o Yrj5_1_d.o qX6j_1_d.o rmapats_mop.o rmapats.o \
-SIM_l.o   /usr/local/edatools/vcs/A-2008.09/linux/lib/libvirsim.a /usr/local/edatools/vcs/A-2008.09/linux/lib/librterrorinf.so \
-/usr/local/edatools/vcs/A-2008.09/linux/lib/libvcsnew.so     /usr/local/edatools/vcs/A-2008.09/linux/lib/ctype-stubs_32.a \
--ldl  -lc -lm -ldl    
-/usr/bin/ld: warning: libstdc++.so.5, needed by /usr/local/edatools/vcs/A-2008.09/linux/lib/librterrorinf.so, \
-may conflict with libstdc++.so.6
+g++  -o ../simv   5NrI_d.o 5NrIB_d.o Yrj5_1_d.o qX6j_1_d.o rmapats_mop.o rmapats.o \
+SIM_l.o        /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvirsim64.a /opt/SYNOPSYS/VCS/2009.12/amd64/lib/liberrorinf.so \
+/opt/SYNOPSYS/VCS/2009.12/amd64/lib/libsnpsmalloc.so     /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvcsnew.so \
+/opt/SYNOPSYS/VCS/2009.12/amd64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread \
+-ldl    
 ../simv up to date
-Command: ./simv -a log/pktlib_test.log
-Chronologic VCS simulator copyright 1991-2008
+Command: ./simv +define+NO_PROCESS_AE -a log/pktlib_test.log -oldui
+Chronologic VCS simulator copyright 1991-2009
 Contains Synopsys proprietary information.
-Compiler version A-2008.09; Runtime version A-2008.09;  Feb 22 22:06 2011
+Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:18 2011
 
 0 : INFO    : TEST      : Pack Pkt 1
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], data[0]}
-        toh :             plen : 35 
+        toh :             plen : 38 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h56420adb297 
-     eth[0] :               sa : 48'h2b2c0947d40c 
+     eth[0] :               da : 48'h401fad5c89b 
+     eth[0] :               sa : 48'h75fe1e26284 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h3 
-   dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'he45 
+   dot1q[0] :              cos : 3'h1 
+   dot1q[0] :              cfi : 1'h0 
+   dot1q[0] :             vlan : 12'hb0e 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[1] :              cos : 3'h4 
+   dot1q[1] :              cos : 3'h3 
    dot1q[1] :              cfi : 1'h0 
-   dot1q[1] :             vlan : 12'h767 
-   dot1q[1] :            etype : 16'h27c3 (UNKNOWN)
-    data[0] :         data_len : 9 (data => 8c 4a a6 a3 ..)
+   dot1q[1] :             vlan : 12'h429 
+   dot1q[1] :            etype : 16'h2f15 (UNKNOWN)
+    data[0] :         data_len : 12 (data => 57 52 26 49 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'ha5805b06 (GOOD)
+        toh :              crc : 32'hba9f67ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 05 64 20 ad b2 97 2b 2c | 09 47 d4 0c 81 00 7e 45 
-    pkt_lib :   16 : 81 00 87 67 27 c3 8c 4a | a6 a3 9d 7c b8 eb 5b a5 
-    pkt_lib :   32 : 80 5b 06 
+    pkt_lib :    0 : 04 01 fa d5 c8 9b 07 5f | e1 e2 62 84 81 00 2b 0e 
+    pkt_lib :   16 : 81 00 64 29 2f 15 57 52 | 26 49 34 49 4c c0 a1 35 
+    pkt_lib :   32 : 94 e4 ba 9f 67 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 35)
+    pkt_lib : (Total Len  = 38)
 
 0 : INFO    : TEST      : Unpack Pkt 1
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], data[0]}
-        toh :             plen : 35 
+        toh :             plen : 38 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h56420adb297 
-     eth[0] :               sa : 48'h2b2c0947d40c 
+     eth[0] :               da : 48'h401fad5c89b 
+     eth[0] :               sa : 48'h75fe1e26284 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h3 
-   dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'he45 
+   dot1q[0] :              cos : 3'h1 
+   dot1q[0] :              cfi : 1'h0 
+   dot1q[0] :             vlan : 12'hb0e 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[1] :              cos : 3'h4 
+   dot1q[1] :              cos : 3'h3 
    dot1q[1] :              cfi : 1'h0 
-   dot1q[1] :             vlan : 12'h767 
-   dot1q[1] :            etype : 16'h27c3 (UNKNOWN)
-    data[0] :         data_len : 9 (data => 8c 4a a6 a3 ..)
+   dot1q[1] :             vlan : 12'h429 
+   dot1q[1] :            etype : 16'h2f15 (UNKNOWN)
+    data[0] :         data_len : 12 (data => 57 52 26 49 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'ha5805b06 (GOOD)
+        toh :              crc : 32'hba9f67ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 05 64 20 ad b2 97 2b 2c | 09 47 d4 0c 81 00 7e 45 
-    pkt_lib :   16 : 81 00 87 67 27 c3 8c 4a | a6 a3 9d 7c b8 eb 5b a5 
-    pkt_lib :   32 : 80 5b 06 
+    pkt_lib :    0 : 04 01 fa d5 c8 9b 07 5f | e1 e2 62 84 81 00 2b 0e 
+    pkt_lib :   16 : 81 00 64 29 2f 15 57 52 | 26 49 34 49 4c c0 a1 35 
+    pkt_lib :   32 : 94 e4 ba 9f 67 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 35)
+    pkt_lib : (Total Len  = 38)
 
 0 : INFO    : TEST      : Copy Pkt 1
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], data[0]}
-        toh :             plen : 35 
+        toh :             plen : 38 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h56420adb297 
-     eth[0] :               sa : 48'h2b2c0947d40c 
+     eth[0] :               da : 48'h401fad5c89b 
+     eth[0] :               sa : 48'h75fe1e26284 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h3 
-   dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'he45 
+   dot1q[0] :              cos : 3'h1 
+   dot1q[0] :              cfi : 1'h0 
+   dot1q[0] :             vlan : 12'hb0e 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[1] :              cos : 3'h4 
+   dot1q[1] :              cos : 3'h3 
    dot1q[1] :              cfi : 1'h0 
-   dot1q[1] :             vlan : 12'h767 
-   dot1q[1] :            etype : 16'h27c3 (UNKNOWN)
-    data[0] :         data_len : 9 (data => 8c 4a a6 a3 ..)
+   dot1q[1] :             vlan : 12'h429 
+   dot1q[1] :            etype : 16'h2f15 (UNKNOWN)
+    data[0] :         data_len : 12 (data => 57 52 26 49 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'ha5805b06 (GOOD)
+        toh :              crc : 32'hba9f67ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 05 64 20 ad b2 97 2b 2c | 09 47 d4 0c 81 00 7e 45 
-    pkt_lib :   16 : 81 00 87 67 27 c3 8c 4a | a6 a3 9d 7c b8 eb 5b a5 
-    pkt_lib :   32 : 80 5b 06 
+    pkt_lib :    0 : 04 01 fa d5 c8 9b 07 5f | e1 e2 62 84 81 00 2b 0e 
+    pkt_lib :   16 : 81 00 64 29 2f 15 57 52 | 26 49 34 49 4c c0 a1 35 
+    pkt_lib :   32 : 94 e4 ba 9f 67 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 35)
+    pkt_lib : (Total Len  = 38)
 
 0 : INFO    : TEST      : Compare Pkt 1
     cmp_hdr : {eth[0], dot1q[0], dot1q[1], data[0]}
-        toh :             plen : 35 
+        toh :             plen : 38 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h56420adb297 
-     eth[0] :               sa : 48'h2b2c0947d40c 
+     eth[0] :               da : 48'h401fad5c89b 
+     eth[0] :               sa : 48'h75fe1e26284 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h3 
-   dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'he45 
+   dot1q[0] :              cos : 3'h1 
+   dot1q[0] :              cfi : 1'h0 
+   dot1q[0] :             vlan : 12'hb0e 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[1] :              cos : 3'h4 
+   dot1q[1] :              cos : 3'h3 
    dot1q[1] :              cfi : 1'h0 
-   dot1q[1] :             vlan : 12'h767 
-   dot1q[1] :            etype : 16'h27c3 (UNKNOWN)
-    data[0] :         data_len : 9 (data => 8c 4a a6 a3 ..)
+   dot1q[1] :             vlan : 12'h429 
+   dot1q[1] :            etype : 16'h2f15 (UNKNOWN)
+    data[0] :         data_len : 12 (data => 57 52 26 49 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'ha5805b06 (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 35 Exp => 35
+        toh :              crc : 32'hba9f67ef (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 38 Exp => 38
 
 0 : INFO    : TEST      : Pack Pkt 2
     cfg_hdr : {eth[0], ipv4[0], gre[0], mpls[0], ipv6[0], tcp[0], data[0]}
-        toh :             plen : 163 
+        toh :             plen : 173 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb85463e37f7a 
-     eth[0] :               sa : 48'hc3901ac31137 
+     eth[0] :               da : 48'hc7a26ab121c8 
+     eth[0] :               sa : 48'ha5dfaddee4f6 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'ha5 
-    ipv4[0] :     total_length : 16'h91 
-    ipv4[0] :               id : 16'hf20f 
-    ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :              ihl : 4'hd 
+    ipv4[0] :              tos : 8'h6b 
+    ipv4[0] :     total_length : 16'h9b 
+    ipv4[0] :               id : 16'h991d 
+    ipv4[0] :         reserved : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h13e8 
-    ipv4[0] :              ttl : 8'h7 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'hd1 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'h3429 (GOOD)
-    ipv4[0] :            ip_sa : 32'h6d63c2e5 
-    ipv4[0] :            ip_da : 32'h5626c40d 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h2fc3 (GOOD)
+    ipv4[0] :            ip_sa : 32'h8e67c05c 
+    ipv4[0] :            ip_da : 32'h2566e400 
+    ipv4[0] :          options : (Total Len  = 32)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : f8 33 ac a7 96 46 e7 6c | a1 15 d3 97 33 74 74 12 
-    ipv4[0] :   16 : 67 90 02 a8 
+    ipv4[0] :    0 : f9 7d 83 c1 cb 70 65 3e | 39 9d d0 50 8e 6e 1a f2 
+    ipv4[0] :   16 : f9 7f 96 84 a2 ab e1 9f | e4 2c ba 8e 43 2a 28 4a 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     gre[0] :                C : 1'b1 
-     gre[0] :                R : 1'b0 
+     gre[0] :                C : 1'b0 
+     gre[0] :                R : 1'b1 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'ha8dc (GOOD)
-     gre[0] :           offset : 16'hb974 
-     gre[0] :  sequence_number : 32'h55f718f9 
+     gre[0] :         checksum : 16'he968 (GOOD)
+     gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
     mpls[0] :           exp[0] : 3'h7 
     mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h3 
+    mpls[0] :           ttl[0] : 8'ha7 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h37 
-    ipv6[0] :       flow_label : 20'h97db6 
-    ipv6[0] :      payload_len : 16'h31 
+    ipv6[0] :              tos : 8'h5 
+    ipv6[0] :       flow_label : 20'ha73a5 
+    ipv6[0] :      payload_len : 16'h33 
     ipv6[0] :         protocol : 8'h6 (TCP)
-    ipv6[0] :              ttl : 8'h49 
-    ipv6[0] :           ip6_sa : 128'h67f29387fec0cc02feeb65243d19401f 
-    ipv6[0] :           ip6_da : 128'hc534d7eb03738374c30797cf630d3153 
-     tcp[0] :          src_prt : 16'h1b44 
-     tcp[0] :          dst_prt : 16'hf810 
-     tcp[0] :       seq_number : 32'h401d7752 
-     tcp[0] :       ack_number : 32'h6c86f369 
+    ipv6[0] :              ttl : 8'h60 
+    ipv6[0] :           ip6_sa : 128'hf0b584098665a2ec7b897bcf1776ef2f 
+    ipv6[0] :           ip6_da : 128'h9bdf2de43be50011accd28d3aa35561f 
+     tcp[0] :          src_prt : 16'h48bb 
+     tcp[0] :          dst_prt : 16'hc643 
+     tcp[0] :       seq_number : 32'h1c42d49b 
+     tcp[0] :       ack_number : 32'hb4128778 
      tcp[0] :           offset : 4'h8 
-     tcp[0] :             rsvd : 4'h5 
-     tcp[0] :            flags : 8'h4d (=> CWR 0 ECE 1 URG 0 ACK 0 PSH 1 RST 1 SYN 0 FIN 1)
-     tcp[0] :           window : 16'h9f49 
-     tcp[0] :         checksum : 16'hab17 (GOOD)
-     tcp[0] :       urgent_ptr : 16'ha382 
+     tcp[0] :             rsvd : 4'h0 
+     tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
+     tcp[0] :           window : 16'hd4b 
+     tcp[0] :         checksum : 16'hd457 (GOOD)
+     tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : (Total Len  = 12)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : e3 66 58 51 9f c2 4d d8 | c4 71 1a e0 
+     tcp[0] :    0 : db f7 fe ad 50 a0 0f 6e | 24 8f e1 d6 
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 17 (data => 10 15 7f f1 ..)
+    data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h54bdeedf (GOOD)
+        toh :              crc : 32'h81d6055e (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b8 54 63 e3 7f 7a c3 90 | 1a c3 11 37 08 00 4a a5 
-    pkt_lib :   16 : 00 91 f2 0f 93 e8 07 2f | 34 29 6d 63 c2 e5 56 26 
-    pkt_lib :   32 : c4 0d f8 33 ac a7 96 46 | e7 6c a1 15 d3 97 33 74 
-    pkt_lib :   48 : 74 12 67 90 02 a8 90 00 | 88 47 a8 dc b9 74 55 f7 
-    pkt_lib :   64 : 18 f9 00 00 2f 03 63 79 | 7d b6 00 31 06 49 67 f2 
-    pkt_lib :   80 : 93 87 fe c0 cc 02 fe eb | 65 24 3d 19 40 1f c5 34 
-    pkt_lib :   96 : d7 eb 03 73 83 74 c3 07 | 97 cf 63 0d 31 53 1b 44 
-    pkt_lib :  112 : f8 10 40 1d 77 52 6c 86 | f3 69 85 4d 9f 49 ab 17 
-    pkt_lib :  128 : a3 82 e3 66 58 51 9f c2 | 4d d8 c4 71 1a e0 10 15 
-    pkt_lib :  144 : 7f f1 41 be ce d3 58 3f | 3e e4 ad af a4 0a 15 54 
-    pkt_lib :  160 : bd ee df 
+    pkt_lib :    0 : c7 a2 6a b1 21 c8 a5 df | ad de e4 f6 08 00 4d 6b 
+    pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
+    pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
+    pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
+    pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
+    pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 163)
+    pkt_lib : (Total Len  = 173)
 
 0 : INFO    : TEST      : Unpack Pkt 2
     cfg_hdr : {eth[0], ipv4[0], gre[0], mpls[0], ipv6[0], tcp[0], data[0]}
-        toh :             plen : 163 
+        toh :             plen : 173 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb85463e37f7a 
-     eth[0] :               sa : 48'hc3901ac31137 
+     eth[0] :               da : 48'hc7a26ab121c8 
+     eth[0] :               sa : 48'ha5dfaddee4f6 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'ha5 
-    ipv4[0] :     total_length : 16'h91 
-    ipv4[0] :               id : 16'hf20f 
-    ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :              ihl : 4'hd 
+    ipv4[0] :              tos : 8'h6b 
+    ipv4[0] :     total_length : 16'h9b 
+    ipv4[0] :               id : 16'h991d 
+    ipv4[0] :         reserved : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h13e8 
-    ipv4[0] :              ttl : 8'h7 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'hd1 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'h3429 (GOOD)
-    ipv4[0] :            ip_sa : 32'h6d63c2e5 
-    ipv4[0] :            ip_da : 32'h5626c40d 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h2fc3 (GOOD)
+    ipv4[0] :            ip_sa : 32'h8e67c05c 
+    ipv4[0] :            ip_da : 32'h2566e400 
+    ipv4[0] :          options : (Total Len  = 32)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : f8 33 ac a7 96 46 e7 6c | a1 15 d3 97 33 74 74 12 
-    ipv4[0] :   16 : 67 90 02 a8 
+    ipv4[0] :    0 : f9 7d 83 c1 cb 70 65 3e | 39 9d d0 50 8e 6e 1a f2 
+    ipv4[0] :   16 : f9 7f 96 84 a2 ab e1 9f | e4 2c ba 8e 43 2a 28 4a 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     gre[0] :                C : 1'b1 
-     gre[0] :                R : 1'b0 
+     gre[0] :                C : 1'b0 
+     gre[0] :                R : 1'b1 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'ha8dc (GOOD)
-     gre[0] :           offset : 16'hb974 
-     gre[0] :  sequence_number : 32'h55f718f9 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
     mpls[0] :           exp[0] : 3'h7 
     mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h3 
+    mpls[0] :           ttl[0] : 8'ha7 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h37 
-    ipv6[0] :       flow_label : 20'h97db6 
-    ipv6[0] :      payload_len : 16'h31 
+    ipv6[0] :              tos : 8'h5 
+    ipv6[0] :       flow_label : 20'ha73a5 
+    ipv6[0] :      payload_len : 16'h33 
     ipv6[0] :         protocol : 8'h6 (TCP)
-    ipv6[0] :              ttl : 8'h49 
-    ipv6[0] :           ip6_sa : 128'h67f29387fec0cc02feeb65243d19401f 
-    ipv6[0] :           ip6_da : 128'hc534d7eb03738374c30797cf630d3153 
-     tcp[0] :          src_prt : 16'h1b44 
-     tcp[0] :          dst_prt : 16'hf810 
-     tcp[0] :       seq_number : 32'h401d7752 
-     tcp[0] :       ack_number : 32'h6c86f369 
+    ipv6[0] :              ttl : 8'h60 
+    ipv6[0] :           ip6_sa : 128'hf0b584098665a2ec7b897bcf1776ef2f 
+    ipv6[0] :           ip6_da : 128'h9bdf2de43be50011accd28d3aa35561f 
+     tcp[0] :          src_prt : 16'h48bb 
+     tcp[0] :          dst_prt : 16'hc643 
+     tcp[0] :       seq_number : 32'h1c42d49b 
+     tcp[0] :       ack_number : 32'hb4128778 
      tcp[0] :           offset : 4'h8 
-     tcp[0] :             rsvd : 4'h5 
-     tcp[0] :            flags : 8'h4d (=> CWR 0 ECE 1 URG 0 ACK 0 PSH 1 RST 1 SYN 0 FIN 1)
-     tcp[0] :           window : 16'h9f49 
-     tcp[0] :         checksum : 16'hab17 (GOOD)
-     tcp[0] :       urgent_ptr : 16'ha382 
+     tcp[0] :             rsvd : 4'h0 
+     tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
+     tcp[0] :           window : 16'hd4b 
+     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : (Total Len  = 12)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : e3 66 58 51 9f c2 4d d8 | c4 71 1a e0 
+     tcp[0] :    0 : db f7 fe ad 50 a0 0f 6e | 24 8f e1 d6 
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 17 (data => 10 15 7f f1 ..)
+    data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h54bdeedf (GOOD)
+        toh :              crc : 32'h81d6055e (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b8 54 63 e3 7f 7a c3 90 | 1a c3 11 37 08 00 4a a5 
-    pkt_lib :   16 : 00 91 f2 0f 93 e8 07 2f | 34 29 6d 63 c2 e5 56 26 
-    pkt_lib :   32 : c4 0d f8 33 ac a7 96 46 | e7 6c a1 15 d3 97 33 74 
-    pkt_lib :   48 : 74 12 67 90 02 a8 90 00 | 88 47 a8 dc b9 74 55 f7 
-    pkt_lib :   64 : 18 f9 00 00 2f 03 63 79 | 7d b6 00 31 06 49 67 f2 
-    pkt_lib :   80 : 93 87 fe c0 cc 02 fe eb | 65 24 3d 19 40 1f c5 34 
-    pkt_lib :   96 : d7 eb 03 73 83 74 c3 07 | 97 cf 63 0d 31 53 1b 44 
-    pkt_lib :  112 : f8 10 40 1d 77 52 6c 86 | f3 69 85 4d 9f 49 ab 17 
-    pkt_lib :  128 : a3 82 e3 66 58 51 9f c2 | 4d d8 c4 71 1a e0 10 15 
-    pkt_lib :  144 : 7f f1 41 be ce d3 58 3f | 3e e4 ad af a4 0a 15 54 
-    pkt_lib :  160 : bd ee df 
+    pkt_lib :    0 : c7 a2 6a b1 21 c8 a5 df | ad de e4 f6 08 00 4d 6b 
+    pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
+    pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
+    pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
+    pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
+    pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 163)
+    pkt_lib : (Total Len  = 173)
 
 0 : INFO    : TEST      : Copy Pkt 2
     cfg_hdr : {eth[0], ipv4[0], gre[0], mpls[0], ipv6[0], tcp[0], data[0]}
-        toh :             plen : 163 
+        toh :             plen : 173 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb85463e37f7a 
-     eth[0] :               sa : 48'hc3901ac31137 
+     eth[0] :               da : 48'hc7a26ab121c8 
+     eth[0] :               sa : 48'ha5dfaddee4f6 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'ha5 
-    ipv4[0] :     total_length : 16'h91 
-    ipv4[0] :               id : 16'hf20f 
-    ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :              ihl : 4'hd 
+    ipv4[0] :              tos : 8'h6b 
+    ipv4[0] :     total_length : 16'h9b 
+    ipv4[0] :               id : 16'h991d 
+    ipv4[0] :         reserved : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h13e8 
-    ipv4[0] :              ttl : 8'h7 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'hd1 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'h3429 (GOOD)
-    ipv4[0] :            ip_sa : 32'h6d63c2e5 
-    ipv4[0] :            ip_da : 32'h5626c40d 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h2fc3 (GOOD)
+    ipv4[0] :            ip_sa : 32'h8e67c05c 
+    ipv4[0] :            ip_da : 32'h2566e400 
+    ipv4[0] :          options : (Total Len  = 32)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : f8 33 ac a7 96 46 e7 6c | a1 15 d3 97 33 74 74 12 
-    ipv4[0] :   16 : 67 90 02 a8 
+    ipv4[0] :    0 : f9 7d 83 c1 cb 70 65 3e | 39 9d d0 50 8e 6e 1a f2 
+    ipv4[0] :   16 : f9 7f 96 84 a2 ab e1 9f | e4 2c ba 8e 43 2a 28 4a 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     gre[0] :                C : 1'b1 
-     gre[0] :                R : 1'b0 
+     gre[0] :                C : 1'b0 
+     gre[0] :                R : 1'b1 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'ha8dc (GOOD)
-     gre[0] :           offset : 16'hb974 
-     gre[0] :  sequence_number : 32'h55f718f9 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
     mpls[0] :           exp[0] : 3'h7 
     mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h3 
+    mpls[0] :           ttl[0] : 8'ha7 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h37 
-    ipv6[0] :       flow_label : 20'h97db6 
-    ipv6[0] :      payload_len : 16'h31 
+    ipv6[0] :              tos : 8'h5 
+    ipv6[0] :       flow_label : 20'ha73a5 
+    ipv6[0] :      payload_len : 16'h33 
     ipv6[0] :         protocol : 8'h6 (TCP)
-    ipv6[0] :              ttl : 8'h49 
-    ipv6[0] :           ip6_sa : 128'h67f29387fec0cc02feeb65243d19401f 
-    ipv6[0] :           ip6_da : 128'hc534d7eb03738374c30797cf630d3153 
-     tcp[0] :          src_prt : 16'h1b44 
-     tcp[0] :          dst_prt : 16'hf810 
-     tcp[0] :       seq_number : 32'h401d7752 
-     tcp[0] :       ack_number : 32'h6c86f369 
+    ipv6[0] :              ttl : 8'h60 
+    ipv6[0] :           ip6_sa : 128'hf0b584098665a2ec7b897bcf1776ef2f 
+    ipv6[0] :           ip6_da : 128'h9bdf2de43be50011accd28d3aa35561f 
+     tcp[0] :          src_prt : 16'h48bb 
+     tcp[0] :          dst_prt : 16'hc643 
+     tcp[0] :       seq_number : 32'h1c42d49b 
+     tcp[0] :       ack_number : 32'hb4128778 
      tcp[0] :           offset : 4'h8 
-     tcp[0] :             rsvd : 4'h5 
-     tcp[0] :            flags : 8'h4d (=> CWR 0 ECE 1 URG 0 ACK 0 PSH 1 RST 1 SYN 0 FIN 1)
-     tcp[0] :           window : 16'h9f49 
-     tcp[0] :         checksum : 16'hab17 (GOOD)
-     tcp[0] :       urgent_ptr : 16'ha382 
+     tcp[0] :             rsvd : 4'h0 
+     tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
+     tcp[0] :           window : 16'hd4b 
+     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : (Total Len  = 12)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : e3 66 58 51 9f c2 4d d8 | c4 71 1a e0 
+     tcp[0] :    0 : db f7 fe ad 50 a0 0f 6e | 24 8f e1 d6 
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 17 (data => 10 15 7f f1 ..)
+    data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h54bdeedf (GOOD)
+        toh :              crc : 32'h81d6055e (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b8 54 63 e3 7f 7a c3 90 | 1a c3 11 37 08 00 4a a5 
-    pkt_lib :   16 : 00 91 f2 0f 93 e8 07 2f | 34 29 6d 63 c2 e5 56 26 
-    pkt_lib :   32 : c4 0d f8 33 ac a7 96 46 | e7 6c a1 15 d3 97 33 74 
-    pkt_lib :   48 : 74 12 67 90 02 a8 90 00 | 88 47 a8 dc b9 74 55 f7 
-    pkt_lib :   64 : 18 f9 00 00 2f 03 63 79 | 7d b6 00 31 06 49 67 f2 
-    pkt_lib :   80 : 93 87 fe c0 cc 02 fe eb | 65 24 3d 19 40 1f c5 34 
-    pkt_lib :   96 : d7 eb 03 73 83 74 c3 07 | 97 cf 63 0d 31 53 1b 44 
-    pkt_lib :  112 : f8 10 40 1d 77 52 6c 86 | f3 69 85 4d 9f 49 ab 17 
-    pkt_lib :  128 : a3 82 e3 66 58 51 9f c2 | 4d d8 c4 71 1a e0 10 15 
-    pkt_lib :  144 : 7f f1 41 be ce d3 58 3f | 3e e4 ad af a4 0a 15 54 
-    pkt_lib :  160 : bd ee df 
+    pkt_lib :    0 : c7 a2 6a b1 21 c8 a5 df | ad de e4 f6 08 00 4d 6b 
+    pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
+    pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
+    pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
+    pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
+    pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 163)
+    pkt_lib : (Total Len  = 173)
 
 0 : INFO    : TEST      : Compare Pkt 2
     cmp_hdr : {eth[0], ipv4[0], gre[0], mpls[0], ipv6[0], tcp[0], data[0]}
-        toh :             plen : 163 
+        toh :             plen : 173 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb85463e37f7a 
-     eth[0] :               sa : 48'hc3901ac31137 
+     eth[0] :               da : 48'hc7a26ab121c8 
+     eth[0] :               sa : 48'ha5dfaddee4f6 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'ha5 
-    ipv4[0] :     total_length : 16'h91 
-    ipv4[0] :               id : 16'hf20f 
-    ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :              ihl : 4'hd 
+    ipv4[0] :              tos : 8'h6b 
+    ipv4[0] :     total_length : 16'h9b 
+    ipv4[0] :               id : 16'h991d 
+    ipv4[0] :         reserved : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h13e8 
-    ipv4[0] :              ttl : 8'h7 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'hd1 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'h3429 (GOOD)
-    ipv4[0] :            ip_sa : 32'h6d63c2e5 
-    ipv4[0] :            ip_da : 32'h5626c40d 
-    ipv4[0] :          options : Matched :-) Length Rcv => 20 Exp => 20
-     gre[0] :                C : 1'b1 
-     gre[0] :                R : 1'b0 
+    ipv4[0] :         checksum : 16'h2fc3 (GOOD)
+    ipv4[0] :            ip_sa : 32'h8e67c05c 
+    ipv4[0] :            ip_da : 32'h2566e400 
+    ipv4[0] :          options : Matched :-) Length Rcv => 32 Exp => 32
+     gre[0] :                C : 1'b0 
+     gre[0] :                R : 1'b1 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'ha8dc (GOOD)
-     gre[0] :           offset : 16'hb974 
-     gre[0] :  sequence_number : 32'h55f718f9 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
     mpls[0] :           exp[0] : 3'h7 
     mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h3 
+    mpls[0] :           ttl[0] : 8'ha7 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h37 
-    ipv6[0] :       flow_label : 20'h97db6 
-    ipv6[0] :      payload_len : 16'h31 
+    ipv6[0] :              tos : 8'h5 
+    ipv6[0] :       flow_label : 20'ha73a5 
+    ipv6[0] :      payload_len : 16'h33 
     ipv6[0] :         protocol : 8'h6 (TCP)
-    ipv6[0] :              ttl : 8'h49 
-    ipv6[0] :           ip6_sa : 128'h67f29387fec0cc02feeb65243d19401f 
-    ipv6[0] :           ip6_da : 128'hc534d7eb03738374c30797cf630d3153 
-     tcp[0] :          src_prt : 16'h1b44 
-     tcp[0] :          dst_prt : 16'hf810 
-     tcp[0] :       seq_number : 32'h401d7752 
-     tcp[0] :       ack_number : 32'h6c86f369 
+    ipv6[0] :              ttl : 8'h60 
+    ipv6[0] :           ip6_sa : 128'hf0b584098665a2ec7b897bcf1776ef2f 
+    ipv6[0] :           ip6_da : 128'h9bdf2de43be50011accd28d3aa35561f 
+     tcp[0] :          src_prt : 16'h48bb 
+     tcp[0] :          dst_prt : 16'hc643 
+     tcp[0] :       seq_number : 32'h1c42d49b 
+     tcp[0] :       ack_number : 32'hb4128778 
      tcp[0] :           offset : 4'h8 
-     tcp[0] :             rsvd : 4'h5 
-     tcp[0] :            flags : 8'h4d (=> CWR 0 ECE 1 URG 0 ACK 0 PSH 1 RST 1 SYN 0 FIN 1)
-     tcp[0] :           window : 16'h9f49 
-     tcp[0] :         checksum : 16'hab17 (GOOD)
-     tcp[0] :       urgent_ptr : 16'ha382 
+     tcp[0] :             rsvd : 4'h0 
+     tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
+     tcp[0] :           window : 16'hd4b 
+     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : Matched :-) Length Rcv => 12 Exp => 12
-    data[0] :         data_len : 17 (data => 10 15 7f f1 ..)
+    data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h54bdeedf (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 163 Exp => 163
+        toh :              crc : 32'h81d6055e (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 173 Exp => 173
 
 0 : INFO    : TEST      : Pack Pkt 3
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], ipv4[0], udp[0], data[0]}
-        toh :             plen : 94 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'heb78426b4ae0 
-     eth[0] :               sa : 48'h901b71342cca 
+     eth[0] :               da : 48'h2082ae89051d 
+     eth[0] :               sa : 48'h9db5bf2bac05 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h2 
+   dot1q[0] :              cos : 3'h0 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h8a7 
+   dot1q[0] :             vlan : 12'h1b9 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[1] :              cos : 3'h4 
    dot1q[1] :              cfi : 1'h1 
-   dot1q[1] :             vlan : 12'hda7 
+   dot1q[1] :             vlan : 12'h6ec 
    dot1q[1] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'hb 
-    ipv4[0] :              tos : 8'h92 
-    ipv4[0] :     total_length : 16'h44 
-    ipv4[0] :               id : 16'hd06b 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'h2d 
+    ipv4[0] :     total_length : 16'h38 
+    ipv4[0] :               id : 16'h96bb 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1e6 
-    ipv4[0] :              ttl : 8'hcd 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h9b 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hd7c1 (GOOD)
-    ipv4[0] :            ip_sa : 32'h7df9343e 
-    ipv4[0] :            ip_da : 32'h6a638f72 
-    ipv4[0] :          options : (Total Len  = 24)
+    ipv4[0] :         checksum : 16'h27d0 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3300f67 
+    ipv4[0] :            ip_da : 32'h23ea1c71 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 62 69 7c 61 e5 4d be 1d | 76 7a 0f 5d de c7 7c 23 
-    ipv4[0] :   16 : 41 78 e5 2b 2e 76 38 e2 | 
+    ipv4[0] :    0 : c8 bb 46 37 b4 91 4f 28 | 6b 07 f6 dd 2b 73 d9 b6 
+    ipv4[0] :   16 : fd a7 7f cd 63 53 d3 51 | d0 56 48 dc 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'h7edd 
-     udp[0] :          dst_prt : 16'hb369 (UNKNOWN)
-     udp[0] :           length : 16'h18 
-     udp[0] :         checksum : 16'hb92a (GOOD)
-    data[0] :         data_len : 16 (data => fc 1d bb e0 ..)
+     udp[0] :          src_prt : 16'h9639 
+     udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
+     udp[0] :           length : 16'h8 
+     udp[0] :         checksum : 16'h4857 (GOOD)
+    data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9a978b7a (GOOD)
+        toh :              crc : 32'h9365c385 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : eb 78 42 6b 4a e0 90 1b | 71 34 2c ca 81 00 48 a7 
-    pkt_lib :   16 : 81 00 9d a7 08 00 4b 92 | 00 44 d0 6b a1 e6 cd 11 
-    pkt_lib :   32 : d7 c1 7d f9 34 3e 6a 63 | 8f 72 62 69 7c 61 e5 4d 
-    pkt_lib :   48 : be 1d 76 7a 0f 5d de c7 | 7c 23 41 78 e5 2b 2e 76 
-    pkt_lib :   64 : 38 e2 7e dd b3 69 00 18 | b9 2a fc 1d bb e0 d8 75 
-    pkt_lib :   80 : 0f 74 34 ee 6c a6 9d 47 | 89 7a 9a 97 8b 7a 
+    pkt_lib :    0 : 20 82 ae 89 05 1d 9d b5 | bf 2b ac 05 81 00 01 b9 
+    pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
+    pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
+    pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
+    pkt_lib :   80 : c3 85 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 94)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Unpack Pkt 3
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], ipv4[0], udp[0], data[0]}
-        toh :             plen : 94 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'heb78426b4ae0 
-     eth[0] :               sa : 48'h901b71342cca 
+     eth[0] :               da : 48'h2082ae89051d 
+     eth[0] :               sa : 48'h9db5bf2bac05 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h2 
+   dot1q[0] :              cos : 3'h0 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h8a7 
+   dot1q[0] :             vlan : 12'h1b9 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[1] :              cos : 3'h4 
    dot1q[1] :              cfi : 1'h1 
-   dot1q[1] :             vlan : 12'hda7 
+   dot1q[1] :             vlan : 12'h6ec 
    dot1q[1] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'hb 
-    ipv4[0] :              tos : 8'h92 
-    ipv4[0] :     total_length : 16'h44 
-    ipv4[0] :               id : 16'hd06b 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'h2d 
+    ipv4[0] :     total_length : 16'h38 
+    ipv4[0] :               id : 16'h96bb 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1e6 
-    ipv4[0] :              ttl : 8'hcd 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h9b 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hd7c1 (GOOD)
-    ipv4[0] :            ip_sa : 32'h7df9343e 
-    ipv4[0] :            ip_da : 32'h6a638f72 
-    ipv4[0] :          options : (Total Len  = 24)
+    ipv4[0] :         checksum : 16'h27d0 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3300f67 
+    ipv4[0] :            ip_da : 32'h23ea1c71 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 62 69 7c 61 e5 4d be 1d | 76 7a 0f 5d de c7 7c 23 
-    ipv4[0] :   16 : 41 78 e5 2b 2e 76 38 e2 | 
+    ipv4[0] :    0 : c8 bb 46 37 b4 91 4f 28 | 6b 07 f6 dd 2b 73 d9 b6 
+    ipv4[0] :   16 : fd a7 7f cd 63 53 d3 51 | d0 56 48 dc 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'h7edd 
-     udp[0] :          dst_prt : 16'hb369 (UNKNOWN)
-     udp[0] :           length : 16'h18 
-     udp[0] :         checksum : 16'hb92a (GOOD)
-    data[0] :         data_len : 16 (data => fc 1d bb e0 ..)
+     udp[0] :          src_prt : 16'h9639 
+     udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
+     udp[0] :           length : 16'h8 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9a978b7a (GOOD)
+        toh :              crc : 32'h9365c385 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : eb 78 42 6b 4a e0 90 1b | 71 34 2c ca 81 00 48 a7 
-    pkt_lib :   16 : 81 00 9d a7 08 00 4b 92 | 00 44 d0 6b a1 e6 cd 11 
-    pkt_lib :   32 : d7 c1 7d f9 34 3e 6a 63 | 8f 72 62 69 7c 61 e5 4d 
-    pkt_lib :   48 : be 1d 76 7a 0f 5d de c7 | 7c 23 41 78 e5 2b 2e 76 
-    pkt_lib :   64 : 38 e2 7e dd b3 69 00 18 | b9 2a fc 1d bb e0 d8 75 
-    pkt_lib :   80 : 0f 74 34 ee 6c a6 9d 47 | 89 7a 9a 97 8b 7a 
+    pkt_lib :    0 : 20 82 ae 89 05 1d 9d b5 | bf 2b ac 05 81 00 01 b9 
+    pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
+    pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
+    pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
+    pkt_lib :   80 : c3 85 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 94)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Copy Pkt 3
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], ipv4[0], udp[0], data[0]}
-        toh :             plen : 94 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'heb78426b4ae0 
-     eth[0] :               sa : 48'h901b71342cca 
+     eth[0] :               da : 48'h2082ae89051d 
+     eth[0] :               sa : 48'h9db5bf2bac05 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h2 
+   dot1q[0] :              cos : 3'h0 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h8a7 
+   dot1q[0] :             vlan : 12'h1b9 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[1] :              cos : 3'h4 
    dot1q[1] :              cfi : 1'h1 
-   dot1q[1] :             vlan : 12'hda7 
+   dot1q[1] :             vlan : 12'h6ec 
    dot1q[1] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'hb 
-    ipv4[0] :              tos : 8'h92 
-    ipv4[0] :     total_length : 16'h44 
-    ipv4[0] :               id : 16'hd06b 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'h2d 
+    ipv4[0] :     total_length : 16'h38 
+    ipv4[0] :               id : 16'h96bb 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1e6 
-    ipv4[0] :              ttl : 8'hcd 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h9b 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hd7c1 (GOOD)
-    ipv4[0] :            ip_sa : 32'h7df9343e 
-    ipv4[0] :            ip_da : 32'h6a638f72 
-    ipv4[0] :          options : (Total Len  = 24)
+    ipv4[0] :         checksum : 16'h27d0 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3300f67 
+    ipv4[0] :            ip_da : 32'h23ea1c71 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 62 69 7c 61 e5 4d be 1d | 76 7a 0f 5d de c7 7c 23 
-    ipv4[0] :   16 : 41 78 e5 2b 2e 76 38 e2 | 
+    ipv4[0] :    0 : c8 bb 46 37 b4 91 4f 28 | 6b 07 f6 dd 2b 73 d9 b6 
+    ipv4[0] :   16 : fd a7 7f cd 63 53 d3 51 | d0 56 48 dc 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'h7edd 
-     udp[0] :          dst_prt : 16'hb369 (UNKNOWN)
-     udp[0] :           length : 16'h18 
-     udp[0] :         checksum : 16'hb92a (GOOD)
-    data[0] :         data_len : 16 (data => fc 1d bb e0 ..)
+     udp[0] :          src_prt : 16'h9639 
+     udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
+     udp[0] :           length : 16'h8 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9a978b7a (GOOD)
+        toh :              crc : 32'h9365c385 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : eb 78 42 6b 4a e0 90 1b | 71 34 2c ca 81 00 48 a7 
-    pkt_lib :   16 : 81 00 9d a7 08 00 4b 92 | 00 44 d0 6b a1 e6 cd 11 
-    pkt_lib :   32 : d7 c1 7d f9 34 3e 6a 63 | 8f 72 62 69 7c 61 e5 4d 
-    pkt_lib :   48 : be 1d 76 7a 0f 5d de c7 | 7c 23 41 78 e5 2b 2e 76 
-    pkt_lib :   64 : 38 e2 7e dd b3 69 00 18 | b9 2a fc 1d bb e0 d8 75 
-    pkt_lib :   80 : 0f 74 34 ee 6c a6 9d 47 | 89 7a 9a 97 8b 7a 
+    pkt_lib :    0 : 20 82 ae 89 05 1d 9d b5 | bf 2b ac 05 81 00 01 b9 
+    pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
+    pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
+    pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
+    pkt_lib :   80 : c3 85 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 94)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Compare Pkt 3
     cmp_hdr : {eth[0], dot1q[0], dot1q[1], ipv4[0], udp[0], data[0]}
-        toh :             plen : 94 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'heb78426b4ae0 
-     eth[0] :               sa : 48'h901b71342cca 
+     eth[0] :               da : 48'h2082ae89051d 
+     eth[0] :               sa : 48'h9db5bf2bac05 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h2 
+   dot1q[0] :              cos : 3'h0 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h8a7 
+   dot1q[0] :             vlan : 12'h1b9 
    dot1q[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[1] :              cos : 3'h4 
    dot1q[1] :              cfi : 1'h1 
-   dot1q[1] :             vlan : 12'hda7 
+   dot1q[1] :             vlan : 12'h6ec 
    dot1q[1] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'hb 
-    ipv4[0] :              tos : 8'h92 
-    ipv4[0] :     total_length : 16'h44 
-    ipv4[0] :               id : 16'hd06b 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'h2d 
+    ipv4[0] :     total_length : 16'h38 
+    ipv4[0] :               id : 16'h96bb 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1e6 
-    ipv4[0] :              ttl : 8'hcd 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h9b 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hd7c1 (GOOD)
-    ipv4[0] :            ip_sa : 32'h7df9343e 
-    ipv4[0] :            ip_da : 32'h6a638f72 
-    ipv4[0] :          options : Matched :-) Length Rcv => 24 Exp => 24
-     udp[0] :          src_prt : 16'h7edd 
-     udp[0] :          dst_prt : 16'hb369 (UNKNOWN)
-     udp[0] :           length : 16'h18 
-     udp[0] :         checksum : 16'hb92a (GOOD)
-    data[0] :         data_len : 16 (data => fc 1d bb e0 ..)
+    ipv4[0] :         checksum : 16'h27d0 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3300f67 
+    ipv4[0] :            ip_da : 32'h23ea1c71 
+    ipv4[0] :          options : Matched :-) Length Rcv => 28 Exp => 28
+     udp[0] :          src_prt : 16'h9639 
+     udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
+     udp[0] :           length : 16'h8 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9a978b7a (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 94 Exp => 94
+        toh :              crc : 32'h9365c385 (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 82 Exp => 82
 
 0 : INFO    : TEST      : Pack Pkt 4
     cfg_hdr : {eth[0], dot1q[0], ipv6[0], gre[0], data[0]}
-        toh :             plen : 82 
+        toh :             plen : 85 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'he4d5b59713af 
-     eth[0] :               sa : 48'hde32cc6cf133 
+     eth[0] :               da : 48'hdb0132bc7758 
+     eth[0] :               sa : 48'h52c0a9a078f7 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h4 
+   dot1q[0] :              cos : 3'h3 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h3ab 
+   dot1q[0] :             vlan : 12'h9a4 
    dot1q[0] :            etype : 16'h86dd (IPV6)
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h76 
-    ipv6[0] :       flow_label : 20'h91754 
-    ipv6[0] :      payload_len : 16'h14 
+    ipv6[0] :              tos : 8'h10 
+    ipv6[0] :       flow_label : 20'heae96 
+    ipv6[0] :      payload_len : 16'h17 
     ipv6[0] :         protocol : 8'h2f (GRE)
-    ipv6[0] :              ttl : 8'hae 
-    ipv6[0] :           ip6_sa : 128'hf99aae57e63ef3631a72dbb46461cf13 
-    ipv6[0] :           ip6_da : 128'hf9691b640f0f15491915b6b0597725a7 
-     gre[0] :                C : 1'b0 
+    ipv6[0] :              ttl : 8'h93 
+    ipv6[0] :           ip6_sa : 128'hc1c82eaae146fb7e5c6fe6c033a634bd 
+    ipv6[0] :           ip6_da : 128'h9a894ff781c310c17be1abdaed010e23 
+     gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
-     gre[0] :         protocol : 16'h96c6 (UNKNOWN)
-     gre[0] :  sequence_number : 32'ha7117737 
-    data[0] :         data_len : 12 (data => 16 ec 75 fc ..)
+     gre[0] :         protocol : 16'h61a (UNKNOWN)
+     gre[0] :         checksum : 16'h8ec3 (GOOD)
+     gre[0] :           offset : 16'h5ff7 
+    data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h5f083d27 (GOOD)
+        toh :              crc : 32'hdd75aeb5 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : e4 d5 b5 97 13 af de 32 | cc 6c f1 33 81 00 83 ab 
-    pkt_lib :   16 : 86 dd 67 69 17 54 00 14 | 2f ae f9 9a ae 57 e6 3e 
-    pkt_lib :   32 : f3 63 1a 72 db b4 64 61 | cf 13 f9 69 1b 64 0f 0f 
-    pkt_lib :   48 : 15 49 19 15 b6 b0 59 77 | 25 a7 10 00 96 c6 a7 11 
-    pkt_lib :   64 : 77 37 16 ec 75 fc 99 81 | db 06 ee 0a ac 94 5f 08 
-    pkt_lib :   80 : 3d 27 
+    pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
+    pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
+    pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
+    pkt_lib :   80 : bf dd 75 ae b5 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 82)
+    pkt_lib : (Total Len  = 85)
 
 0 : INFO    : TEST      : Unpack Pkt 4
     cfg_hdr : {eth[0], dot1q[0], ipv6[0], gre[0], data[0]}
-        toh :             plen : 82 
+        toh :             plen : 85 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'he4d5b59713af 
-     eth[0] :               sa : 48'hde32cc6cf133 
+     eth[0] :               da : 48'hdb0132bc7758 
+     eth[0] :               sa : 48'h52c0a9a078f7 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h4 
+   dot1q[0] :              cos : 3'h3 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h3ab 
+   dot1q[0] :             vlan : 12'h9a4 
    dot1q[0] :            etype : 16'h86dd (IPV6)
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h76 
-    ipv6[0] :       flow_label : 20'h91754 
-    ipv6[0] :      payload_len : 16'h14 
+    ipv6[0] :              tos : 8'h10 
+    ipv6[0] :       flow_label : 20'heae96 
+    ipv6[0] :      payload_len : 16'h17 
     ipv6[0] :         protocol : 8'h2f (GRE)
-    ipv6[0] :              ttl : 8'hae 
-    ipv6[0] :           ip6_sa : 128'hf99aae57e63ef3631a72dbb46461cf13 
-    ipv6[0] :           ip6_da : 128'hf9691b640f0f15491915b6b0597725a7 
-     gre[0] :                C : 1'b0 
+    ipv6[0] :              ttl : 8'h93 
+    ipv6[0] :           ip6_sa : 128'hc1c82eaae146fb7e5c6fe6c033a634bd 
+    ipv6[0] :           ip6_da : 128'h9a894ff781c310c17be1abdaed010e23 
+     gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
-     gre[0] :         protocol : 16'h96c6 (UNKNOWN)
-     gre[0] :  sequence_number : 32'ha7117737 
-    data[0] :         data_len : 12 (data => 16 ec 75 fc ..)
+     gre[0] :         protocol : 16'h61a (UNKNOWN)
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h5ff7 
+    data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h5f083d27 (GOOD)
+        toh :              crc : 32'hdd75aeb5 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : e4 d5 b5 97 13 af de 32 | cc 6c f1 33 81 00 83 ab 
-    pkt_lib :   16 : 86 dd 67 69 17 54 00 14 | 2f ae f9 9a ae 57 e6 3e 
-    pkt_lib :   32 : f3 63 1a 72 db b4 64 61 | cf 13 f9 69 1b 64 0f 0f 
-    pkt_lib :   48 : 15 49 19 15 b6 b0 59 77 | 25 a7 10 00 96 c6 a7 11 
-    pkt_lib :   64 : 77 37 16 ec 75 fc 99 81 | db 06 ee 0a ac 94 5f 08 
-    pkt_lib :   80 : 3d 27 
+    pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
+    pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
+    pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
+    pkt_lib :   80 : bf dd 75 ae b5 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 82)
+    pkt_lib : (Total Len  = 85)
 
 0 : INFO    : TEST      : Copy Pkt 4
     cfg_hdr : {eth[0], dot1q[0], ipv6[0], gre[0], data[0]}
-        toh :             plen : 82 
+        toh :             plen : 85 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'he4d5b59713af 
-     eth[0] :               sa : 48'hde32cc6cf133 
+     eth[0] :               da : 48'hdb0132bc7758 
+     eth[0] :               sa : 48'h52c0a9a078f7 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h4 
+   dot1q[0] :              cos : 3'h3 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h3ab 
+   dot1q[0] :             vlan : 12'h9a4 
    dot1q[0] :            etype : 16'h86dd (IPV6)
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h76 
-    ipv6[0] :       flow_label : 20'h91754 
-    ipv6[0] :      payload_len : 16'h14 
+    ipv6[0] :              tos : 8'h10 
+    ipv6[0] :       flow_label : 20'heae96 
+    ipv6[0] :      payload_len : 16'h17 
     ipv6[0] :         protocol : 8'h2f (GRE)
-    ipv6[0] :              ttl : 8'hae 
-    ipv6[0] :           ip6_sa : 128'hf99aae57e63ef3631a72dbb46461cf13 
-    ipv6[0] :           ip6_da : 128'hf9691b640f0f15491915b6b0597725a7 
-     gre[0] :                C : 1'b0 
+    ipv6[0] :              ttl : 8'h93 
+    ipv6[0] :           ip6_sa : 128'hc1c82eaae146fb7e5c6fe6c033a634bd 
+    ipv6[0] :           ip6_da : 128'h9a894ff781c310c17be1abdaed010e23 
+     gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
-     gre[0] :         protocol : 16'h96c6 (UNKNOWN)
-     gre[0] :  sequence_number : 32'ha7117737 
-    data[0] :         data_len : 12 (data => 16 ec 75 fc ..)
+     gre[0] :         protocol : 16'h61a (UNKNOWN)
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h5ff7 
+    data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h5f083d27 (GOOD)
+        toh :              crc : 32'hdd75aeb5 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : e4 d5 b5 97 13 af de 32 | cc 6c f1 33 81 00 83 ab 
-    pkt_lib :   16 : 86 dd 67 69 17 54 00 14 | 2f ae f9 9a ae 57 e6 3e 
-    pkt_lib :   32 : f3 63 1a 72 db b4 64 61 | cf 13 f9 69 1b 64 0f 0f 
-    pkt_lib :   48 : 15 49 19 15 b6 b0 59 77 | 25 a7 10 00 96 c6 a7 11 
-    pkt_lib :   64 : 77 37 16 ec 75 fc 99 81 | db 06 ee 0a ac 94 5f 08 
-    pkt_lib :   80 : 3d 27 
+    pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
+    pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
+    pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
+    pkt_lib :   80 : bf dd 75 ae b5 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 82)
+    pkt_lib : (Total Len  = 85)
 
 0 : INFO    : TEST      : Compare Pkt 4
     cmp_hdr : {eth[0], dot1q[0], ipv6[0], gre[0], data[0]}
-        toh :             plen : 82 
+        toh :             plen : 85 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'he4d5b59713af 
-     eth[0] :               sa : 48'hde32cc6cf133 
+     eth[0] :               da : 48'hdb0132bc7758 
+     eth[0] :               sa : 48'h52c0a9a078f7 
      eth[0] :            etype : 16'h8100 (DOT1Q)
-   dot1q[0] :              cos : 3'h4 
+   dot1q[0] :              cos : 3'h3 
    dot1q[0] :              cfi : 1'h0 
-   dot1q[0] :             vlan : 12'h3ab 
+   dot1q[0] :             vlan : 12'h9a4 
    dot1q[0] :            etype : 16'h86dd (IPV6)
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h76 
-    ipv6[0] :       flow_label : 20'h91754 
-    ipv6[0] :      payload_len : 16'h14 != 16'h2414 (ERROR) 
+    ipv6[0] :              tos : 8'h10 
+    ipv6[0] :       flow_label : 20'heae96 
+    ipv6[0] :      payload_len : 16'h17 != 16'h2417 (ERROR) 
     ipv6[0] :         protocol : 8'h2f (GRE)
-    ipv6[0] :              ttl : 8'hae 
-    ipv6[0] :           ip6_sa : 128'hf99aae57e63ef3631a72dbb46461cf13 
-    ipv6[0] :           ip6_da : 128'hf9691b640f0f15491915b6b0597725a7 
-     gre[0] :                C : 1'b0 
+    ipv6[0] :              ttl : 8'h93 
+    ipv6[0] :           ip6_sa : 128'hc1c82eaae146fb7e5c6fe6c033a634bd 
+    ipv6[0] :           ip6_da : 128'h9a894ff781c310c17be1abdaed010e23 
+     gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
      gre[0] :                K : 1'b0 
-     gre[0] :                S : 1'b1 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
-     gre[0] :         protocol : 16'h96c6 (UNKNOWN)
-     gre[0] :  sequence_number : 32'ha7117737 
-    data[0] :         data_len : 12 (data => 16 ec 75 fc ..)
+     gre[0] :         protocol : 16'h61a (UNKNOWN)
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h5ff7 
+    data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h5f083d27 (GOOD)
-0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 82 Exp => 82
+        toh :              crc : 32'hdd75aeb5 (GOOD)
+0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 85 Exp => 85
     pkt_lib :        ~~~~~~~~~ RCV ~~~~~~~~~~|~~~~~~~~~ EXP ~~~~~~~~~~
     pkt_lib :        0   1  2  3  4  5  6  7 |  0  1  2  3  4  5  6  7
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : e4 d5 b5 97 13 af de 32 | .. .. .. .. .. .. .. .. 
-    pkt_lib :    8 : cc 6c f1 33 81 00 83 ab | .. .. .. .. .. .. .. .. 
-    pkt_lib :   16 : 86 dd 67 69 17 54 00 14 | .. .. .. .. .. .. 24 .. 
-    pkt_lib :   24 : 2f ae f9 9a ae 57 e6 3e | .. .. .. .. .. .. .. .. 
-    pkt_lib :   32 : f3 63 1a 72 db b4 64 61 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   40 : cf 13 f9 69 1b 64 0f 0f | .. .. .. .. .. .. .. .. 
-    pkt_lib :   48 : 15 49 19 15 b6 b0 59 77 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   56 : 25 a7 10 00 96 c6 a7 11 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   64 : 77 37 16 ec 75 fc 99 81 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   72 : db 06 ee 0a ac 94 5f 08 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   80 : 3d 27                   | .. .. 
+    pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | .. .. .. .. .. .. .. .. 
+    pkt_lib :    8 : a9 a0 78 f7 81 00 69 a4 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | .. .. .. .. .. .. 24 .. 
+    pkt_lib :   24 : 2f 93 c1 c8 2e aa e1 46 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   40 : 34 bd 9a 89 4f f7 81 c3 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   56 : 0e 23 80 00 06 1a 00 00 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   72 : a9 c9 e9 d7 b9 af 92 82 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   80 : bf dd 75 ae b5          | .. .. .. .. .. 
 
 0 : INFO    : TEST      : Pack Pkt 5
     cfg_hdr : {eth[0], itag[0], eth[1], ipv4[0], tcp[0], data[0]}
-        toh :             plen : 142 
+        toh :             plen : 156 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hf848503b013b 
-     eth[0] :               sa : 48'hc937f573381 
+     eth[0] :               da : 48'hd1a3b898d017 
+     eth[0] :               sa : 48'hf9b5b9cfa44 
      eth[0] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h6 
+    itag[0] :              pri : 3'h4 
     itag[0] :               de : 1'h0 
     itag[0] :            rsvd0 : 2'h3 
     itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h8b7 
-     eth[1] :               da : 48'hd1337c93a452 
-     eth[1] :               sa : 48'h83f3668e4626 
+    itag[0] :              sid : 12'h5f1 
+     eth[1] :               da : 48'hae545c7414e0 
+     eth[1] :               sa : 48'h3622e2f6182f 
      eth[1] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h62 
-    ipv4[0] :     total_length : 16'h6a 
-    ipv4[0] :               id : 16'h7315 
+    ipv4[0] :              ihl : 4'he 
+    ipv4[0] :              tos : 8'ha4 
+    ipv4[0] :     total_length : 16'h78 
+    ipv4[0] :               id : 16'h5a81 
     ipv4[0] :         reserved : 1'h0 
     ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
     ipv4[0] :      frag_offset : 13'h0 
-    ipv4[0] :              ttl : 8'h6d 
+    ipv4[0] :              ttl : 8'h60 
     ipv4[0] :         protocol : 8'h6 (TCP)
-    ipv4[0] :         checksum : 16'h4c6a (GOOD)
-    ipv4[0] :            ip_sa : 32'h5264d13c 
-    ipv4[0] :            ip_da : 32'h81a0ff23 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h8e0b (GOOD)
+    ipv4[0] :            ip_sa : 32'hc738bdf2 
+    ipv4[0] :            ip_da : 32'h979626d2 
+    ipv4[0] :          options : (Total Len  = 36)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 0b 52 90 98 85 7e 1b 7c | fd 88 e7 de 71 ac b6 03 
-    ipv4[0] :   16 : 42 f4 17 56 
+    ipv4[0] :    0 : a7 0b 10 e6 ce 29 97 6e | 0c 14 a5 b4 38 06 2c 80 
+    ipv4[0] :   16 : 1c 03 50 ac a1 33 45 ca | 78 74 d2 e7 b4 7a 2e 9e 
+    ipv4[0] :   32 : b0 be 7e 01 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :          src_prt : 16'h7d7e 
-     tcp[0] :          dst_prt : 16'h6829 
-     tcp[0] :       seq_number : 32'h3d635827 
-     tcp[0] :       ack_number : 32'h35d622fa 
-     tcp[0] :           offset : 4'he 
-     tcp[0] :             rsvd : 4'hd 
-     tcp[0] :            flags : 8'h80 (=> CWR 1 ECE 0 URG 0 ACK 0 PSH 0 RST 0 SYN 0 FIN 0)
-     tcp[0] :           window : 16'hdf98 
-     tcp[0] :         checksum : 16'hd817 (GOOD)
-     tcp[0] :       urgent_ptr : 16'h53b 
-     tcp[0] :          options : (Total Len  = 36)
+     tcp[0] :          src_prt : 16'hadc3 
+     tcp[0] :          dst_prt : 16'h614c 
+     tcp[0] :       seq_number : 32'h7170e96c 
+     tcp[0] :       ack_number : 32'he48df88d 
+     tcp[0] :           offset : 4'hc 
+     tcp[0] :             rsvd : 4'h4 
+     tcp[0] :            flags : 8'h77 (=> CWR 0 ECE 1 URG 1 ACK 1 PSH 0 RST 1 SYN 1 FIN 1)
+     tcp[0] :           window : 16'h9b1c 
+     tcp[0] :         checksum : 16'h9608 (GOOD)
+     tcp[0] :       urgent_ptr : 16'h751c 
+     tcp[0] :          options : (Total Len  = 28)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : 4e d6 04 27 6b 2a fb 53 | 69 46 a2 af 75 6a d5 b0 
-     tcp[0] :   16 : fa 0d d9 80 7b 07 f9 49 | 0b 50 5d ec b6 88 a3 7a 
-     tcp[0] :   32 : 05 76 aa 85 
+     tcp[0] :    0 : 38 e2 23 cd 76 88 4d 95 | 10 d7 fb 0d ba d6 f3 80 
+     tcp[0] :   16 : b9 52 5d 94 d5 fe ad 51 | c0 52 dd 52 
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 10 (data => 47 b3 f0 59 ..)
+    data[0] :         data_len : 16 (data => 99 b5 14 a1 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h941f5752 (GOOD)
+        toh :              crc : 32'ha450f347 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : f8 48 50 3b 01 3b 0c 93 | 7f 57 33 81 88 e7 00 0c 
-    pkt_lib :   16 : d8 b7 d1 33 7c 93 a4 52 | 83 f3 66 8e 46 26 08 00 
-    pkt_lib :   32 : 4a 62 00 6a 73 15 40 00 | 6d 06 4c 6a 52 64 d1 3c 
-    pkt_lib :   48 : 81 a0 ff 23 0b 52 90 98 | 85 7e 1b 7c fd 88 e7 de 
-    pkt_lib :   64 : 71 ac b6 03 42 f4 17 56 | 7d 7e 68 29 3d 63 58 27 
-    pkt_lib :   80 : 35 d6 22 fa ed 80 df 98 | d8 17 05 3b 4e d6 04 27 
-    pkt_lib :   96 : 6b 2a fb 53 69 46 a2 af | 75 6a d5 b0 fa 0d d9 80 
-    pkt_lib :  112 : 7b 07 f9 49 0b 50 5d ec | b6 88 a3 7a 05 76 aa 85 
-    pkt_lib :  128 : 47 b3 f0 59 47 f8 5c 0b | 35 29 94 1f 57 52 
+    pkt_lib :    0 : d1 a3 b8 98 d0 17 0f 9b | 5b 9c fa 44 88 e7 8d 5f 
+    pkt_lib :   16 : 10 ae 54 5c 74 14 e0 36 | 22 e2 f6 18 2f 08 00 4e 
+    pkt_lib :   32 : a4 00 78 5a 81 40 00 60 | 06 8e 0b c7 38 bd f2 97 
+    pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
+    pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
+    pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
+    pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 142)
+    pkt_lib : (Total Len  = 156)
 
 0 : INFO    : TEST      : Unpack Pkt 5
-    cfg_hdr : {eth[0], itag[0], eth[1], ipv4[0], tcp[0], data[0]}
-        toh :             plen : 142 
+    cfg_hdr : {eth[0], itag[0], eth[1], snap[0], snap[1], data[0]}
+        toh :             plen : 156 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hf848503b013b 
-     eth[0] :               sa : 48'hc937f573381 
+     eth[0] :               da : 48'hd1a3b898d017 
+     eth[0] :               sa : 48'hf9b5b9cfa44 
      eth[0] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h6 
+    itag[0] :              pri : 3'h4 
     itag[0] :               de : 1'h0 
     itag[0] :            rsvd0 : 2'h3 
     itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h8b7 
-     eth[1] :               da : 48'hd1337c93a452 
-     eth[1] :               sa : 48'h83f3668e4626 
-     eth[1] :            etype : 16'h800 (IPV4)
-    ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h62 
-    ipv4[0] :     total_length : 16'h6a 
-    ipv4[0] :               id : 16'h7315 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h1 
-    ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h0 
-    ipv4[0] :              ttl : 8'h6d 
-    ipv4[0] :         protocol : 8'h6 (TCP)
-    ipv4[0] :         checksum : 16'h4c6a (GOOD)
-    ipv4[0] :            ip_sa : 32'h5264d13c 
-    ipv4[0] :            ip_da : 32'h81a0ff23 
-    ipv4[0] :          options : (Total Len  = 20)
-    ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
-    ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 0b 52 90 98 85 7e 1b 7c | fd 88 e7 de 71 ac b6 03 
-    ipv4[0] :   16 : 42 f4 17 56 
-    ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :          src_prt : 16'h7d7e 
-     tcp[0] :          dst_prt : 16'h6829 
-     tcp[0] :       seq_number : 32'h3d635827 
-     tcp[0] :       ack_number : 32'h35d622fa 
-     tcp[0] :           offset : 4'he 
-     tcp[0] :             rsvd : 4'hd 
-     tcp[0] :            flags : 8'h80 (=> CWR 1 ECE 0 URG 0 ACK 0 PSH 0 RST 0 SYN 0 FIN 0)
-     tcp[0] :           window : 16'hdf98 
-     tcp[0] :         checksum : 16'hd817 (GOOD)
-     tcp[0] :       urgent_ptr : 16'h53b 
-     tcp[0] :          options : (Total Len  = 36)
-     tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
-     tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : 4e d6 04 27 6b 2a fb 53 | 69 46 a2 af 75 6a d5 b0 
-     tcp[0] :   16 : fa 0d d9 80 7b 07 f9 49 | 0b 50 5d ec b6 88 a3 7a 
-     tcp[0] :   32 : 05 76 aa 85 
-     tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 10 (data => 47 b3 f0 59 ..)
+    itag[0] :              sid : 12'h5f1 
+     eth[1] :               da : 48'h545c7414e036 
+     eth[1] :               sa : 48'h22e2f6182f08 
+     eth[1] :            etype : 16'h4e (SNAP)
+    snap[0] :             dsap : 8'ha4 
+    snap[0] :             ssap : 8'h0 
+    snap[0] :             ctrl : 8'h78 
+    snap[0] :              oui : 24'h5a8140 
+    snap[0] :            etype : 16'h60 (SNAP)
+    snap[1] :             dsap : 8'h6 
+    snap[1] :             ssap : 8'h8e 
+    snap[1] :             ctrl : 8'hb 
+    snap[1] :              oui : 24'hc738bd 
+    snap[1] :            etype : 16'hf297 (UNKNOWN)
+    data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h941f5752 (GOOD)
+        toh :              crc : 32'h50f34700 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : f8 48 50 3b 01 3b 0c 93 | 7f 57 33 81 88 e7 00 0c 
-    pkt_lib :   16 : d8 b7 d1 33 7c 93 a4 52 | 83 f3 66 8e 46 26 08 00 
-    pkt_lib :   32 : 4a 62 00 6a 73 15 40 00 | 6d 06 4c 6a 52 64 d1 3c 
-    pkt_lib :   48 : 81 a0 ff 23 0b 52 90 98 | 85 7e 1b 7c fd 88 e7 de 
-    pkt_lib :   64 : 71 ac b6 03 42 f4 17 56 | 7d 7e 68 29 3d 63 58 27 
-    pkt_lib :   80 : 35 d6 22 fa ed 80 df 98 | d8 17 05 3b 4e d6 04 27 
-    pkt_lib :   96 : 6b 2a fb 53 69 46 a2 af | 75 6a d5 b0 fa 0d d9 80 
-    pkt_lib :  112 : 7b 07 f9 49 0b 50 5d ec | b6 88 a3 7a 05 76 aa 85 
-    pkt_lib :  128 : 47 b3 f0 59 47 f8 5c 0b | 35 29 94 1f 57 52 
+    pkt_lib :    0 : d1 a3 b8 98 d0 17 0f 9b | 5b 9c fa 44 88 e7 8d 5f 
+    pkt_lib :   16 : 10 ae 54 5c 74 14 e0 36 | 22 e2 f6 18 2f 08 00 4e 
+    pkt_lib :   32 : a4 00 78 5a 81 40 00 60 | 06 8e 0b c7 38 bd f2 97 
+    pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
+    pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
+    pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
+    pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 142)
+    pkt_lib : (Total Len  = 156)
 
 0 : INFO    : TEST      : Copy Pkt 5
-    cfg_hdr : {eth[0], itag[0], eth[1], ipv4[0], tcp[0], data[0]}
-        toh :             plen : 142 
+    cfg_hdr : {eth[0], itag[0], eth[1], snap[0], snap[1], data[0]}
+        toh :             plen : 156 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hf848503b013b 
-     eth[0] :               sa : 48'hc937f573381 
+     eth[0] :               da : 48'hd1a3b898d017 
+     eth[0] :               sa : 48'hf9b5b9cfa44 
      eth[0] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h6 
+    itag[0] :              pri : 3'h4 
     itag[0] :               de : 1'h0 
     itag[0] :            rsvd0 : 2'h3 
     itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h8b7 
-     eth[1] :               da : 48'hd1337c93a452 
-     eth[1] :               sa : 48'h83f3668e4626 
-     eth[1] :            etype : 16'h800 (IPV4)
-    ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h62 
-    ipv4[0] :     total_length : 16'h6a 
-    ipv4[0] :               id : 16'h7315 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h1 
-    ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h0 
-    ipv4[0] :              ttl : 8'h6d 
-    ipv4[0] :         protocol : 8'h6 (TCP)
-    ipv4[0] :         checksum : 16'h4c6a (GOOD)
-    ipv4[0] :            ip_sa : 32'h5264d13c 
-    ipv4[0] :            ip_da : 32'h81a0ff23 
-    ipv4[0] :          options : (Total Len  = 20)
-    ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
-    ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 0b 52 90 98 85 7e 1b 7c | fd 88 e7 de 71 ac b6 03 
-    ipv4[0] :   16 : 42 f4 17 56 
-    ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :          src_prt : 16'h7d7e 
-     tcp[0] :          dst_prt : 16'h6829 
-     tcp[0] :       seq_number : 32'h3d635827 
-     tcp[0] :       ack_number : 32'h35d622fa 
-     tcp[0] :           offset : 4'he 
-     tcp[0] :             rsvd : 4'hd 
-     tcp[0] :            flags : 8'h80 (=> CWR 1 ECE 0 URG 0 ACK 0 PSH 0 RST 0 SYN 0 FIN 0)
-     tcp[0] :           window : 16'hdf98 
-     tcp[0] :         checksum : 16'hd817 (GOOD)
-     tcp[0] :       urgent_ptr : 16'h53b 
-     tcp[0] :          options : (Total Len  = 36)
-     tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
-     tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     tcp[0] :    0 : 4e d6 04 27 6b 2a fb 53 | 69 46 a2 af 75 6a d5 b0 
-     tcp[0] :   16 : fa 0d d9 80 7b 07 f9 49 | 0b 50 5d ec b6 88 a3 7a 
-     tcp[0] :   32 : 05 76 aa 85 
-     tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    data[0] :         data_len : 10 (data => 47 b3 f0 59 ..)
+    itag[0] :              sid : 12'h5f1 
+     eth[1] :               da : 48'h545c7414e036 
+     eth[1] :               sa : 48'h22e2f6182f08 
+     eth[1] :            etype : 16'h4e (SNAP)
+    snap[0] :             dsap : 8'ha4 
+    snap[0] :             ssap : 8'h0 
+    snap[0] :             ctrl : 8'h78 
+    snap[0] :              oui : 24'h5a8140 
+    snap[0] :            etype : 16'h60 (SNAP)
+    snap[1] :             dsap : 8'h6 
+    snap[1] :             ssap : 8'h8e 
+    snap[1] :             ctrl : 8'hb 
+    snap[1] :              oui : 24'hc738bd 
+    snap[1] :            etype : 16'hf297 (UNKNOWN)
+    data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h941f5752 (GOOD)
+        toh :              crc : 32'h50f34700 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : f8 48 50 3b 01 3b 0c 93 | 7f 57 33 81 88 e7 00 0c 
-    pkt_lib :   16 : d8 b7 d1 33 7c 93 a4 52 | 83 f3 66 8e 46 26 08 00 
-    pkt_lib :   32 : 4a 62 00 6a 73 15 40 00 | 6d 06 4c 6a 52 64 d1 3c 
-    pkt_lib :   48 : 81 a0 ff 23 0b 52 90 98 | 85 7e 1b 7c fd 88 e7 de 
-    pkt_lib :   64 : 71 ac b6 03 42 f4 17 56 | 7d 7e 68 29 3d 63 58 27 
-    pkt_lib :   80 : 35 d6 22 fa ed 80 df 98 | d8 17 05 3b 4e d6 04 27 
-    pkt_lib :   96 : 6b 2a fb 53 69 46 a2 af | 75 6a d5 b0 fa 0d d9 80 
-    pkt_lib :  112 : 7b 07 f9 49 0b 50 5d ec | b6 88 a3 7a 05 76 aa 85 
-    pkt_lib :  128 : 47 b3 f0 59 47 f8 5c 0b | 35 29 94 1f 57 52 
+    pkt_lib :    0 : d1 a3 b8 98 d0 17 0f 9b | 5b 9c fa 44 88 e7 8d 5f 
+    pkt_lib :   16 : 10 ae 54 5c 74 14 e0 36 | 22 e2 f6 18 2f 08 00 4e 
+    pkt_lib :   32 : a4 00 78 5a 81 40 00 60 | 06 8e 0b c7 38 bd f2 97 
+    pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
+    pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
+    pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
+    pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 142)
+    pkt_lib : (Total Len  = 156)
 
 0 : INFO    : TEST      : Compare Pkt 5
-    cmp_hdr : {eth[0], itag[0], eth[1], ipv4[0], tcp[0], data[0]}
-        toh :             plen : 142 
+    cmp_hdr : {eth[0], itag[0], eth[1], snap[0], snap[1], data[0]}
+        toh :             plen : 156 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hf848503b013b 
-     eth[0] :               sa : 48'hc937f573381 
+     eth[0] :               da : 48'hd1a3b898d017 
+     eth[0] :               sa : 48'hf9b5b9cfa44 
      eth[0] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h6 
+    itag[0] :              pri : 3'h4 
     itag[0] :               de : 1'h0 
     itag[0] :            rsvd0 : 2'h3 
     itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h8b7 
-     eth[1] :               da : 48'hd1337c93a452 
-     eth[1] :               sa : 48'h83f3668e4626 
-     eth[1] :            etype : 16'h800 (IPV4)
-    ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h62 
-    ipv4[0] :     total_length : 16'h6a 
-    ipv4[0] :               id : 16'h7315 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h1 
-    ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h0 
-    ipv4[0] :              ttl : 8'h6d 
-    ipv4[0] :         protocol : 8'h6 (TCP)
-    ipv4[0] :         checksum : 16'h4c6a (GOOD)
-    ipv4[0] :            ip_sa : 32'h5264d13c 
-    ipv4[0] :            ip_da : 32'h81a0ff23 
-    ipv4[0] :          options : Matched :-) Length Rcv => 20 Exp => 20
-     tcp[0] :          src_prt : 16'h7d7e 
-     tcp[0] :          dst_prt : 16'h6829 
-     tcp[0] :       seq_number : 32'h3d635827 
-     tcp[0] :       ack_number : 32'h35d622fa 
-     tcp[0] :           offset : 4'he 
-     tcp[0] :             rsvd : 4'hd 
-     tcp[0] :            flags : 8'h80 (=> CWR 1 ECE 0 URG 0 ACK 0 PSH 0 RST 0 SYN 0 FIN 0)
-     tcp[0] :           window : 16'hdf98 
-     tcp[0] :         checksum : 16'hd817 (GOOD)
-     tcp[0] :       urgent_ptr : 16'h53b 
-     tcp[0] :          options : Matched :-) Length Rcv => 36 Exp => 36
-    data[0] :         data_len : 10 (data => 47 b3 f0 59 ..)
+    itag[0] :              sid : 12'h5f1 
+     eth[1] :               da : 48'h545c7414e036 
+     eth[1] :               sa : 48'h22e2f6182f08 
+     eth[1] :            etype : 16'h4e (SNAP)
+    snap[0] :             dsap : 8'ha4 
+    snap[0] :             ssap : 8'h0 
+    snap[0] :             ctrl : 8'h78 
+    snap[0] :              oui : 24'h5a8140 
+    snap[0] :            etype : 16'h60 (SNAP)
+    snap[1] :             dsap : 8'h6 
+    snap[1] :             ssap : 8'h8e 
+    snap[1] :             ctrl : 8'hb 
+    snap[1] :              oui : 24'hc738bd 
+    snap[1] :            etype : 16'hf297 (UNKNOWN)
+    data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h941f5752 (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 142 Exp => 142
+        toh :              crc : 32'h50f34700 (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 156 Exp => 156
 
 0 : INFO    : TEST      : Pack Pkt 6
     cfg_hdr : {eth[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 81 
+        toh :             plen : 96 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h645167034526 
-     eth[0] :               sa : 48'hafaacc8ef30e 
+     eth[0] :               da : 48'ha2acb1365bd4 
+     eth[0] :               sa : 48'h80d91f6ba0b8 
      eth[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h6 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h30 
+    mpls[0] :     num_mpls_lbl : 3 
+    mpls[0] :         label[0] : 20'h9dfb (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'h38 
+    mpls[0] :         label[1] : 20'h82711 (UNKNOWN)
+    mpls[0] :           exp[1] : 3'h6 
+    mpls[0] :             s[1] : 0 
+    mpls[0] :           ttl[1] : 8'h40 
+    mpls[0] :         label[2] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[2] : 3'h1 
+    mpls[0] :             s[2] : 1 
+    mpls[0] :           ttl[2] : 8'h50 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h5c 
-    ipv4[0] :     total_length : 16'h3b 
-    ipv4[0] :               id : 16'h5506 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'ha1 
+    ipv4[0] :     total_length : 16'h42 
+    ipv4[0] :               id : 16'he8c4 
     ipv4[0] :         reserved : 1'h0 
     ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h9c7 
-    ipv4[0] :              ttl : 8'hb1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h1945 
+    ipv4[0] :              ttl : 8'h66 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'h939d (GOOD)
-    ipv4[0] :            ip_sa : 32'hd289ef28 
-    ipv4[0] :            ip_da : 32'h370da94d 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'h1743 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3047dabe 
+    ipv4[0] :            ip_da : 32'h8911a1e0 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 93 10 8d 8a 10 34 54 b2 | 45 d3 86 89 
+    ipv4[0] :    0 : 54 71 dc 29 4a 14 9d ed | ac 8a fc 66 2f 37 6b b8 
+    ipv4[0] :   16 : bb e0 b6 00 75 ca c6 62 | fb df f7 58 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hbf68 
-     udp[0] :          dst_prt : 16'hbe0c (UNKNOWN)
-     udp[0] :           length : 16'h1b 
-     udp[0] :         checksum : 16'h830 (GOOD)
-    data[0] :         data_len : 19 (data => 8c 21 3d 2b ..)
+     udp[0] :          src_prt : 16'heb6b 
+     udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
+     udp[0] :           length : 16'h12 
+     udp[0] :         checksum : 16'h396c (GOOD)
+    data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hec934b78 (GOOD)
+        toh :              crc : 32'h30fc84dc (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 64 51 67 03 45 26 af aa | cc 8e f3 0e 88 47 00 00 
-    pkt_lib :   16 : 0d 30 48 5c 00 3b 55 06 | 29 c7 b1 11 93 9d d2 89 
-    pkt_lib :   32 : ef 28 37 0d a9 4d 93 10 | 8d 8a 10 34 54 b2 45 d3 
-    pkt_lib :   48 : 86 89 bf 68 be 0c 00 1b | 08 30 8c 21 3d 2b af 48 
-    pkt_lib :   64 : a6 d8 e7 e3 7c 26 91 82 | c7 22 d8 e7 23 ec 93 4b 
-    pkt_lib :   80 : 78 
+    pkt_lib :    0 : a2 ac b1 36 5b d4 80 d9 | 1f 6b a0 b8 88 47 09 df 
+    pkt_lib :   16 : b8 38 82 71 1c 40 00 00 | 03 50 4c a1 00 42 e8 c4 
+    pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
+    pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
+    pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
+    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 81)
+    pkt_lib : (Total Len  = 96)
 
 0 : INFO    : TEST      : Unpack Pkt 6
     cfg_hdr : {eth[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 81 
+        toh :             plen : 96 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h645167034526 
-     eth[0] :               sa : 48'hafaacc8ef30e 
+     eth[0] :               da : 48'ha2acb1365bd4 
+     eth[0] :               sa : 48'h80d91f6ba0b8 
      eth[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h6 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h30 
+    mpls[0] :     num_mpls_lbl : 3 
+    mpls[0] :         label[0] : 20'h9dfb (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'h38 
+    mpls[0] :         label[1] : 20'h82711 (UNKNOWN)
+    mpls[0] :           exp[1] : 3'h6 
+    mpls[0] :             s[1] : 0 
+    mpls[0] :           ttl[1] : 8'h40 
+    mpls[0] :         label[2] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[2] : 3'h1 
+    mpls[0] :             s[2] : 1 
+    mpls[0] :           ttl[2] : 8'h50 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h5c 
-    ipv4[0] :     total_length : 16'h3b 
-    ipv4[0] :               id : 16'h5506 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'ha1 
+    ipv4[0] :     total_length : 16'h42 
+    ipv4[0] :               id : 16'he8c4 
     ipv4[0] :         reserved : 1'h0 
     ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h9c7 
-    ipv4[0] :              ttl : 8'hb1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h1945 
+    ipv4[0] :              ttl : 8'h66 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'h939d (GOOD)
-    ipv4[0] :            ip_sa : 32'hd289ef28 
-    ipv4[0] :            ip_da : 32'h370da94d 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'h1743 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3047dabe 
+    ipv4[0] :            ip_da : 32'h8911a1e0 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 93 10 8d 8a 10 34 54 b2 | 45 d3 86 89 
+    ipv4[0] :    0 : 54 71 dc 29 4a 14 9d ed | ac 8a fc 66 2f 37 6b b8 
+    ipv4[0] :   16 : bb e0 b6 00 75 ca c6 62 | fb df f7 58 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hbf68 
-     udp[0] :          dst_prt : 16'hbe0c (UNKNOWN)
-     udp[0] :           length : 16'h1b 
-     udp[0] :         checksum : 16'h830 (GOOD)
-    data[0] :         data_len : 19 (data => 8c 21 3d 2b ..)
+     udp[0] :          src_prt : 16'heb6b 
+     udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
+     udp[0] :           length : 16'h12 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hec934b78 (GOOD)
+        toh :              crc : 32'h30fc84dc (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 64 51 67 03 45 26 af aa | cc 8e f3 0e 88 47 00 00 
-    pkt_lib :   16 : 0d 30 48 5c 00 3b 55 06 | 29 c7 b1 11 93 9d d2 89 
-    pkt_lib :   32 : ef 28 37 0d a9 4d 93 10 | 8d 8a 10 34 54 b2 45 d3 
-    pkt_lib :   48 : 86 89 bf 68 be 0c 00 1b | 08 30 8c 21 3d 2b af 48 
-    pkt_lib :   64 : a6 d8 e7 e3 7c 26 91 82 | c7 22 d8 e7 23 ec 93 4b 
-    pkt_lib :   80 : 78 
+    pkt_lib :    0 : a2 ac b1 36 5b d4 80 d9 | 1f 6b a0 b8 88 47 09 df 
+    pkt_lib :   16 : b8 38 82 71 1c 40 00 00 | 03 50 4c a1 00 42 e8 c4 
+    pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
+    pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
+    pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
+    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 81)
+    pkt_lib : (Total Len  = 96)
 
 0 : INFO    : TEST      : Copy Pkt 6
     cfg_hdr : {eth[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 81 
+        toh :             plen : 96 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h645167034526 
-     eth[0] :               sa : 48'hafaacc8ef30e 
+     eth[0] :               da : 48'ha2acb1365bd4 
+     eth[0] :               sa : 48'h80d91f6ba0b8 
      eth[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h6 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h30 
+    mpls[0] :     num_mpls_lbl : 3 
+    mpls[0] :         label[0] : 20'h9dfb (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'h38 
+    mpls[0] :         label[1] : 20'h82711 (UNKNOWN)
+    mpls[0] :           exp[1] : 3'h6 
+    mpls[0] :             s[1] : 0 
+    mpls[0] :           ttl[1] : 8'h40 
+    mpls[0] :         label[2] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[2] : 3'h1 
+    mpls[0] :             s[2] : 1 
+    mpls[0] :           ttl[2] : 8'h50 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h5c 
-    ipv4[0] :     total_length : 16'h3b 
-    ipv4[0] :               id : 16'h5506 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'ha1 
+    ipv4[0] :     total_length : 16'h42 
+    ipv4[0] :               id : 16'he8c4 
     ipv4[0] :         reserved : 1'h0 
     ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h9c7 
-    ipv4[0] :              ttl : 8'hb1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h1945 
+    ipv4[0] :              ttl : 8'h66 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'h939d (GOOD)
-    ipv4[0] :            ip_sa : 32'hd289ef28 
-    ipv4[0] :            ip_da : 32'h370da94d 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'h1743 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3047dabe 
+    ipv4[0] :            ip_da : 32'h8911a1e0 
+    ipv4[0] :          options : (Total Len  = 28)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 93 10 8d 8a 10 34 54 b2 | 45 d3 86 89 
+    ipv4[0] :    0 : 54 71 dc 29 4a 14 9d ed | ac 8a fc 66 2f 37 6b b8 
+    ipv4[0] :   16 : bb e0 b6 00 75 ca c6 62 | fb df f7 58 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hbf68 
-     udp[0] :          dst_prt : 16'hbe0c (UNKNOWN)
-     udp[0] :           length : 16'h1b 
-     udp[0] :         checksum : 16'h830 (GOOD)
-    data[0] :         data_len : 19 (data => 8c 21 3d 2b ..)
+     udp[0] :          src_prt : 16'heb6b 
+     udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
+     udp[0] :           length : 16'h12 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hec934b78 (GOOD)
+        toh :              crc : 32'h30fc84dc (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 64 51 67 03 45 26 af aa | cc 8e f3 0e 88 47 00 00 
-    pkt_lib :   16 : 0d 30 48 5c 00 3b 55 06 | 29 c7 b1 11 93 9d d2 89 
-    pkt_lib :   32 : ef 28 37 0d a9 4d 93 10 | 8d 8a 10 34 54 b2 45 d3 
-    pkt_lib :   48 : 86 89 bf 68 be 0c 00 1b | 08 30 8c 21 3d 2b af 48 
-    pkt_lib :   64 : a6 d8 e7 e3 7c 26 91 82 | c7 22 d8 e7 23 ec 93 4b 
-    pkt_lib :   80 : 78 
+    pkt_lib :    0 : a2 ac b1 36 5b d4 80 d9 | 1f 6b a0 b8 88 47 09 df 
+    pkt_lib :   16 : b8 38 82 71 1c 40 00 00 | 03 50 4c a1 00 42 e8 c4 
+    pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
+    pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
+    pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
+    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 81)
+    pkt_lib : (Total Len  = 96)
 
 0 : INFO    : TEST      : Compare Pkt 6
     cmp_hdr : {eth[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 81 
+        toh :             plen : 96 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h645167034526 
-     eth[0] :               sa : 48'hafaacc8ef30e 
+     eth[0] :               da : 48'ha2acb1365bd4 
+     eth[0] :               sa : 48'h80d91f6ba0b8 
      eth[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h6 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'h30 
+    mpls[0] :     num_mpls_lbl : 3 
+    mpls[0] :         label[0] : 20'h9dfb (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'h38 
+    mpls[0] :         label[1] : 20'h82711 (UNKNOWN)
+    mpls[0] :           exp[1] : 3'h6 
+    mpls[0] :             s[1] : 0 
+    mpls[0] :           ttl[1] : 8'h40 
+    mpls[0] :         label[2] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[2] : 3'h1 
+    mpls[0] :             s[2] : 1 
+    mpls[0] :           ttl[2] : 8'h50 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h5c 
-    ipv4[0] :     total_length : 16'h3b 
-    ipv4[0] :               id : 16'h5506 
+    ipv4[0] :              ihl : 4'hc 
+    ipv4[0] :              tos : 8'ha1 
+    ipv4[0] :     total_length : 16'h42 
+    ipv4[0] :               id : 16'he8c4 
     ipv4[0] :         reserved : 1'h0 
     ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h9c7 
-    ipv4[0] :              ttl : 8'hb1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h1945 
+    ipv4[0] :              ttl : 8'h66 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'h939d (GOOD)
-    ipv4[0] :            ip_sa : 32'hd289ef28 
-    ipv4[0] :            ip_da : 32'h370da94d 
-    ipv4[0] :          options : Matched :-) Length Rcv => 12 Exp => 12
-     udp[0] :          src_prt : 16'hbf68 
-     udp[0] :          dst_prt : 16'hbe0c (UNKNOWN)
-     udp[0] :           length : 16'h1b 
-     udp[0] :         checksum : 16'h830 (GOOD)
-    data[0] :         data_len : 19 (data => 8c 21 3d 2b ..)
+    ipv4[0] :         checksum : 16'h1743 (GOOD)
+    ipv4[0] :            ip_sa : 32'h3047dabe 
+    ipv4[0] :            ip_da : 32'h8911a1e0 
+    ipv4[0] :          options : Matched :-) Length Rcv => 28 Exp => 28
+     udp[0] :          src_prt : 16'heb6b 
+     udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
+     udp[0] :           length : 16'h12 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hec934b78 (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 81 Exp => 81
+        toh :              crc : 32'h30fc84dc (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 96 Exp => 96
 
 0 : INFO    : TEST      : Pack Pkt 7
     cfg_hdr : {eth[0], alt1q[0], mmpls[0], ipv6[0], udp[0], data[0]}
-        toh :             plen : 91 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hc6092e8e593 
-     eth[0] :               sa : 48'h1dc5572f7f84 
+     eth[0] :               da : 48'h1a7f24aca2ba 
+     eth[0] :               sa : 48'h427e34a37349 
      eth[0] :            etype : 16'h8200 (ALT1Q)
-   alt1q[0] :              cos : 3'h3 
-   alt1q[0] :              cfi : 1'h1 
-   alt1q[0] :             vlan : 12'hcfe 
+   alt1q[0] :              cos : 3'h5 
+   alt1q[0] :              cfi : 1'h0 
+   alt1q[0] :             vlan : 12'h7fa 
    alt1q[0] :            etype : 16'h8848 (MPLS-MULTICAST)
    mmpls[0] :     num_mpls_lbl : 2 
-   mmpls[0] :         label[0] : 20'hfb509 (UNKNOWN)
-   mmpls[0] :           exp[0] : 3'h0 
+   mmpls[0] :         label[0] : 20'hf8bf9 (UNKNOWN)
+   mmpls[0] :           exp[0] : 3'h2 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h97 
+   mmpls[0] :           ttl[0] : 8'h1e 
    mmpls[0] :         label[1] : 20'h2 (IPV6 Explicit Null)
-   mmpls[0] :           exp[1] : 3'h1 
+   mmpls[0] :           exp[1] : 3'h0 
    mmpls[0] :             s[1] : 1 
-   mmpls[0] :           ttl[1] : 8'h46 
+   mmpls[0] :           ttl[1] : 8'h9a 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h6b 
-    ipv6[0] :       flow_label : 20'h53e54 
-    ipv6[0] :      payload_len : 16'h15 
+    ipv6[0] :              tos : 8'hb 
+    ipv6[0] :       flow_label : 20'hfdae4 
+    ipv6[0] :      payload_len : 16'hc 
     ipv6[0] :         protocol : 8'h11 (UDP)
-    ipv6[0] :              ttl : 8'hf2 
-    ipv6[0] :           ip6_sa : 128'h14583ddae811364f78bae7a97a0c342a 
-    ipv6[0] :           ip6_da : 128'h5ee046b014b7af74c358491b55bc95a3 
-     udp[0] :          src_prt : 16'h4d0b 
-     udp[0] :          dst_prt : 16'he321 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'ha6e (GOOD)
-    data[0] :         data_len : 13 (data => 4f 07 0d 44 ..)
+    ipv6[0] :              ttl : 8'he2 
+    ipv6[0] :           ip6_sa : 128'h859644a0c90236618438e174d0f82765 
+    ipv6[0] :           ip6_da : 128'hebaf93fa61f601954b90ea5608029faf 
+     udp[0] :          src_prt : 16'h8cb6 
+     udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
+     udp[0] :           length : 16'hc 
+     udp[0] :         checksum : 16'ha81f (GOOD)
+    data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hddad970a (GOOD)
+        toh :              crc : 32'hccbba2c9 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 0c 60 92 e8 e5 93 1d c5 | 57 2f 7f 84 82 00 7c fe 
-    pkt_lib :   16 : 88 48 fb 50 90 97 00 00 | 23 46 66 b5 3e 54 00 15 
-    pkt_lib :   32 : 11 f2 14 58 3d da e8 11 | 36 4f 78 ba e7 a9 7a 0c 
-    pkt_lib :   48 : 34 2a 5e e0 46 b0 14 b7 | af 74 c3 58 49 1b 55 bc 
-    pkt_lib :   64 : 95 a3 4d 0b e3 21 00 15 | 0a 6e 4f 07 0d 44 8f f5 
-    pkt_lib :   80 : 8b c7 8d 04 97 5d 48 dd | ad 97 0a 
+    pkt_lib :    0 : 1a 7f 24 ac a2 ba 42 7e | 34 a3 73 49 82 00 a7 fa 
+    pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
+    pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
+    pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
+    pkt_lib :   80 : a2 c9 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 91)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Unpack Pkt 7
     cfg_hdr : {eth[0], alt1q[0], mmpls[0], ipv6[0], udp[0], data[0]}
-        toh :             plen : 91 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hc6092e8e593 
-     eth[0] :               sa : 48'h1dc5572f7f84 
+     eth[0] :               da : 48'h1a7f24aca2ba 
+     eth[0] :               sa : 48'h427e34a37349 
      eth[0] :            etype : 16'h8200 (ALT1Q)
-   alt1q[0] :              cos : 3'h3 
-   alt1q[0] :              cfi : 1'h1 
-   alt1q[0] :             vlan : 12'hcfe 
+   alt1q[0] :              cos : 3'h5 
+   alt1q[0] :              cfi : 1'h0 
+   alt1q[0] :             vlan : 12'h7fa 
    alt1q[0] :            etype : 16'h8848 (MPLS-MULTICAST)
    mmpls[0] :     num_mpls_lbl : 2 
-   mmpls[0] :         label[0] : 20'hfb509 (UNKNOWN)
-   mmpls[0] :           exp[0] : 3'h0 
+   mmpls[0] :         label[0] : 20'hf8bf9 (UNKNOWN)
+   mmpls[0] :           exp[0] : 3'h2 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h97 
+   mmpls[0] :           ttl[0] : 8'h1e 
    mmpls[0] :         label[1] : 20'h2 (IPV6 Explicit Null)
-   mmpls[0] :           exp[1] : 3'h1 
+   mmpls[0] :           exp[1] : 3'h0 
    mmpls[0] :             s[1] : 1 
-   mmpls[0] :           ttl[1] : 8'h46 
+   mmpls[0] :           ttl[1] : 8'h9a 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h6b 
-    ipv6[0] :       flow_label : 20'h53e54 
-    ipv6[0] :      payload_len : 16'h15 
+    ipv6[0] :              tos : 8'hb 
+    ipv6[0] :       flow_label : 20'hfdae4 
+    ipv6[0] :      payload_len : 16'hc 
     ipv6[0] :         protocol : 8'h11 (UDP)
-    ipv6[0] :              ttl : 8'hf2 
-    ipv6[0] :           ip6_sa : 128'h14583ddae811364f78bae7a97a0c342a 
-    ipv6[0] :           ip6_da : 128'h5ee046b014b7af74c358491b55bc95a3 
-     udp[0] :          src_prt : 16'h4d0b 
-     udp[0] :          dst_prt : 16'he321 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'ha6e (GOOD)
-    data[0] :         data_len : 13 (data => 4f 07 0d 44 ..)
+    ipv6[0] :              ttl : 8'he2 
+    ipv6[0] :           ip6_sa : 128'h859644a0c90236618438e174d0f82765 
+    ipv6[0] :           ip6_da : 128'hebaf93fa61f601954b90ea5608029faf 
+     udp[0] :          src_prt : 16'h8cb6 
+     udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
+     udp[0] :           length : 16'hc 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hddad970a (GOOD)
+        toh :              crc : 32'hccbba2c9 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 0c 60 92 e8 e5 93 1d c5 | 57 2f 7f 84 82 00 7c fe 
-    pkt_lib :   16 : 88 48 fb 50 90 97 00 00 | 23 46 66 b5 3e 54 00 15 
-    pkt_lib :   32 : 11 f2 14 58 3d da e8 11 | 36 4f 78 ba e7 a9 7a 0c 
-    pkt_lib :   48 : 34 2a 5e e0 46 b0 14 b7 | af 74 c3 58 49 1b 55 bc 
-    pkt_lib :   64 : 95 a3 4d 0b e3 21 00 15 | 0a 6e 4f 07 0d 44 8f f5 
-    pkt_lib :   80 : 8b c7 8d 04 97 5d 48 dd | ad 97 0a 
+    pkt_lib :    0 : 1a 7f 24 ac a2 ba 42 7e | 34 a3 73 49 82 00 a7 fa 
+    pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
+    pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
+    pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
+    pkt_lib :   80 : a2 c9 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 91)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Copy Pkt 7
     cfg_hdr : {eth[0], alt1q[0], mmpls[0], ipv6[0], udp[0], data[0]}
-        toh :             plen : 91 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hc6092e8e593 
-     eth[0] :               sa : 48'h1dc5572f7f84 
+     eth[0] :               da : 48'h1a7f24aca2ba 
+     eth[0] :               sa : 48'h427e34a37349 
      eth[0] :            etype : 16'h8200 (ALT1Q)
-   alt1q[0] :              cos : 3'h3 
-   alt1q[0] :              cfi : 1'h1 
-   alt1q[0] :             vlan : 12'hcfe 
+   alt1q[0] :              cos : 3'h5 
+   alt1q[0] :              cfi : 1'h0 
+   alt1q[0] :             vlan : 12'h7fa 
    alt1q[0] :            etype : 16'h8848 (MPLS-MULTICAST)
    mmpls[0] :     num_mpls_lbl : 2 
-   mmpls[0] :         label[0] : 20'hfb509 (UNKNOWN)
-   mmpls[0] :           exp[0] : 3'h0 
+   mmpls[0] :         label[0] : 20'hf8bf9 (UNKNOWN)
+   mmpls[0] :           exp[0] : 3'h2 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h97 
+   mmpls[0] :           ttl[0] : 8'h1e 
    mmpls[0] :         label[1] : 20'h2 (IPV6 Explicit Null)
-   mmpls[0] :           exp[1] : 3'h1 
+   mmpls[0] :           exp[1] : 3'h0 
    mmpls[0] :             s[1] : 1 
-   mmpls[0] :           ttl[1] : 8'h46 
+   mmpls[0] :           ttl[1] : 8'h9a 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h6b 
-    ipv6[0] :       flow_label : 20'h53e54 
-    ipv6[0] :      payload_len : 16'h15 
+    ipv6[0] :              tos : 8'hb 
+    ipv6[0] :       flow_label : 20'hfdae4 
+    ipv6[0] :      payload_len : 16'hc 
     ipv6[0] :         protocol : 8'h11 (UDP)
-    ipv6[0] :              ttl : 8'hf2 
-    ipv6[0] :           ip6_sa : 128'h14583ddae811364f78bae7a97a0c342a 
-    ipv6[0] :           ip6_da : 128'h5ee046b014b7af74c358491b55bc95a3 
-     udp[0] :          src_prt : 16'h4d0b 
-     udp[0] :          dst_prt : 16'he321 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'ha6e (GOOD)
-    data[0] :         data_len : 13 (data => 4f 07 0d 44 ..)
+    ipv6[0] :              ttl : 8'he2 
+    ipv6[0] :           ip6_sa : 128'h859644a0c90236618438e174d0f82765 
+    ipv6[0] :           ip6_da : 128'hebaf93fa61f601954b90ea5608029faf 
+     udp[0] :          src_prt : 16'h8cb6 
+     udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
+     udp[0] :           length : 16'hc 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hddad970a (GOOD)
+        toh :              crc : 32'hccbba2c9 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 0c 60 92 e8 e5 93 1d c5 | 57 2f 7f 84 82 00 7c fe 
-    pkt_lib :   16 : 88 48 fb 50 90 97 00 00 | 23 46 66 b5 3e 54 00 15 
-    pkt_lib :   32 : 11 f2 14 58 3d da e8 11 | 36 4f 78 ba e7 a9 7a 0c 
-    pkt_lib :   48 : 34 2a 5e e0 46 b0 14 b7 | af 74 c3 58 49 1b 55 bc 
-    pkt_lib :   64 : 95 a3 4d 0b e3 21 00 15 | 0a 6e 4f 07 0d 44 8f f5 
-    pkt_lib :   80 : 8b c7 8d 04 97 5d 48 dd | ad 97 0a 
+    pkt_lib :    0 : 1a 7f 24 ac a2 ba 42 7e | 34 a3 73 49 82 00 a7 fa 
+    pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
+    pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
+    pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
+    pkt_lib :   80 : a2 c9 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 91)
+    pkt_lib : (Total Len  = 82)
 
 0 : INFO    : TEST      : Compare Pkt 7
     cmp_hdr : {eth[0], alt1q[0], mmpls[0], ipv6[0], udp[0], data[0]}
-        toh :             plen : 91 
+        toh :             plen : 82 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hc6092e8e593 
-     eth[0] :               sa : 48'h1dc5572f7f84 
+     eth[0] :               da : 48'h1a7f24aca2ba 
+     eth[0] :               sa : 48'h427e34a37349 
      eth[0] :            etype : 16'h8200 (ALT1Q)
-   alt1q[0] :              cos : 3'h3 
-   alt1q[0] :              cfi : 1'h1 
-   alt1q[0] :             vlan : 12'hcfe 
+   alt1q[0] :              cos : 3'h5 
+   alt1q[0] :              cfi : 1'h0 
+   alt1q[0] :             vlan : 12'h7fa 
    alt1q[0] :            etype : 16'h8848 (MPLS-MULTICAST)
    mmpls[0] :     num_mpls_lbl : 2 
-   mmpls[0] :         label[0] : 20'hfb509 (UNKNOWN)
-   mmpls[0] :           exp[0] : 3'h0 
+   mmpls[0] :         label[0] : 20'hf8bf9 (UNKNOWN)
+   mmpls[0] :           exp[0] : 3'h2 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h97 
+   mmpls[0] :           ttl[0] : 8'h1e 
    mmpls[0] :         label[1] : 20'h2 (IPV6 Explicit Null)
-   mmpls[0] :           exp[1] : 3'h1 
+   mmpls[0] :           exp[1] : 3'h0 
    mmpls[0] :             s[1] : 1 
-   mmpls[0] :           ttl[1] : 8'h46 
+   mmpls[0] :           ttl[1] : 8'h9a 
     ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'h6b 
-    ipv6[0] :       flow_label : 20'h53e54 
-    ipv6[0] :      payload_len : 16'h15 
+    ipv6[0] :              tos : 8'hb 
+    ipv6[0] :       flow_label : 20'hfdae4 
+    ipv6[0] :      payload_len : 16'hc 
     ipv6[0] :         protocol : 8'h11 (UDP)
-    ipv6[0] :              ttl : 8'hf2 
-    ipv6[0] :           ip6_sa : 128'h14583ddae811364f78bae7a97a0c342a 
-    ipv6[0] :           ip6_da : 128'h5ee046b014b7af74c358491b55bc95a3 
-     udp[0] :          src_prt : 16'h4d0b 
-     udp[0] :          dst_prt : 16'he321 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'ha6e (GOOD)
-    data[0] :         data_len : 13 (data => 4f 07 0d 44 ..)
+    ipv6[0] :              ttl : 8'he2 
+    ipv6[0] :           ip6_sa : 128'h859644a0c90236618438e174d0f82765 
+    ipv6[0] :           ip6_da : 128'hebaf93fa61f601954b90ea5608029faf 
+     udp[0] :          src_prt : 16'h8cb6 
+     udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
+     udp[0] :           length : 16'hc 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hddad970a (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 91 Exp => 91
+        toh :              crc : 32'hccbba2c9 (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 82 Exp => 82
 
 0 : INFO    : TEST      : Pack Pkt 8
     cfg_hdr : {eth[0], mmpls[0], eth[1], data[0]}
-        toh :             plen : 51 
+        toh :             plen : 46 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h400a298dd995 
-     eth[0] :               sa : 48'h81c6807d296d 
+     eth[0] :               da : 48'h9e250d195342 
+     eth[0] :               sa : 48'h9b371e0cfea2 
      eth[0] :            etype : 16'h8848 (MPLS-MULTICAST)
-   mmpls[0] :     num_mpls_lbl : 3 
+   mmpls[0] :     num_mpls_lbl : 2 
    mmpls[0] :         label[0] : 20'h3 (ETH Explicit Null)
-   mmpls[0] :           exp[0] : 3'h3 
+   mmpls[0] :           exp[0] : 3'h1 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h81 
-   mmpls[0] :         label[1] : 20'hc42b1 (UNKNOWN)
-   mmpls[0] :           exp[1] : 3'h3 
-   mmpls[0] :             s[1] : 0 
-   mmpls[0] :           ttl[1] : 8'h53 
-   mmpls[0] :         label[2] : 20'h35da2 (UNKNOWN)
-   mmpls[0] :           exp[2] : 3'h3 
-   mmpls[0] :             s[2] : 1 
-   mmpls[0] :           ttl[2] : 8'hc5 
-     eth[1] :               da : 48'h6ac8578d2365 
-     eth[1] :               sa : 48'h6ebdb7ff2e92 
-     eth[1] :            etype : 16'ha1ae (UNKNOWN)
-    data[0] :         data_len : 7 (data => 07 a1 8c df ..)
+   mmpls[0] :           ttl[0] : 8'h40 
+   mmpls[0] :         label[1] : 20'h87398 (UNKNOWN)
+   mmpls[0] :           exp[1] : 3'h2 
+   mmpls[0] :             s[1] : 1 
+   mmpls[0] :           ttl[1] : 8'ha8 
+     eth[1] :               da : 48'h5ff28a30bad3 
+     eth[1] :               sa : 48'h45cdb62507dc 
+     eth[1] :            etype : 16'h7d8d (UNKNOWN)
+    data[0] :         data_len : 6 (data => ec 58 16 b4 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h80130973 (GOOD)
+        toh :              crc : 32'hc9bd1345 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 40 0a 29 8d d9 95 81 c6 | 80 7d 29 6d 88 48 00 00 
-    pkt_lib :   16 : 36 81 c4 2b 16 53 35 da | 27 c5 6a c8 57 8d 23 65 
-    pkt_lib :   32 : 6e bd b7 ff 2e 92 a1 ae | 07 a1 8c df fa c6 fe 80 
-    pkt_lib :   48 : 13 09 73 
+    pkt_lib :    0 : 9e 25 0d 19 53 42 9b 37 | 1e 0c fe a2 88 48 00 00 
+    pkt_lib :   16 : 32 40 87 39 85 a8 5f f2 | 8a 30 ba d3 45 cd b6 25 
+    pkt_lib :   32 : 07 dc 7d 8d ec 58 16 b4 | 25 70 c9 bd 13 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 51)
+    pkt_lib : (Total Len  = 46)
 
 0 : INFO    : TEST      : Unpack Pkt 8
-    cfg_hdr : {eth[0], mmpls[0], ipv6[0], data[0]}
-        toh :             plen : 51 
+    cfg_hdr : {eth[0], mmpls[0], eth[1], data[0]}
+        toh :             plen : 46 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h400a298dd995 
-     eth[0] :               sa : 48'h81c6807d296d 
+     eth[0] :               da : 48'h9e250d195342 
+     eth[0] :               sa : 48'h9b371e0cfea2 
      eth[0] :            etype : 16'h8848 (MPLS-MULTICAST)
-   mmpls[0] :     num_mpls_lbl : 3 
+   mmpls[0] :     num_mpls_lbl : 2 
    mmpls[0] :         label[0] : 20'h3 (ETH Explicit Null)
-   mmpls[0] :           exp[0] : 3'h3 
+   mmpls[0] :           exp[0] : 3'h1 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h81 
-   mmpls[0] :         label[1] : 20'hc42b1 (UNKNOWN)
-   mmpls[0] :           exp[1] : 3'h3 
-   mmpls[0] :             s[1] : 0 
-   mmpls[0] :           ttl[1] : 8'h53 
-   mmpls[0] :         label[2] : 20'h35da2 (UNKNOWN)
-   mmpls[0] :           exp[2] : 3'h3 
-   mmpls[0] :             s[2] : 1 
-   mmpls[0] :           ttl[2] : 8'hc5 
-    ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'hac 
-    ipv6[0] :       flow_label : 20'h8578d 
-    ipv6[0] :      payload_len : 16'h2365 
-    ipv6[0] :         protocol : 8'h6e (UNKNOWN)
-    ipv6[0] :              ttl : 8'hbd 
-    ipv6[0] :           ip6_sa : 128'hb7ff2e92a1ae07a18cdffac6fe000000 
-    ipv6[0] :           ip6_da : 128'h0 
-    data[0] :         data_len : 0 (data => EMPTY)
+   mmpls[0] :           ttl[0] : 8'h40 
+   mmpls[0] :         label[1] : 20'h87398 (UNKNOWN)
+   mmpls[0] :           exp[1] : 3'h2 
+   mmpls[0] :             s[1] : 1 
+   mmpls[0] :           ttl[1] : 8'ha8 
+     eth[1] :               da : 48'h5ff28a30bad3 
+     eth[1] :               sa : 48'h45cdb62507dc 
+     eth[1] :            etype : 16'h7d8d (UNKNOWN)
+    data[0] :         data_len : 6 (data => ec 58 16 b4 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h80130973 (GOOD)
+        toh :              crc : 32'hc9bd1345 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 40 0a 29 8d d9 95 81 c6 | 80 7d 29 6d 88 48 00 00 
-    pkt_lib :   16 : 36 81 c4 2b 16 53 35 da | 27 c5 6a c8 57 8d 23 65 
-    pkt_lib :   32 : 6e bd b7 ff 2e 92 a1 ae | 07 a1 8c df fa c6 fe 80 
-    pkt_lib :   48 : 13 09 73 
+    pkt_lib :    0 : 9e 25 0d 19 53 42 9b 37 | 1e 0c fe a2 88 48 00 00 
+    pkt_lib :   16 : 32 40 87 39 85 a8 5f f2 | 8a 30 ba d3 45 cd b6 25 
+    pkt_lib :   32 : 07 dc 7d 8d ec 58 16 b4 | 25 70 c9 bd 13 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 51)
+    pkt_lib : (Total Len  = 46)
 
 0 : INFO    : TEST      : Copy Pkt 8
-    cfg_hdr : {eth[0], mmpls[0], ipv6[0], data[0]}
-        toh :             plen : 51 
+    cfg_hdr : {eth[0], mmpls[0], eth[1], data[0]}
+        toh :             plen : 46 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h400a298dd995 
-     eth[0] :               sa : 48'h81c6807d296d 
+     eth[0] :               da : 48'h9e250d195342 
+     eth[0] :               sa : 48'h9b371e0cfea2 
      eth[0] :            etype : 16'h8848 (MPLS-MULTICAST)
-   mmpls[0] :     num_mpls_lbl : 3 
+   mmpls[0] :     num_mpls_lbl : 2 
    mmpls[0] :         label[0] : 20'h3 (ETH Explicit Null)
-   mmpls[0] :           exp[0] : 3'h3 
+   mmpls[0] :           exp[0] : 3'h1 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h81 
-   mmpls[0] :         label[1] : 20'hc42b1 (UNKNOWN)
-   mmpls[0] :           exp[1] : 3'h3 
-   mmpls[0] :             s[1] : 0 
-   mmpls[0] :           ttl[1] : 8'h53 
-   mmpls[0] :         label[2] : 20'h35da2 (UNKNOWN)
-   mmpls[0] :           exp[2] : 3'h3 
-   mmpls[0] :             s[2] : 1 
-   mmpls[0] :           ttl[2] : 8'hc5 
-    ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'hac 
-    ipv6[0] :       flow_label : 20'h8578d 
-    ipv6[0] :      payload_len : 16'h2365 
-    ipv6[0] :         protocol : 8'h6e (UNKNOWN)
-    ipv6[0] :              ttl : 8'hbd 
-    ipv6[0] :           ip6_sa : 128'hb7ff2e92a1ae07a18cdffac6fe000000 
-    ipv6[0] :           ip6_da : 128'h0 
-    data[0] :         data_len : 0 (data => EMPTY)
+   mmpls[0] :           ttl[0] : 8'h40 
+   mmpls[0] :         label[1] : 20'h87398 (UNKNOWN)
+   mmpls[0] :           exp[1] : 3'h2 
+   mmpls[0] :             s[1] : 1 
+   mmpls[0] :           ttl[1] : 8'ha8 
+     eth[1] :               da : 48'h5ff28a30bad3 
+     eth[1] :               sa : 48'h45cdb62507dc 
+     eth[1] :            etype : 16'h7d8d (UNKNOWN)
+    data[0] :         data_len : 6 (data => ec 58 16 b4 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h80130973 (GOOD)
+        toh :              crc : 32'hc9bd1345 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 40 0a 29 8d d9 95 81 c6 | 80 7d 29 6d 88 48 00 00 
-    pkt_lib :   16 : 36 81 c4 2b 16 53 35 da | 27 c5 6a c8 57 8d 23 65 
-    pkt_lib :   32 : 6e bd b7 ff 2e 92 a1 ae | 07 a1 8c df fa c6 fe 80 
-    pkt_lib :   48 : 13 09 73 
+    pkt_lib :    0 : 9e 25 0d 19 53 42 9b 37 | 1e 0c fe a2 88 48 00 00 
+    pkt_lib :   16 : 32 40 87 39 85 a8 5f f2 | 8a 30 ba d3 45 cd b6 25 
+    pkt_lib :   32 : 07 dc 7d 8d ec 58 16 b4 | 25 70 c9 bd 13 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 51)
+    pkt_lib : (Total Len  = 46)
 
 0 : INFO    : TEST      : Compare Pkt 8
-    cmp_hdr : {eth[0], mmpls[0], ipv6[0], data[0]}
-        toh :             plen : 51 
+    cmp_hdr : {eth[0], mmpls[0], eth[1], data[0]}
+        toh :             plen : 46 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h400a298dd995 
-     eth[0] :               sa : 48'h81c6807d296d 
+     eth[0] :               da : 48'h9e250d195342 
+     eth[0] :               sa : 48'h9b371e0cfea2 
      eth[0] :            etype : 16'h8848 (MPLS-MULTICAST)
-   mmpls[0] :     num_mpls_lbl : 3 
+   mmpls[0] :     num_mpls_lbl : 2 
    mmpls[0] :         label[0] : 20'h3 (ETH Explicit Null)
-   mmpls[0] :           exp[0] : 3'h3 
+   mmpls[0] :           exp[0] : 3'h1 
    mmpls[0] :             s[0] : 0 
-   mmpls[0] :           ttl[0] : 8'h81 
-   mmpls[0] :         label[1] : 20'hc42b1 (UNKNOWN)
-   mmpls[0] :           exp[1] : 3'h3 
-   mmpls[0] :             s[1] : 0 
-   mmpls[0] :           ttl[1] : 8'h53 
-   mmpls[0] :         label[2] : 20'h35da2 (UNKNOWN)
-   mmpls[0] :           exp[2] : 3'h3 
-   mmpls[0] :             s[2] : 1 
-   mmpls[0] :           ttl[2] : 8'hc5 
-    ipv6[0] :          version : 4'h6 
-    ipv6[0] :              tos : 8'hac 
-    ipv6[0] :       flow_label : 20'h8578d 
-    ipv6[0] :      payload_len : 16'h2365 
-    ipv6[0] :         protocol : 8'h6e (UNKNOWN)
-    ipv6[0] :              ttl : 8'hbd 
-    ipv6[0] :           ip6_sa : 128'hb7ff2e92a1ae07a18cdffac6fe000000 
-    ipv6[0] :           ip6_da : 128'h0 
-    data[0] :         data_len : 0 (data => EMPTY)
+   mmpls[0] :           ttl[0] : 8'h40 
+   mmpls[0] :         label[1] : 20'h87398 (UNKNOWN)
+   mmpls[0] :           exp[1] : 3'h2 
+   mmpls[0] :             s[1] : 1 
+   mmpls[0] :           ttl[1] : 8'ha8 
+     eth[1] :               da : 48'h5ff28a30bad3 
+     eth[1] :               sa : 48'h45cdb62507dc 
+     eth[1] :            etype : 16'h7d8d (UNKNOWN)
+    data[0] :         data_len : 6 (data => ec 58 16 b4 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h80130973 (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 51 Exp => 51
+        toh :              crc : 32'hc9bd1345 (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 46 Exp => 46
 
 0 : INFO    : TEST      : Pack Pkt 9
     cfg_hdr : {eth[0], ipv4[0], gre[0], eth[1], itag[0], eth[2], data[0]}
-        toh :             plen : 98 
+        toh :             plen : 102 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb399fa57fd29 
-     eth[0] :               sa : 48'h96d8dffe5e04 
+     eth[0] :               da : 48'hce187b85d30c 
+     eth[0] :               sa : 48'hce296e152f55 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h96 
-    ipv4[0] :     total_length : 16'h50 
-    ipv4[0] :               id : 16'h910 
+    ipv4[0] :              ihl : 4'h7 
+    ipv4[0] :              tos : 8'h99 
+    ipv4[0] :     total_length : 16'h54 
+    ipv4[0] :               id : 16'h20d6 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h153c 
-    ipv4[0] :              ttl : 8'h6 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h12 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'hc06a (GOOD)
-    ipv4[0] :            ip_sa : 32'h64b56243 
-    ipv4[0] :            ip_da : 32'haa19ba84 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'he254 (GOOD)
+    ipv4[0] :            ip_sa : 32'h63f3546c 
+    ipv4[0] :            ip_da : 32'h6e827dfa 
+    ipv4[0] :          options : (Total Len  = 8)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 8b a2 62 3c bc 1e 97 39 | d9 d2 0b 92 
+    ipv4[0] :    0 : 50 1f fa a9 43 7e af 93 | 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
      gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
-     gre[0] :                K : 1'b1 
-     gre[0] :                S : 1'b1 
+     gre[0] :                K : 1'b0 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h928b (GOOD)
-     gre[0] :           offset : 16'h669 
-     gre[0] :              key : 32'h2e17735d 
-     gre[0] :  sequence_number : 32'h7ac50c4a 
-     eth[1] :               da : 48'h7c1e55452d6b 
-     eth[1] :               sa : 48'he5c372bfdec4 
+     gre[0] :         checksum : 16'h788d (GOOD)
+     gre[0] :           offset : 16'h618d 
+     eth[1] :               da : 48'hcd458a1e722c 
+     eth[1] :               sa : 48'had720be0bd6b 
      eth[1] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h1 
-    itag[0] :               de : 1'h0 
+    itag[0] :              pri : 3'h7 
+    itag[0] :               de : 1'h1 
     itag[0] :            rsvd0 : 2'h1 
-    itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h289 
-     eth[2] :               da : 48'hb371e7b3d017 
-     eth[2] :               sa : 48'hc61200b46f67 
-     eth[2] :            etype : 16'h7638 (UNKNOWN)
-    data[0] :         data_len : 0 (data => EMPTY)
+    itag[0] :            rsvd1 : 2'h3 
+    itag[0] :              sid : 12'h182 
+     eth[2] :               da : 48'h8d81e5b61f0b 
+     eth[2] :               sa : 48'h36e0be0bbca0 
+     eth[2] :            etype : 16'hf2bc (UNKNOWN)
+    data[0] :         data_len : 16 (data => 5c b7 b6 4d ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h52646bcf (GOOD)
+        toh :              crc : 32'had223674 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b3 99 fa 57 fd 29 96 d8 | df fe 5e 04 08 00 48 96 
-    pkt_lib :   16 : 00 50 09 10 95 3c 06 2f | c0 6a 64 b5 62 43 aa 19 
-    pkt_lib :   32 : ba 84 8b a2 62 3c bc 1e | 97 39 d9 d2 0b 92 b0 00 
-    pkt_lib :   48 : 65 58 92 8b 06 69 2e 17 | 73 5d 7a c5 0c 4a 7c 1e 
-    pkt_lib :   64 : 55 45 2d 6b e5 c3 72 bf | de c4 88 e7 00 02 52 89 
-    pkt_lib :   80 : b3 71 e7 b3 d0 17 c6 12 | 00 b4 6f 67 76 38 52 64 
-    pkt_lib :   96 : 6b cf 
+    pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
+    pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
+    pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
+    pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
+    pkt_lib :   96 : f3 ad 22 36 74 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 98)
+    pkt_lib : (Total Len  = 102)
 
 0 : INFO    : TEST      : Unpack Pkt 9
     cfg_hdr : {eth[0], ipv4[0], gre[0], eth[1], itag[0], eth[2], data[0]}
-        toh :             plen : 98 
+        toh :             plen : 102 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb399fa57fd29 
-     eth[0] :               sa : 48'h96d8dffe5e04 
+     eth[0] :               da : 48'hce187b85d30c 
+     eth[0] :               sa : 48'hce296e152f55 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h96 
-    ipv4[0] :     total_length : 16'h50 
-    ipv4[0] :               id : 16'h910 
+    ipv4[0] :              ihl : 4'h7 
+    ipv4[0] :              tos : 8'h99 
+    ipv4[0] :     total_length : 16'h54 
+    ipv4[0] :               id : 16'h20d6 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h153c 
-    ipv4[0] :              ttl : 8'h6 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h12 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'hc06a (GOOD)
-    ipv4[0] :            ip_sa : 32'h64b56243 
-    ipv4[0] :            ip_da : 32'haa19ba84 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'he254 (GOOD)
+    ipv4[0] :            ip_sa : 32'h63f3546c 
+    ipv4[0] :            ip_da : 32'h6e827dfa 
+    ipv4[0] :          options : (Total Len  = 8)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 8b a2 62 3c bc 1e 97 39 | d9 d2 0b 92 
+    ipv4[0] :    0 : 50 1f fa a9 43 7e af 93 | 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
      gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
-     gre[0] :                K : 1'b1 
-     gre[0] :                S : 1'b1 
+     gre[0] :                K : 1'b0 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h928b (GOOD)
-     gre[0] :           offset : 16'h669 
-     gre[0] :              key : 32'h2e17735d 
-     gre[0] :  sequence_number : 32'h7ac50c4a 
-     eth[1] :               da : 48'h7c1e55452d6b 
-     eth[1] :               sa : 48'he5c372bfdec4 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h618d 
+     eth[1] :               da : 48'hcd458a1e722c 
+     eth[1] :               sa : 48'had720be0bd6b 
      eth[1] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h1 
-    itag[0] :               de : 1'h0 
+    itag[0] :              pri : 3'h7 
+    itag[0] :               de : 1'h1 
     itag[0] :            rsvd0 : 2'h1 
-    itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h289 
-     eth[2] :               da : 48'hb371e7b3d017 
-     eth[2] :               sa : 48'hc61200b46f67 
-     eth[2] :            etype : 16'h7638 (UNKNOWN)
-    data[0] :         data_len : 0 (data => EMPTY)
+    itag[0] :            rsvd1 : 2'h3 
+    itag[0] :              sid : 12'h182 
+     eth[2] :               da : 48'h81e5b61f0b36 
+     eth[2] :               sa : 48'he0be0bbca0f2 
+     eth[2] :            etype : 16'hbc5c (UNKNOWN)
+    data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h52646bcf (GOOD)
+        toh :              crc : 32'h22367400 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b3 99 fa 57 fd 29 96 d8 | df fe 5e 04 08 00 48 96 
-    pkt_lib :   16 : 00 50 09 10 95 3c 06 2f | c0 6a 64 b5 62 43 aa 19 
-    pkt_lib :   32 : ba 84 8b a2 62 3c bc 1e | 97 39 d9 d2 0b 92 b0 00 
-    pkt_lib :   48 : 65 58 92 8b 06 69 2e 17 | 73 5d 7a c5 0c 4a 7c 1e 
-    pkt_lib :   64 : 55 45 2d 6b e5 c3 72 bf | de c4 88 e7 00 02 52 89 
-    pkt_lib :   80 : b3 71 e7 b3 d0 17 c6 12 | 00 b4 6f 67 76 38 52 64 
-    pkt_lib :   96 : 6b cf 
+    pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
+    pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
+    pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
+    pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
+    pkt_lib :   96 : f3 ad 22 36 74 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 98)
+    pkt_lib : (Total Len  = 102)
 
 0 : INFO    : TEST      : Copy Pkt 9
     cfg_hdr : {eth[0], ipv4[0], gre[0], eth[1], itag[0], eth[2], data[0]}
-        toh :             plen : 98 
+        toh :             plen : 102 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb399fa57fd29 
-     eth[0] :               sa : 48'h96d8dffe5e04 
+     eth[0] :               da : 48'hce187b85d30c 
+     eth[0] :               sa : 48'hce296e152f55 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h96 
-    ipv4[0] :     total_length : 16'h50 
-    ipv4[0] :               id : 16'h910 
+    ipv4[0] :              ihl : 4'h7 
+    ipv4[0] :              tos : 8'h99 
+    ipv4[0] :     total_length : 16'h54 
+    ipv4[0] :               id : 16'h20d6 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h153c 
-    ipv4[0] :              ttl : 8'h6 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h12 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'hc06a (GOOD)
-    ipv4[0] :            ip_sa : 32'h64b56243 
-    ipv4[0] :            ip_da : 32'haa19ba84 
-    ipv4[0] :          options : (Total Len  = 12)
+    ipv4[0] :         checksum : 16'he254 (GOOD)
+    ipv4[0] :            ip_sa : 32'h63f3546c 
+    ipv4[0] :            ip_da : 32'h6e827dfa 
+    ipv4[0] :          options : (Total Len  = 8)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : 8b a2 62 3c bc 1e 97 39 | d9 d2 0b 92 
+    ipv4[0] :    0 : 50 1f fa a9 43 7e af 93 | 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
      gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
-     gre[0] :                K : 1'b1 
-     gre[0] :                S : 1'b1 
+     gre[0] :                K : 1'b0 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h928b (GOOD)
-     gre[0] :           offset : 16'h669 
-     gre[0] :              key : 32'h2e17735d 
-     gre[0] :  sequence_number : 32'h7ac50c4a 
-     eth[1] :               da : 48'h7c1e55452d6b 
-     eth[1] :               sa : 48'he5c372bfdec4 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h618d 
+     eth[1] :               da : 48'hcd458a1e722c 
+     eth[1] :               sa : 48'had720be0bd6b 
      eth[1] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h1 
-    itag[0] :               de : 1'h0 
+    itag[0] :              pri : 3'h7 
+    itag[0] :               de : 1'h1 
     itag[0] :            rsvd0 : 2'h1 
-    itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h289 
-     eth[2] :               da : 48'hb371e7b3d017 
-     eth[2] :               sa : 48'hc61200b46f67 
-     eth[2] :            etype : 16'h7638 (UNKNOWN)
-    data[0] :         data_len : 0 (data => EMPTY)
+    itag[0] :            rsvd1 : 2'h3 
+    itag[0] :              sid : 12'h182 
+     eth[2] :               da : 48'h81e5b61f0b36 
+     eth[2] :               sa : 48'he0be0bbca0f2 
+     eth[2] :            etype : 16'hbc5c (UNKNOWN)
+    data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h52646bcf (GOOD)
+        toh :              crc : 32'h22367400 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : b3 99 fa 57 fd 29 96 d8 | df fe 5e 04 08 00 48 96 
-    pkt_lib :   16 : 00 50 09 10 95 3c 06 2f | c0 6a 64 b5 62 43 aa 19 
-    pkt_lib :   32 : ba 84 8b a2 62 3c bc 1e | 97 39 d9 d2 0b 92 b0 00 
-    pkt_lib :   48 : 65 58 92 8b 06 69 2e 17 | 73 5d 7a c5 0c 4a 7c 1e 
-    pkt_lib :   64 : 55 45 2d 6b e5 c3 72 bf | de c4 88 e7 00 02 52 89 
-    pkt_lib :   80 : b3 71 e7 b3 d0 17 c6 12 | 00 b4 6f 67 76 38 52 64 
-    pkt_lib :   96 : 6b cf 
+    pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
+    pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
+    pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
+    pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
+    pkt_lib :   96 : f3 ad 22 36 74 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 98)
+    pkt_lib : (Total Len  = 102)
 
 0 : INFO    : TEST      : Compare Pkt 9
     cmp_hdr : {eth[0], ipv4[0], gre[0], eth[1], itag[0], eth[2], data[0]}
-        toh :             plen : 98 
+        toh :             plen : 102 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'hb399fa57fd29 
-     eth[0] :               sa : 48'h96d8dffe5e04 
+     eth[0] :               da : 48'hce187b85d30c 
+     eth[0] :               sa : 48'hce296e152f55 
      eth[0] :            etype : 16'h800 (IPV4)
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'h8 
-    ipv4[0] :              tos : 8'h96 
-    ipv4[0] :     total_length : 16'h50 
-    ipv4[0] :               id : 16'h910 
+    ipv4[0] :              ihl : 4'h7 
+    ipv4[0] :              tos : 8'h99 
+    ipv4[0] :     total_length : 16'h54 
+    ipv4[0] :               id : 16'h20d6 
     ipv4[0] :         reserved : 1'h1 
-    ipv4[0] :               df : 1'h0 
+    ipv4[0] :               df : 1'h1 
     ipv4[0] :               mf : 1'h0 
-    ipv4[0] :      frag_offset : 13'h153c 
-    ipv4[0] :              ttl : 8'h6 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h12 
     ipv4[0] :         protocol : 8'h2f (GRE)
-    ipv4[0] :         checksum : 16'hc06a (GOOD)
-    ipv4[0] :            ip_sa : 32'h64b56243 
-    ipv4[0] :            ip_da : 32'haa19ba84 
-    ipv4[0] :          options : Matched :-) Length Rcv => 12 Exp => 12
+    ipv4[0] :         checksum : 16'he254 (GOOD)
+    ipv4[0] :            ip_sa : 32'h63f3546c 
+    ipv4[0] :            ip_da : 32'h6e827dfa 
+    ipv4[0] :          options : Matched :-) Length Rcv => 8 Exp => 8
      gre[0] :                C : 1'b1 
      gre[0] :                R : 1'b0 
-     gre[0] :                K : 1'b1 
-     gre[0] :                S : 1'b1 
+     gre[0] :                K : 1'b0 
+     gre[0] :                S : 1'b0 
      gre[0] :                s : 1'b0 
      gre[0] :            recur : 3'h0 
      gre[0] :                A : 1'b0 
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h928b (GOOD)
-     gre[0] :           offset : 16'h669 
-     gre[0] :              key : 32'h2e17735d 
-     gre[0] :  sequence_number : 32'h7ac50c4a 
-     eth[1] :               da : 48'h7c1e55452d6b 
-     eth[1] :               sa : 48'he5c372bfdec4 
+     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :           offset : 16'h618d 
+     eth[1] :               da : 48'hcd458a1e722c 
+     eth[1] :               sa : 48'had720be0bd6b 
      eth[1] :            etype : 16'h88e7 (ITAG)
-    itag[0] :              pri : 3'h1 
-    itag[0] :               de : 1'h0 
+    itag[0] :              pri : 3'h7 
+    itag[0] :               de : 1'h1 
     itag[0] :            rsvd0 : 2'h1 
-    itag[0] :            rsvd1 : 2'h1 
-    itag[0] :              sid : 12'h289 
-     eth[2] :               da : 48'hb371e7b3d017 
-     eth[2] :               sa : 48'hc61200b46f67 
-     eth[2] :            etype : 16'h7638 (UNKNOWN)
-    data[0] :         data_len : 0 (data => EMPTY)
+    itag[0] :            rsvd1 : 2'h3 
+    itag[0] :              sid : 12'h182 
+     eth[2] :               da : 48'h81e5b61f0b36 
+     eth[2] :               sa : 48'he0be0bbca0f2 
+     eth[2] :            etype : 16'hbc5c (UNKNOWN)
+    data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h52646bcf (GOOD)
-0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 98 Exp => 98
+        toh :              crc : 32'h22367400 (GOOD)
+0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 102 Exp => 102
 
 0 : INFO    : TEST      : Pack Pkt 10
     cfg_hdr : {eth[0], dot1q[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 87 
+        toh :             plen : 103 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h4a8f25f6c042 
-     eth[0] :               sa : 48'h8e15078a8d5b 
+     eth[0] :               da : 48'h532f6d6e11af 
+     eth[0] :               sa : 48'hd78486e97027 
      eth[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[0] :              cos : 3'h2 
    dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'h1a4 
+   dot1q[0] :             vlan : 12'h743 
    dot1q[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h0 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'hce 
+    mpls[0] :     num_mpls_lbl : 2 
+    mpls[0] :         label[0] : 20'he2555 (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'he6 
+    mpls[0] :         label[1] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[1] : 3'h4 
+    mpls[0] :             s[1] : 1 
+    mpls[0] :           ttl[1] : 8'h18 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h39 
-    ipv4[0] :     total_length : 16'h3d 
-    ipv4[0] :               id : 16'h36f2 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1965 
-    ipv4[0] :              ttl : 8'h3e 
+    ipv4[0] :              ihl : 4'he 
+    ipv4[0] :              tos : 8'h73 
+    ipv4[0] :     total_length : 16'h49 
+    ipv4[0] :               id : 16'hbf6e 
+    ipv4[0] :         reserved : 1'h1 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h68 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hab30 (GOOD)
-    ipv4[0] :            ip_sa : 32'h799a6454 
-    ipv4[0] :            ip_da : 32'hd50867eb 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h7b8a (GOOD)
+    ipv4[0] :            ip_sa : 32'heb24ce3a 
+    ipv4[0] :            ip_da : 32'h2ffa6354 
+    ipv4[0] :          options : (Total Len  = 36)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : e8 f6 eb 6d fb a7 b2 e1 | 56 82 d1 cd cd 98 c9 06 
-    ipv4[0] :   16 : 40 3a be f4 
+    ipv4[0] :    0 : a8 a9 3e 6b 28 7e 9c 28 | 49 09 76 fb bd f0 cf 83 
+    ipv4[0] :   16 : 96 fc 6d 4b bb 04 02 1e | 16 88 30 86 e7 35 4a ca 
+    ipv4[0] :   32 : c2 e5 0a f6 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hc030 
-     udp[0] :          dst_prt : 16'h3bb3 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'h93e (GOOD)
-    data[0] :         data_len : 13 (data => 7d 7f d6 f2 ..)
+     udp[0] :          src_prt : 16'h8227 
+     udp[0] :          dst_prt : 16'hbad2 (UNKNOWN)
+     udp[0] :           length : 16'h11 
+     udp[0] :         checksum : 16'he417 (GOOD)
+    data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hfc27887f (GOOD)
+        toh :              crc : 32'hb2f462ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 4a 8f 25 f6 c0 42 8e 15 | 07 8a 8d 5b 81 00 51 a4 
-    pkt_lib :   16 : 88 47 00 00 01 ce 4a 39 | 00 3d 36 f2 39 65 3e 11 
-    pkt_lib :   32 : ab 30 79 9a 64 54 d5 08 | 67 eb e8 f6 eb 6d fb a7 
-    pkt_lib :   48 : b2 e1 56 82 d1 cd cd 98 | c9 06 40 3a be f4 c0 30 
-    pkt_lib :   64 : 3b b3 00 15 09 3e 7d 7f | d6 f2 91 78 10 03 f4 ca 
-    pkt_lib :   80 : 51 06 a4 fc 27 88 7f 
+    pkt_lib :    0 : 53 2f 6d 6e 11 af d7 84 | 86 e9 70 27 81 00 57 43 
+    pkt_lib :   16 : 88 47 e2 55 58 e6 00 00 | 09 18 4e 73 00 49 bf 6e 
+    pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
+    pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
+    pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 87)
+    pkt_lib : (Total Len  = 103)
 
 0 : INFO    : TEST      : Unpack Pkt 10
     cfg_hdr : {eth[0], dot1q[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 87 
+        toh :             plen : 103 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h4a8f25f6c042 
-     eth[0] :               sa : 48'h8e15078a8d5b 
+     eth[0] :               da : 48'h532f6d6e11af 
+     eth[0] :               sa : 48'hd78486e97027 
      eth[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[0] :              cos : 3'h2 
    dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'h1a4 
+   dot1q[0] :             vlan : 12'h743 
    dot1q[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h0 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'hce 
+    mpls[0] :     num_mpls_lbl : 2 
+    mpls[0] :         label[0] : 20'he2555 (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'he6 
+    mpls[0] :         label[1] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[1] : 3'h4 
+    mpls[0] :             s[1] : 1 
+    mpls[0] :           ttl[1] : 8'h18 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h39 
-    ipv4[0] :     total_length : 16'h3d 
-    ipv4[0] :               id : 16'h36f2 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1965 
-    ipv4[0] :              ttl : 8'h3e 
+    ipv4[0] :              ihl : 4'he 
+    ipv4[0] :              tos : 8'h73 
+    ipv4[0] :     total_length : 16'h49 
+    ipv4[0] :               id : 16'hbf6e 
+    ipv4[0] :         reserved : 1'h1 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h68 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hab30 (GOOD)
-    ipv4[0] :            ip_sa : 32'h799a6454 
-    ipv4[0] :            ip_da : 32'hd50867eb 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h7b8a (GOOD)
+    ipv4[0] :            ip_sa : 32'heb24ce3a 
+    ipv4[0] :            ip_da : 32'h2ffa6354 
+    ipv4[0] :          options : (Total Len  = 36)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : e8 f6 eb 6d fb a7 b2 e1 | 56 82 d1 cd cd 98 c9 06 
-    ipv4[0] :   16 : 40 3a be f4 
+    ipv4[0] :    0 : a8 a9 3e 6b 28 7e 9c 28 | 49 09 76 fb bd f0 cf 83 
+    ipv4[0] :   16 : 96 fc 6d 4b bb 04 02 1e | 16 88 30 86 e7 35 4a ca 
+    ipv4[0] :   32 : c2 e5 0a f6 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hc030 
-     udp[0] :          dst_prt : 16'h3bb3 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'h93e (GOOD)
-    data[0] :         data_len : 13 (data => 7d 7f d6 f2 ..)
+     udp[0] :          src_prt : 16'h8227 
+     udp[0] :          dst_prt : 16'hbad2 (UNKNOWN)
+     udp[0] :           length : 16'h11 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hfc27887f (GOOD)
+        toh :              crc : 32'hb2f462ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 4a 8f 25 f6 c0 42 8e 15 | 07 8a 8d 5b 81 00 51 a4 
-    pkt_lib :   16 : 88 47 00 00 01 ce 4a 39 | 00 3d 36 f2 39 65 3e 11 
-    pkt_lib :   32 : ab 30 79 9a 64 54 d5 08 | 67 eb e8 f6 eb 6d fb a7 
-    pkt_lib :   48 : b2 e1 56 82 d1 cd cd 98 | c9 06 40 3a be f4 c0 30 
-    pkt_lib :   64 : 3b b3 00 15 09 3e 7d 7f | d6 f2 91 78 10 03 f4 ca 
-    pkt_lib :   80 : 51 06 a4 fc 27 88 7f 
+    pkt_lib :    0 : 53 2f 6d 6e 11 af d7 84 | 86 e9 70 27 81 00 57 43 
+    pkt_lib :   16 : 88 47 e2 55 58 e6 00 00 | 09 18 4e 73 00 49 bf 6e 
+    pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
+    pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
+    pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 87)
+    pkt_lib : (Total Len  = 103)
 
 0 : INFO    : TEST      : Copy Pkt 10
     cfg_hdr : {eth[0], dot1q[0], mpls[0], ipv4[0], udp[0], data[0]}
-        toh :             plen : 87 
+        toh :             plen : 103 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h4a8f25f6c042 
-     eth[0] :               sa : 48'h8e15078a8d5b 
+     eth[0] :               da : 48'h532f6d6e11af 
+     eth[0] :               sa : 48'hd78486e97027 
      eth[0] :            etype : 16'h8100 (DOT1Q)
    dot1q[0] :              cos : 3'h2 
    dot1q[0] :              cfi : 1'h1 
-   dot1q[0] :             vlan : 12'h1a4 
+   dot1q[0] :             vlan : 12'h743 
    dot1q[0] :            etype : 16'h8847 (MPLS-UNICAST)
-    mpls[0] :     num_mpls_lbl : 1 
-    mpls[0] :         label[0] : 20'h0 (IPV4 Explicit Null)
-    mpls[0] :           exp[0] : 3'h0 
-    mpls[0] :             s[0] : 1 
-    mpls[0] :           ttl[0] : 8'hce 
+    mpls[0] :     num_mpls_lbl : 2 
+    mpls[0] :         label[0] : 20'he2555 (UNKNOWN)
+    mpls[0] :           exp[0] : 3'h4 
+    mpls[0] :             s[0] : 0 
+    mpls[0] :           ttl[0] : 8'he6 
+    mpls[0] :         label[1] : 20'h0 (IPV4 Explicit Null)
+    mpls[0] :           exp[1] : 3'h4 
+    mpls[0] :             s[1] : 1 
+    mpls[0] :           ttl[1] : 8'h18 
     ipv4[0] :          version : 4'h4 
-    ipv4[0] :              ihl : 4'ha 
-    ipv4[0] :              tos : 8'h39 
-    ipv4[0] :     total_length : 16'h3d 
-    ipv4[0] :               id : 16'h36f2 
-    ipv4[0] :         reserved : 1'h0 
-    ipv4[0] :               df : 1'h0 
-    ipv4[0] :               mf : 1'h1 
-    ipv4[0] :      frag_offset : 13'h1965 
-    ipv4[0] :              ttl : 8'h3e 
+    ipv4[0] :              ihl : 4'he 
+    ipv4[0] :              tos : 8'h73 
+    ipv4[0] :     total_length : 16'h49 
+    ipv4[0] :               id : 16'hbf6e 
+    ipv4[0] :         reserved : 1'h1 
+    ipv4[0] :               df : 1'h1 
+    ipv4[0] :               mf : 1'h0 
+    ipv4[0] :      frag_offset : 13'h0 
+    ipv4[0] :              ttl : 8'h68 
     ipv4[0] :         protocol : 8'h11 (UDP)
-    ipv4[0] :         checksum : 16'hab30 (GOOD)
-    ipv4[0] :            ip_sa : 32'h799a6454 
-    ipv4[0] :            ip_da : 32'hd50867eb 
-    ipv4[0] :          options : (Total Len  = 20)
+    ipv4[0] :         checksum : 16'h7b8a (GOOD)
+    ipv4[0] :            ip_sa : 32'heb24ce3a 
+    ipv4[0] :            ip_da : 32'h2ffa6354 
+    ipv4[0] :          options : (Total Len  = 36)
     ipv4[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    ipv4[0] :    0 : e8 f6 eb 6d fb a7 b2 e1 | 56 82 d1 cd cd 98 c9 06 
-    ipv4[0] :   16 : 40 3a be f4 
+    ipv4[0] :    0 : a8 a9 3e 6b 28 7e 9c 28 | 49 09 76 fb bd f0 cf 83 
+    ipv4[0] :   16 : 96 fc 6d 4b bb 04 02 1e | 16 88 30 86 e7 35 4a ca 
+    ipv4[0] :   32 : c2 e5 0a f6 
     ipv4[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-     udp[0] :          src_prt : 16'hc030 
-     udp[0] :          dst_prt : 16'h3bb3 (UNKNOWN)
-     udp[0] :           length : 16'h15 
-     udp[0] :         checksum : 16'h93e (GOOD)
-    data[0] :         data_len : 13 (data => 7d 7f d6 f2 ..)
+     udp[0] :          src_prt : 16'h8227 
+     udp[0] :          dst_prt : 16'hbad2 (UNKNOWN)
+     udp[0] :           length : 16'h11 
+     udp[0] :         checksum : 16'h0 (GOOD)
+    data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hfc27887f (GOOD)
+        toh :              crc : 32'hb2f462ef (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 4a 8f 25 f6 c0 42 8e 15 | 07 8a 8d 5b 81 00 51 a4 
-    pkt_lib :   16 : 88 47 00 00 01 ce 4a 39 | 00 3d 36 f2 39 65 3e 11 
-    pkt_lib :   32 : ab 30 79 9a 64 54 d5 08 | 67 eb e8 f6 eb 6d fb a7 
-    pkt_lib :   48 : b2 e1 56 82 d1 cd cd 98 | c9 06 40 3a be f4 c0 30 
-    pkt_lib :   64 : 3b b3 00 15 09 3e 7d 7f | d6 f2 91 78 10 03 f4 ca 
-    pkt_lib :   80 : 51 06 a4 fc 27 88 7f 
+    pkt_lib :    0 : 53 2f 6d 6e 11 af d7 84 | 86 e9 70 27 81 00 57 43 
+    pkt_lib :   16 : 88 47 e2 55 58 e6 00 00 | 09 18 4e 73 00 49 bf 6e 
+    pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
+    pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
+    pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib : (Total Len  = 87)
+    pkt_lib : (Total Len  = 103)
 
 0 : INFO    : TEST      : Compare Pkt 10
     cmp_hdr : {eth[0], dot1q[0], mpls[0], ipv4[0], udp[0], data[0]} != {eth[0], data[0]} (ERROR)
-        toh :             plen : 87 
+        toh :             plen : 103 
         toh :     chop_plen_to : 0 
-     eth[0] :               da : 48'h4a8f25f6c042 
-     eth[0] :               sa : 48'h8e15078a8d5b 
+     eth[0] :               da : 48'h532f6d6e11af 
+     eth[0] :               sa : 48'hd78486e97027 
      eth[0] :            etype : 16'h8100 != 16'h8181 (ERROR) (DOT1Q)
         toh :          pad_len : 0 
-        toh :              crc : 32'hfc27887f (GOOD)
-0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 87 Exp => 87
+        toh :              crc : 32'hb2f462ef (GOOD)
+0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 103 Exp => 103
     pkt_lib :        ~~~~~~~~~ RCV ~~~~~~~~~~|~~~~~~~~~ EXP ~~~~~~~~~~
     pkt_lib :        0   1  2  3  4  5  6  7 |  0  1  2  3  4  5  6  7
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
-    pkt_lib :    0 : 4a 8f 25 f6 c0 42 8e 15 | .. .. .. .. .. .. .. .. 
-    pkt_lib :    8 : 07 8a 8d 5b 81 00 51 a4 | .. .. .. .. .. 81 .. .. 
-    pkt_lib :   16 : 88 47 00 00 01 ce 4a 39 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   24 : 00 3d 36 f2 39 65 3e 11 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   32 : ab 30 79 9a 64 54 d5 08 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   40 : 67 eb e8 f6 eb 6d fb a7 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   48 : b2 e1 56 82 d1 cd cd 98 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   56 : c9 06 40 3a be f4 c0 30 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   64 : 3b b3 00 15 09 3e 7d 7f | .. .. .. .. .. .. .. .. 
-    pkt_lib :   72 : d6 f2 91 78 10 03 f4 ca | .. .. .. .. .. .. .. .. 
-    pkt_lib :   80 : 51 06 a4 fc 27 88 7f    | .. .. .. .. .. .. .. 
+    pkt_lib :    0 : 53 2f 6d 6e 11 af d7 84 | .. .. .. .. .. .. .. .. 
+    pkt_lib :    8 : 86 e9 70 27 81 00 57 43 | .. .. .. .. .. 81 .. .. 
+    pkt_lib :   16 : 88 47 e2 55 58 e6 00 00 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   24 : 09 18 4e 73 00 49 bf 6e | .. .. .. .. .. .. .. .. 
+    pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   40 : ce 3a 2f fa 63 54 a8 a9 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   56 : 76 fb bd f0 cf 83 96 fc | .. .. .. .. .. .. .. .. 
+    pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   72 : 30 86 e7 35 4a ca c2 e5 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   88 : 00 00 78 21 c1 55 ea 22 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   96 : 91 71 dd b2 f4 62 ef    | .. .. .. .. .. .. .. 
 
 $finish called from file "test/pktlib_test.sv", line 114.
 $finish at simulation time                    0
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 0
-CPU Time:      0.460 seconds;       Data structure size:   0.0Mb
-Tue Feb 22 22:06:27 2011
+CPU Time:      0.350 seconds;       Data structure size:   0.0Mb
+Mon May  2 16:18:30 2011

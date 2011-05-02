@@ -114,8 +114,8 @@ class snap_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
-    pack_vec = {dsap, ssap, ctrl, oui, etype};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    hdr = {>>{dsap, ssap, ctrl, oui, etype}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         this.nxt_hdr.pack_hdr (pkt, index);
@@ -132,8 +132,8 @@ class snap_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 8;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {dsap, ssap, ctrl, oui, etype} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{dsap, ssap, ctrl, oui, etype}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {

@@ -76,8 +76,8 @@ class itag_hdr_class extends hdr_class; // {
                 ref   int       index,
                 input bit       last_pack = 1'b0); // {
     // pack class members
-    pack_vec = {pri, de, rsvd0, rsvd1, sid};
-    harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
+    hdr = {>>{pri, de, rsvd0, rsvd1, sid}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         this.nxt_hdr.pack_hdr (pkt, index);
@@ -92,8 +92,8 @@ class itag_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 4;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {pri, de, rsvd0, rsvd1, sid} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{pri, de, rsvd0, rsvd1, sid}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {

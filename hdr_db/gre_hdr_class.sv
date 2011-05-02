@@ -189,32 +189,32 @@ class gre_hdr_class extends hdr_class; // {
     int gre_idx;
     gre_idx = index;
     // pack class members
-    pack_vec = {C, R, K, S, s, recur, A, flags, version, etype};
-    harray.pack_bit (pkt, pack_vec, index, 32);
+    hdr = {>>{C, R, K, S, s, recur, A, flags, version, etype}};
+    harray.pack_array_8 (hdr, pkt, index);
     if (C | R)
     begin // {
-        pack_vec = {checksum, offset};
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{checksum, offset}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     if (version_1)
     begin // {
-        pack_vec = {payload_length, call_id};
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{payload_length, call_id}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     if (K)
     begin // {
-        pack_vec = key;
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{key}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     if (S)
     begin // {
-        pack_vec = sequence_number;
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{sequence_number}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     if (A)
     begin // {
-        pack_vec = ack_number;
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{ack_number}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     // pack next hdr
     if (~last_pack)
@@ -236,37 +236,37 @@ class gre_hdr_class extends hdr_class; // {
     seq_len    = 0;
     ack_len    = 0;
     start_off  = index;
-    harray.unpack_array (pkt, pack_vec, index, 4);
-    {C, R, K, S, s, recur, A, flags, version, etype} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{C, R, K, S, s, recur, A, flags, version, etype}} = hdr;
     if (C | R)
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        {checksum, offset} = pack_vec;
         chkoff_len = 4;
+        harray.copy_array (pkt, hdr, index, chkoff_len);
+        {>>{checksum, offset}} = hdr;
     end // }
     if (version == 1)
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        {payload_length, call_id} = pack_vec;;
         chkoff_len = 4;
+        harray.copy_array (pkt, hdr, index, chkoff_len);
+        {>>{payload_length, call_id}} = hdr;
     end // }
     if (K)
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        key = pack_vec;
         key_len = 4;
+        harray.copy_array (pkt, hdr, index, key_len);
+        {>>{key}} = hdr;
     end // }
     if (S)
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        sequence_number = pack_vec;
         seq_len = 4;
+        harray.copy_array (pkt, hdr, index, seq_len);
+        {>>{sequence_number}} = hdr;
     end // }
     if (A)
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        ack_number = pack_vec;
         ack_len = 4;
+        harray.copy_array (pkt, hdr, index, ack_len);
+        {>>{ack_number}} = hdr;
     end // }
     hdr_len += chkoff_len + key_len + seq_len + ack_len;
     if (mode == SMART_UNPACK)
@@ -288,12 +288,10 @@ class gre_hdr_class extends hdr_class; // {
   function post_pack (ref bit [7:0] pkt [],
                           int       gre_idx); // {
     bit [7:0]      chksm_data [];
-    int            cpy_idx, i;
     // Calulate udp_chksm, corrupt it if asked
     if (cal_chksm)
     begin // {
-        cpy_idx = gre_idx/8;
-        harray.copy_array(pkt, chksm_data, cpy_idx, (pkt.size - cpy_idx));
+        harray.copy_array(pkt, chksm_data, gre_idx, (pkt.size - gre_idx));
         if (chksm_data.size/2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

@@ -112,8 +112,8 @@ class udp_hdr_class extends hdr_class; // {
     if (cal_udp_chksm && ~last_pack)
         checksum = 0;
     // pack class members
-    pack_vec = {src_prt, dst_prt, length, checksum};  
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    hdr = {>>{src_prt, dst_prt, length, checksum}};  
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         nxt_hdr.pack_hdr (pkt, index);
@@ -130,8 +130,8 @@ class udp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 8;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {src_prt, dst_prt, length, checksum} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{src_prt, dst_prt, length, checksum}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -153,7 +153,7 @@ class udp_hdr_class extends hdr_class; // {
                           int       udp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
-    int            cpy_idx, i;
+    int            i;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
     // Calulate udp_chksm, corrupt it if asked
@@ -174,8 +174,7 @@ class udp_hdr_class extends hdr_class; // {
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
             end // }
         end // }
-        cpy_idx = udp_idx/8;
-        harray.copy_array(pkt, chksm_data, cpy_idx, (pkt.size - cpy_idx));
+        harray.copy_array(pkt, chksm_data, udp_idx, (pkt.size - udp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

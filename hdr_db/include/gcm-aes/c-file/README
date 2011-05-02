@@ -1,0 +1,66 @@
+/*
+Copyright (c) 2011, Sachin Gandhi
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the author nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+// ----------------------------------------------------------------------
+//  README file for aes and gcm
+// ----------------------------------------------------------------------
+
+    This folder consists of all the aes and gcm c-files require to encrypt, 
+  decrypt and authenticate the byte streams.
+
+  List of Files :
+  =============
+  aescrypt.c
+  aes.h
+  aeskey.c
+  aesopt.h
+  aestab.c
+  aestab.h
+  gcm.cpp
+  gcm.h
+  gfvec.cpp
+  gfvec.h
+  gcm_dpi.cpp
+  gcm_dpi.h
+
+  gcm_dpi.cpp :
+  -----------
+
+    This file consists of all the c-routine (DPI calls) required to encrypt, 
+  decrypt and authenticate the byte streams. It has three routine/DPI calls.
+
+  1. print_c_msg - This routine captures print message from c-files 
+                   to simualtion log file.
+
+  2. aes_hkey    - This routine computes h-key value. 
+                 - H-Key will be needed to program some part of 
+                 - egress/ingress context table.
+                 - This routine should be used in api calls to program MacSEC. 
+
+  3. gcm_crypt   - This is the main routine/task to encrypt or decrypt and 
+                   authenticate the input data byte streams.
+                 - This task takes the input byte strams and gives out 
+                   encrypted/decrypted byte streams.
+                 - At the end of the out_put byte streams, 16B of authentication 
+                   (ICV) tag is added. 
+                 - NOTE : 
+                   ++++
+                       This task doesn't parse or construct the packet. All the packet 
+                   processing and parsing needs to be done outside of this task. 
+                   (For e.g. i>.   MacSec hdr need to be added before task is called.
+                             ii>.  Parameters require (key, sci, pn, etc..) to compute 
+                                   encryption and decryption must be provided.
+                             iii>. If pkt needs to be padded, it should be padded after 
+                                   the task is called.
+                   )               
+                      

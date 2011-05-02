@@ -237,11 +237,13 @@ class ipv4_hdr_class extends hdr_class; // {
         end // }
     end // }
     // pack class members
-    pack_vec = {version, ihl, tos, total_length, id, reserved, df, mf, 
-                frag_offset, ttl, protocol, checksum, ip_sa, ip_da};
-    harray.pack_bit (pkt, pack_vec, index, 160);
     if (ihl > 5)
-        harray.pack_array_8(options, pkt, index);
+        hdr = {>>{version, ihl, tos, total_length, id, reserved, df, mf,
+                  frag_offset, ttl, protocol, checksum, ip_sa, ip_da, options}};
+    else
+        hdr = {>>{version, ihl, tos, total_length, id, reserved, df, mf,
+                  frag_offset, ttl, protocol, checksum, ip_sa, ip_da}};
+    harray.pack_array_8(hdr, pkt, index);
     cal_pseudo_chksm ();
     // pack next hdr
     if (~last_pack)
@@ -256,9 +258,9 @@ class ipv4_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, 20);
-    {version, ihl, tos, total_length, id, reserved, df, mf,
-     frag_offset, ttl, protocol, checksum, ip_sa, ip_da} = pack_vec;
+    harray.copy_array (pkt, hdr, index, 20);
+    {>>{version, ihl, tos, total_length, id, reserved, df, mf,
+        frag_offset, ttl, protocol, checksum, ip_sa, ip_da}} = hdr;
     hdr_len = ihl * 4;
     if (ihl > 4'd5)
         harray.copy_array (pkt, options, index, (hdr_len - 20));
@@ -357,11 +359,9 @@ class ipv4_hdr_class extends hdr_class; // {
   task cal_pseudo_chksm; // {
     bit [15:0] ip_data_length;
     ip_data_length    = total_length - (ihl*4);
-    pseudo_chksm_data = new[12];
     pseudo_chksm_idx  = 0;
     pseudo_chksm      = 0;
-    pack_vec          = {ip_data_length, {8'h0, protocol}, ip_sa, ip_da}; 
-    harray.pack_bit (pseudo_chksm_data, pack_vec, pseudo_chksm_idx, 96);
+    pseudo_chksm_data = {>>{ip_data_length, 8'h0, protocol, ip_sa, ip_da}}; 
     pseudo_chksm      = crc_chksm.chksm16(pseudo_chksm_data, pseudo_chksm_data.size(), 0, 0, corrupt_ip_chksm_msk);
   endtask : cal_pseudo_chksm // }
 endclass : ipv4_hdr_class // }

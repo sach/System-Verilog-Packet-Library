@@ -93,26 +93,28 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     TOP_HID,                 // 0
     PTH_HID,                 // 1
     ETH_HID,                 // 2
-    DOT1Q_HID,               // 3
-    ALT1Q_HID,               // 4
-    STAG_HID,                // 5
-    ITAG_HID,                // 6
-    SNAP_HID,                // 7
-    PTL2_HID,                // 8
-    MPLS_HID,                // 9 
-    MMPLS_HID,               // 10
-    IPV4_HID,                // 11
-    IPV6_HID,                // 12
-    PTIP_HID,                // 13
-    TCP_HID,                 // 14
-    UDP_HID,                 // 15
-    GRE_HID,                 // 16
-    PTP_HID,                 // 17
-    NTP_HID,                 // 18 
-    DATA_HID,                // 19
-    EOH_HID,                 // 20
-//  XXX_HID,                 // 21
-    TOTAL_HID                // 21
+    MACSEC_HID,              // 3
+    DOT1Q_HID,               // 4
+    ALT1Q_HID,               // 5
+    STAG_HID,                // 6
+    ITAG_HID,                // 7
+    SNAP_HID,                // 8
+    PTL2_HID,                // 9
+    MPLS_HID,                // 10
+    MMPLS_HID,               // 11
+    IPV4_HID,                // 12
+    IPV6_HID,                // 13
+    PTIP_HID,                // 14
+    IPSEC_HID,               // 15
+    TCP_HID,                 // 16
+    UDP_HID,                 // 17
+    GRE_HID,                 // 18
+    PTP_HID,                 // 19
+    NTP_HID,                 // 20 
+    DATA_HID,                // 21
+    EOH_HID,                 // 22
+//  XXX_HID,                 // 23
+    TOTAL_HID                // 23
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -121,6 +123,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class toh_class;
   typedef class pt_hdr_class;
   typedef class eth_hdr_class;
+  typedef class macsec_hdr_class;
   typedef class snap_hdr_class;
   typedef class dot1q_hdr_class;
   typedef class itag_hdr_class;
@@ -129,6 +132,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class ipv4_hdr_class;
   typedef class ipv6_hdr_class;
   typedef class ptip_hdr_class;
+  typedef class ipsec_hdr_class;
   typedef class ptp_hdr_class;
   typedef class ntp_hdr_class;
   typedef class tcp_hdr_class;
@@ -149,6 +153,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "toh_class.sv"
   `include "pt_hdr_class.sv"
   `include "eth_hdr_class.sv"
+  `include "macsec_hdr_class.sv"
   `include "dot1q_hdr_class.sv"
   `include "itag_hdr_class.sv"
   `include "snap_hdr_class.sv"
@@ -157,6 +162,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "ipv4_hdr_class.sv"
   `include "ipv6_hdr_class.sv"
   `include "ptip_hdr_class.sv"
+  `include "ipsec_hdr_class.sv"
   `include "tcp_hdr_class.sv"
   `include "udp_hdr_class.sv"
   `include "gre_hdr_class.sv"
@@ -171,6 +177,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   toh_class           toh;\
   pt_hdr_class        pth     [`MAX_NUM_INSTS];\
   eth_hdr_class       eth     [`MAX_NUM_INSTS];\
+  macsec_hdr_class    macsec  [`MAX_NUM_INSTS];\
   dot1q_hdr_class     dot1q   [`MAX_NUM_INSTS];\
   dot1q_hdr_class     alt1q   [`MAX_NUM_INSTS];\
   dot1q_hdr_class     stag    [`MAX_NUM_INSTS];\
@@ -182,6 +189,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ipv4_hdr_class      ipv4    [`MAX_NUM_INSTS];\
   ipv6_hdr_class      ipv6    [`MAX_NUM_INSTS];\
   ptip_hdr_class      ptip    [`MAX_NUM_INSTS];\
+  ipsec_hdr_class     ipsec   [`MAX_NUM_INSTS];\
   tcp_hdr_class       tcp     [`MAX_NUM_INSTS];\
   udp_hdr_class       udp     [`MAX_NUM_INSTS];\
   gre_hdr_class       gre     [`MAX_NUM_INSTS];\
@@ -196,6 +204,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     begin\
         pth    [i] = new (this, i);\
         eth    [i] = new (this, i);\
+        macsec [i] = new (this, i);\
         dot1q  [i] = new (this, i);\
         alt1q  [i] = new (this, i, 1);\
         stag   [i] = new (this, i, 2);\
@@ -207,6 +216,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         ipv4   [i] = new (this, i);\
         ipv6   [i] = new (this, i);\
         ptip   [i] = new (this, i);\
+        ipsec  [i] = new (this, i);\
         tcp    [i] = new (this, i);\
         udp    [i] = new (this, i);\
         gre    [i] = new (this, i);\

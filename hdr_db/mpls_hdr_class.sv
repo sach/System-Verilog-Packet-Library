@@ -128,13 +128,13 @@ class mpls_hdr_class extends hdr_class; // {
     // pack class members
     for (i = 0; i < num_mpls_lbl; i++)
     begin // {
-        pack_vec = {label[i], exp[i], s[i], ttl[i]};
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{label[i], exp[i], s[i], ttl[i]}};
+         harray.pack_array_8 (hdr, pkt, index);
     end // }
     if ((nxt_hdr.hid == ETH_HID) & (label[0] !== eth_null_lbl))
     begin // {
-        pack_vec = eth_ctrl;
-        harray.pack_bit (pkt, pack_vec, index, 32);
+        hdr = {>>{eth_ctrl}};
+        harray.pack_array_8 (hdr, pkt, index);
     end // }
     // pack next hdr
     if (~last_pack && this.nxt_hdr != null)
@@ -167,8 +167,8 @@ class mpls_hdr_class extends hdr_class; // {
                `endif
                break;
             end // }
-            harray.unpack_array (pkt, pack_vec, index, 4);
-            {label[num_mpls_lbl-1], exp[num_mpls_lbl-1], s[num_mpls_lbl-1], ttl[num_mpls_lbl-1]} = pack_vec;
+            harray.copy_array (pkt, hdr, index, 4);
+            {>>{label[num_mpls_lbl-1], exp[num_mpls_lbl-1], s[num_mpls_lbl-1], ttl[num_mpls_lbl-1]}} = hdr;
             if (s[num_mpls_lbl-1] == 1'b1)
             begin // {
                 unpack_done = 1;
@@ -185,8 +185,8 @@ class mpls_hdr_class extends hdr_class; // {
         nxtB = 8'hAA;
     if ((label[0] != eth_null_lbl) & (nxtB[7:4] == 4'h0))
     begin // {
-        harray.unpack_array (pkt, pack_vec, index, 4);
-        eth_ctrl =  pack_vec;
+        harray.copy_array (pkt, hdr, index, 4);
+        {>>{eth_ctrl}} =  hdr;
         hdr_len  = (num_mpls_lbl * 4) + 4;
     end // }
     else

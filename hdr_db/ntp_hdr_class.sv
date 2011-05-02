@@ -120,10 +120,10 @@ class ntp_hdr_class extends hdr_class; // {
                  input bit       last_pack = 1'b0); // {
     // pack class members
     if (auth_en)
-        pack_vec = {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest};
+        hdr = {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest}};
     else
-        pack_vec = {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+        hdr = {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         this.nxt_hdr.pack_hdr (pkt, index);
@@ -138,11 +138,11 @@ class ntp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = (auth_en) ? 68 : 48;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    harray.copy_array (pkt, hdr, index, hdr_len);
     if (auth_en == 1'b1)
-        {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest} = pack_vec;
+        {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest}} = hdr;
     else
-        {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp} = pack_vec;
+        {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {

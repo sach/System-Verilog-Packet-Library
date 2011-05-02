@@ -219,13 +219,13 @@ class ptp_hdr_class extends hdr_class; // {
     if (ptp_ver == 1'b1)
     begin // {
         if (v2_msg_type == 0)
-            pack_vec = {v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl, v2_synctimestamp};
+            hdr = {>>{v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl, v2_synctimestamp}};
         else
-            pack_vec = {v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl};
+            hdr = {>>{v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl}};
     end // }
     else
-        pack_vec = {v1_ptp_ver, v1_nw_ver, v1_subdomain, v1_msg_type, v1_src_com_tech, v1_src_uid, v1_src_port_id, v1_seq_id, v1_cntrl, v1_rsvd0, v1_flags, v1_rsvd1};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+        hdr = {>>{v1_ptp_ver, v1_nw_ver, v1_subdomain, v1_msg_type, v1_src_com_tech, v1_src_uid, v1_src_port_id, v1_seq_id, v1_cntrl, v1_rsvd0, v1_flags, v1_rsvd1}};
+    harray.pack_array_8 (pkt, hdr, index);
     // pack next hdr
     if (~last_pack)
         this.nxt_hdr.pack_hdr (pkt, index);
@@ -249,17 +249,17 @@ class ptp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = (ptp_ver) ? 34 : 40;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    harray.copy_array (pkt, hdr, index, hdr_len);
     if (ptp_ver == 1'b1)
-        {v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl} = pack_vec;
+        {>>{v2_trans_spec, v2_msg_type, v2_ptp_ver, v2_msg_len, v2_domain_no, v2_rsvd0, v2_flags, v2_crct_fld, v2_rsvd1, v2_src_port_id, v2_seq_id, v2_cntrl, v2_logmsgintrl}} = hdr;
     else
-        {v1_ptp_ver, v1_nw_ver, v1_subdomain, v1_msg_type, v1_src_com_tech, v1_src_uid, v1_src_port_id, v1_seq_id, v1_cntrl, v1_rsvd0, v1_flags, v1_rsvd1} = pack_vec;
+        {>>{v1_ptp_ver, v1_nw_ver, v1_subdomain, v1_msg_type, v1_src_com_tech, v1_src_uid, v1_src_port_id, v1_seq_id, v1_cntrl, v1_rsvd0, v1_flags, v1_rsvd1}} = hdr;
     if ((ptp_ver == 1'b1) && (v2_msg_type == 0))
     begin // {
         sync_msg_hdr     = 10;
         hdr_len         += sync_msg_hdr;
-        harray.unpack_array (pkt, pack_vec, index, sync_msg_hdr);
-        v2_synctimestamp = pack_vec;
+        harray.copy_array (pkt, hdr, index, sync_msg_hdr);
+        {>>{v2_synctimestamp}} = hdr;
     end // }
     else 
         sync_msg_hdr = 0;

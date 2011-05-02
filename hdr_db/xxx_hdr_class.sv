@@ -59,7 +59,7 @@ class xxx_hdr_class extends hdr_class; // {
 
   constraint legal_hdr_len 
   {
-    hdr_len == ?; <Length of this header?
+    hdr_len == ?; <Length of this header>
   }
 
   // other constarints .. here
@@ -79,8 +79,8 @@ class xxx_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
-    pack_vec = {};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    hdr = {>>{}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         nxt_hdr.pack_hdr (pkt, index);
@@ -95,8 +95,8 @@ class xxx_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = ?;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {

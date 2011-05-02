@@ -131,8 +131,8 @@ class ipv6_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
-    pack_vec = {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8); 
+    hdr = {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}};
+    harray.pack_array_8 (hdr, pkt, index);
     cal_pseudo_chksm ();
     // pack next hdr
     if (~last_pack)
@@ -148,8 +148,8 @@ class ipv6_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 40;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -214,11 +214,9 @@ class ipv6_hdr_class extends hdr_class; // {
 
   // calculate pseudo ipv6 header checksum. It may be required for UDP or TCP
   task cal_pseudo_chksm (); // {
-    pseudo_chksm_data = new[40];
     pseudo_chksm_idx  = 0;
     pseudo_chksm      = 0;
-    pack_vec          = {32'h0, {8'h0, protocol}, payload_len, ip6_sa, ip6_da}; 
-    harray.pack_bit(pseudo_chksm_data, pack_vec, pseudo_chksm_idx, 320);
+    pseudo_chksm_data = {>>{32'h0, 8'h0, protocol, payload_len, ip6_sa, ip6_da}}; 
     pseudo_chksm      = crc_chksm.chksm16(pseudo_chksm_data, pseudo_chksm_data.size(), 0, 0, 16'hFFFF);
   endtask : cal_pseudo_chksm // }
 

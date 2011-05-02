@@ -1,0 +1,17 @@
+// ---------------------------------------------------------------------- 
+//
+//  Copyright (c) 2009-2010 SiGeeks
+//  All Rights Reserved
+// ----------------------------------------------------------------------
+//  README file
+// ----------------------------------------------------------------------
+
+    This folder consists of two sub folders 
+
+  c-file - It consists of all the c files and all the c header (gcm and aes) 
+           files required for encrypting, decrypting and authenticating the 
+           input data byte streams.
+
+  sv-file - It consists of all the system verilog files to test the basic
+            encrypt/decrypt functionality of aes/gcm engine.
+          - Simulation should work with VCS. Any other simulator is not tested.

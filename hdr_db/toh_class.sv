@@ -119,8 +119,6 @@ class toh_class extends hdr_class; // {
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
-    bit [`VEC_SZ-1:0] tmp_vec;
-
     // pack all the hdrs to pkt
     pkt      = new[this.plen];
     index    = 0;
@@ -138,7 +136,7 @@ class toh_class extends hdr_class; // {
     if ((chop_plen_to != 0) & (chop_plen_to < (plen - crc_sz)))
     begin // {
         pkt = new[chop_plen_to] (pkt);
-        index = (chop_plen_to - crc_sz) * 8;
+        index = (chop_plen_to - crc_sz);
     end // }
 
     // calculate and append crc
@@ -149,8 +147,8 @@ class toh_class extends hdr_class; // {
         pkt[pkt.size() - 3] = 0;
         pkt[pkt.size() - 4] = 0;
         crc                 = crc_chksm.crc32(pkt, pkt.size()-4, 0, corrupt_crc);
-        tmp_vec             = crc;
-        this.nxt_hdr.harray.pack_bit(pkt, tmp_vec, index, 32);
+        hdr                 = {>>{crc}};
+        this.nxt_hdr.harray.pack_array_8 (hdr, pkt, index);
     end // }
   endtask : pack_hdr // }
 

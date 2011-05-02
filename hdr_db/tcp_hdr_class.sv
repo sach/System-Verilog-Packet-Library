@@ -168,10 +168,11 @@ class tcp_hdr_class extends hdr_class; // {
     if (cal_tcp_chksm && ~last_pack)
         checksum = 0;
     // pack class members
-    pack_vec = {src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr};
-    harray.pack_bit (pkt, pack_vec, index, 160);
     if (offset > 5)
-        harray.pack_array_8(options, pkt, index);
+        hdr = {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr, options}};
+    else
+        hdr = {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         nxt_hdr.pack_hdr (pkt, index);
@@ -189,8 +190,8 @@ class tcp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 20;
     start_off = index;
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr} = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr}} = hdr;
     hdr_len   = offset * 4;
     if (offset > 4'd5)
         harray.copy_array (pkt, options, index, (hdr_len - 20));
@@ -215,7 +216,7 @@ class tcp_hdr_class extends hdr_class; // {
                           int       tcp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
-    int            cpy_idx, i;
+    int            i;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
     // Calulate tcp_chksm, corrupt it if asked
@@ -236,8 +237,7 @@ class tcp_hdr_class extends hdr_class; // {
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
             end // }
         end // }
-        cpy_idx = tcp_idx/8;
-        harray.copy_array(pkt, chksm_data, cpy_idx, (pkt.size - cpy_idx));
+        harray.copy_array(pkt, chksm_data, tcp_idx, (pkt.size - tcp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

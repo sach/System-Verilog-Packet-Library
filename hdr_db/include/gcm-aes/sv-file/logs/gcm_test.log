@@ -1,0 +1,81 @@
+Command: vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder \
+-debug_all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c ../c-file/aeskey.c \
+../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp gcm_test.sv \
+-l logs/gcm_test.log
+                         Chronologic VCS (TM)
+         Version D-2009.12_Full64 -- Thu Apr 28 16:02:30 2011
+               Copyright (c) 1991-2009 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'gcm_test.sv'
+Parsing included file 'gcm_dpi.sv'.
+Back to file 'gcm_test.sv'.
+Top Level Modules:
+       gcm_test
+No TimeScale specified
+Starting vcs inline pass...
+2 modules and 0 UDP read.
+recompiling module gcm_test
+Both modules done.
+gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aescrypt.c \
+
+gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aeskey.c \
+
+gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aestab.c \
+
+g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gcm.cpp \
+
+g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gfvec.cpp \
+
+g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gcm_dpi.cpp \
+
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv   aescrypt.o aeskey.o aestab.o gcm.o gfvec.o gcm_dpi.o  5NrI_d.o \
+5NrIB_d.o Yrj5_1_d.o sd3I_1_d.o rmapats_mop.o rmapats.o       /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvirsim64.a \
+/opt/SYNOPSYS/VCS/2009.12/amd64/lib/liberrorinf.so /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libsnpsmalloc.so \
+/opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvcsnew.so     /opt/SYNOPSYS/VCS/2009.12/amd64/lib/vcs_save_restore_new.o \
+-ldl -lm  -lc -lpthread -ldl    
+../simv up to date
+Command: ./simv +vcs+lic+wait +v2k +nospecify +evalorder -a logs/gcm_test.log -oldui
+Chronologic VCS simulator copyright 1991-2009
+Contains Synopsys proprietary information.
+Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  Apr 28 16:02 2011
+
+gcm_test:        ~~~~~~~~~~~~~ Pkt before Encryption ~~~~~~~~~~~~~~
+gcm_test:        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
+gcm_test:        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
+gcm_test:    0 : 00 01 02 03 04 05 06 07 | 08 09 0a 0b 0c 0d 0e 0f 
+gcm_test:   16 : 10 11 12 13 14 15 16 17 | 18 19 1a 1b 1c 1d 1e 1f 
+gcm_test:   32 : 20 21 22 23 24 25 26 27 | 28 29 2a 2b 2c 2d 2e 2f 
+gcm_test:   48 : 30 31 32 33 34 35 36 37 | 38 39 3a 3b 3c 3d 3e 3f 
+
+
+gcm_test:        ~~~~~~~~~~~~~ Pkt after Encryption ~~~~~~~~~~~~~~
+gcm_test:        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
+gcm_test:        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
+gcm_test:    0 : 00 01 02 03 04 05 06 07 | 08 09 0a 0b 0c 0d 0e 0f 
+gcm_test:   16 : 10 11 12 13 f0 58 8d 9a | ba 4c db 6c 75 54 c0 23 
+gcm_test:   32 : 9b 93 a3 e3 06 97 f7 64 | 70 e3 40 d9 be 5b fd f6 
+gcm_test:   48 : b7 dd b1 85 dd 6f d5 30 | ce e2 55 34 08 d7 ad aa 
+gcm_test:   64 : 39 2d 88 46 22 a7 97 de | ec fd 26 0d 18 16 82 71 
+
+
+gcm_test:        ~~~~~~~~~~~~~ Pkt after decryption ~~~~~~~~~~~~~~
+gcm_test:        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
+gcm_test:        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
+gcm_test:    0 : 00 01 02 03 04 05 06 07 | 08 09 0a 0b 0c 0d 0e 0f 
+gcm_test:   16 : 10 11 12 13 14 15 16 17 | 18 19 1a 1b 1c 1d 1e 1f 
+gcm_test:   32 : 20 21 22 23 24 25 26 27 | 28 29 2a 2b 2c 2d 2e 2f 
+gcm_test:   48 : 30 31 32 33 34 35 36 37 | 38 39 3a 3b 3c 3d 3e 3f 
+gcm_test:   64 : 39 2d 88 46 22 a7 97 de | ec fd 26 0d 18 16 82 71 
+
+
+0 : ~~~~~~~  Test PASS :)- ~~~~~~~
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 0
+CPU Time:      0.020 seconds;       Data structure size:   0.0Mb
+Thu Apr 28 16:02:32 2011

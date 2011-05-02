@@ -22,7 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
          int                    inst_no = 0;         // hdr instance number
          int                    cfg_id  = 0;         // cfg_id number
          string                 hdr_name;
-         bit [`VEC_SZ-1:0]      pack_vec;            // packing vector
+         bit [7:0]              hdr [];              // each hdr data in array
   rand   hdr_class              nxt_hdr;             // object handle to nxt hdr in list
   rand   hdr_class              prv_hdr;             // object handle to prv hdr in list
   rand   hdr_class              all_hdr [$];         // all the hdr of list;
@@ -69,7 +69,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.inst_no             = cpy_cls.inst_no;\
     this.cfg_id              = cpy_cls.cfg_id;\
     this.hdr_name            = cpy_cls.hdr_name;\
-    this.pack_vec            = cpy_cls.pack_vec;\
+    this.hdr                 = cpy_cls.hdr;\
     this.nxt_hdr             = cpy_cls.nxt_hdr;\
     this.prv_hdr             = cpy_cls.prv_hdr;\
     this.all_hdr             = cpy_cls.all_hdr;\
@@ -81,14 +81,19 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.harray.data_pattern = cpy_cls.harray.data_pattern;\
     this.harray.start_byte   = cpy_cls.harray.start_byte;\
     `HDR_L2_INCLUDE_CPY;\
+    `HDR_MACSEC_INCLUDE_CPY;\
     `HDR_PTP_INCLUDE_CPY;\
     `HDR_MPLS_INCLUDE_CPY;\
     `HDR_IP_INCLUDE_CPY;\
+    `HDR_IPSEC_INCLUDE_CPY;\
     `HDR_UDP_INCLUDE_CPY;\
     `HDR_XXX_INCLUDE_CPY
 
 // ~~~~~~~~~~ L2/Ether Type defines/tasks/macros ~~~~~~~~~~
 `include "hdr_l2_include.svh"
+
+// ~~~~~~~~~~ MACSEC defines/tasks/macros ~~~~~~~~~~
+`include "hdr_macsec_include.svh"
 
 // ~~~~~~~~~~ PTP defines/tasks/macros ~~~~~~~~~~
 `include "hdr_ptp_include.svh"
@@ -98,6 +103,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ~~~~~~~~~~ L3/Nxt hdr defines/tasks/macros ~~~~~~~~~~
 `include "hdr_ip_include.svh"
+
+// ~~~~~~~~~~ IPSEC defines/tasks/macros ~~~~~~~~~~
+`include "hdr_ipsec_include.svh"
 
 // ~~~~~~~~~~ UDP defines/tasks/macros ~~~~~~~~~~
 `include "hdr_udp_include.svh"

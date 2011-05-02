@@ -16,6 +16,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 
 // ~~~~~~~~~~ Ether Type defines ~~~~~~~~~~
+`define MACSEC_HDR_ETYPE    16'h88E5
 `define SNAP_HDR_ETYPE      16'h8870
 `define DOT1Q_HDR_ETYPE     16'h8100
 `define ALT1Q_HDR_ETYPE     16'h8200
@@ -31,6 +32,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define LLC_HDR_MAX_LEN     16'd1500
 
 // ~~~~~~~~~~ Ether Type fields ~~~~~~~~~~
+  bit [15:0]  macsec_etype  = `MACSEC_HDR_ETYPE;
   bit [15:0]  snap_etype    = `SNAP_HDR_ETYPE;
   bit [15:0]  dot1q_etype   = `DOT1Q_HDR_ETYPE;
   bit [15:0]  alt1q_etype   = `ALT1Q_HDR_ETYPE;
@@ -47,6 +49,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ~~~~~~~~ define to copy Ether Type fields  ~~~~~~~~~~
 `define HDR_L2_INCLUDE_CPY\
+    this.macsec_etype  = cpy_cls.macsec_etype;\
     this.snap_etype    = cpy_cls.snap_etype;\
     this.dot1q_etype   = cpy_cls.dot1q_etype;\
     this.alt1q_etype   = cpy_cls.alt1q_etype;\
@@ -66,6 +69,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         (nxt_hdr.hid == SNAP_HID)   -> (etype == snap_etype) | (etype == this.total_hdr_len);\
         (nxt_hdr.hid == SNAP_HID) & (etype != snap_etype) -> (this.total_hdr_len inside { [16'd1 : llc_max_len] });\
         (nxt_hdr.hid != SNAP_HID)   -> (etype >  llc_max_len) ;\
+        (nxt_hdr.hid == MACSEC_HID) -> (etype == macsec_etype);\
         (nxt_hdr.hid == DOT1Q_HID)  -> (etype == dot1q_etype) ;\
         (nxt_hdr.hid == ALT1Q_HID)  -> (etype == alt1q_etype) ;\
         (nxt_hdr.hid == STAG_HID)   -> (etype == stag_etype)  ;\
@@ -97,6 +101,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      else
      begin // {
          case (etype) // {
+             macsec_etype  : get_etype_name = "MACSEC";
              dot1q_etype   : get_etype_name = "DOT1Q";
              alt1q_etype   : get_etype_name = "ALT1Q";
              stag_etype    : get_etype_name = "STAG";
@@ -118,6 +123,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   // function to get etype based on hid
   function bit [15:0] get_etype(int hid); // {
      case (hid) // {
+        MACSEC_HID  : get_etype = macsec_etype;
         SNAP_HID    : get_etype = snap_etype;
         DOT1Q_HID   : get_etype = dot1q_etype;
         ALT1Q_HID   : get_etype = alt1q_etype;
@@ -141,6 +147,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      else
      begin // {
          case (etype) // {
+             macsec_etype  : get_hid_from_etype = MACSEC_HID;
              snap_etype    : get_hid_from_etype = SNAP_HID;
              dot1q_etype   : get_hid_from_etype = DOT1Q_HID;
              alt1q_etype   : get_hid_from_etype = ALT1Q_HID;

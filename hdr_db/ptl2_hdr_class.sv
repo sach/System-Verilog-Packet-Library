@@ -92,9 +92,8 @@ class ptl2_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
-    harray.pack_array_8 (pt_data, pkt, index);
-    pack_vec = etype;
-    harray.pack_bit (pkt, pack_vec, index, 16); 
+    hdr = {>>{pt_data, etype}};
+    harray.pack_array_8 (hdr, pkt, index);
     // pack next hdr
     if (~last_pack)
         this.nxt_hdr.pack_hdr (pkt, index);
@@ -109,9 +108,8 @@ class ptl2_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = pt_len;
     start_off = index;
-    harray.copy_array (pkt, pt_data, index, hdr_len-2);
-    harray.unpack_array (pkt, pack_vec, index, 2);
-    etype = pack_vec;
+    harray.copy_array (pkt, hdr, index, hdr_len);
+    {>>{pt_data, etype}} = hdr;
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {

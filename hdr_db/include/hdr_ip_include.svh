@@ -18,6 +18,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Nxt_hdr/protocol defines ~~~~~~~~~~
 `define IPV4_HDR_PROT       8'h04
 `define IPV6_HDR_PROT       8'h29
+`define IPSEC_HDR_PROT      8'h50
 `define TCP_HDR_PROT        8'h06
 `define UDP_HDR_PROT        8'h11
 `define GRE_HDR_PROT        8'h2F
@@ -26,6 +27,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Nxt_hdr/protocol fields ~~~~~~~~~~
   bit [7:0]   ipv4_prot     = `IPV4_HDR_PROT;
   bit [7:0]   ipv6_prot     = `IPV6_HDR_PROT;
+  bit [7:0]   ipsec_prot    = `IPSEC_HDR_PROT;
   bit [7:0]   tcp_prot      = `TCP_HDR_PROT;
   bit [7:0]   udp_prot      = `UDP_HDR_PROT;
   bit [7:0]   gre_prot      = `GRE_HDR_PROT;
@@ -35,6 +37,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define HDR_IP_INCLUDE_CPY\
     this.ipv4_prot     = cpy_cls.ipv4_prot;\
     this.ipv6_prot     = cpy_cls.ipv6_prot;\
+    this.ipsec_prot    = cpy_cls.ipsec_prot;\
     this.tcp_prot      = cpy_cls.tcp_prot;\
     this.udp_prot      = cpy_cls.udp_prot;\
     this.gre_prot      = cpy_cls.gre_prot;\
@@ -44,6 +47,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define LEGAL_PROT_TYPE_CONSTRAINTS \
         (nxt_hdr.hid == IPV4_HID)  ->  (protocol == ipv4_prot)  ;\
         (nxt_hdr.hid == IPV6_HID)  ->  (protocol == ipv6_prot)  ;\
+        (nxt_hdr.hid == IPSEC_HID) ->  (protocol == ipsec_prot) ;\
         (nxt_hdr.hid == TCP_HID)   ->  (protocol == tcp_prot)   ;\
         (nxt_hdr.hid == UDP_HID)   ->  (protocol == udp_prot)   ;\
         (nxt_hdr.hid == GRE_HID)   ->  (protocol == gre_prot)   ;\
@@ -61,6 +65,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      case (protocol) // {
          ipv4_prot     : get_protocol_name = "IPV4";
          ipv6_prot     : get_protocol_name = "IPV6";
+         ipsec_prot    : get_protocol_name = "IPSEC";
          tcp_prot      : get_protocol_name = "TCP";
          udp_prot      : get_protocol_name = "UDP";
          gre_prot      : get_protocol_name = "GRE";
@@ -74,6 +79,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      case (hid) // {
         IPV4_HID    : get_prot = ipv4_prot;
         IPV6_HID    : get_prot = ipv6_prot;
+        IPSEC_HID   : get_prot = ipsec_prot;
         TCP_HID     : get_prot = tcp_prot;
         UDP_HID     : get_prot = udp_prot;
         GRE_HID     : get_prot = gre_prot;
@@ -87,6 +93,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      case (protocol) // {
          ipv4_prot     : get_hid_from_protocol = IPV4_HID;
          ipv6_prot     : get_hid_from_protocol = IPV6_HID;
+         ipsec_prot    : get_hid_from_protocol = IPSEC_HID;
          tcp_prot      : get_hid_from_protocol = TCP_HID;
          udp_prot      : get_hid_from_protocol = UDP_HID;
          gre_prot      : get_hid_from_protocol = GRE_HID;
