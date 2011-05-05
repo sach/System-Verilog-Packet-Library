@@ -1,7 +1,7 @@
 Command: vcs -sverilog -full64 -f pktlib.vf -R test/pktlib_test.sv +define+NO_PROCESS_AE \
 -l log/pktlib_test.log
                          Chronologic VCS (TM)
-         Version D-2009.12_Full64 -- Mon May  2 16:18:27 2011
+         Version D-2009.12_Full64 -- Wed May  4 18:00:06 2011
                Copyright (c) 1991-2009 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -101,7 +101,7 @@ SIM_l.o        /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvirsim64.a /opt/SYNOPSYS/V
 Command: ./simv +define+NO_PROCESS_AE -a log/pktlib_test.log -oldui
 Chronologic VCS simulator copyright 1991-2009
 Contains Synopsys proprietary information.
-Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:18 2011
+Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  4 18:00 2011
 
 0 : INFO    : TEST      : Pack Pkt 1
     cfg_hdr : {eth[0], dot1q[0], dot1q[1], data[0]}
@@ -241,7 +241,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'he968 (GOOD)
+     gre[0] :         checksum : 16'h1511 (GOOD)
      gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
@@ -273,7 +273,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h81d6055e (GOOD)
+        toh :              crc : 32'h70cbce93 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -281,13 +281,13 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
     pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
     pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
-    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 15 11 | 18 a6 00 00 2f a7 60 5a 
     pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
     pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
     pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
-    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b d4 57 | 22 21 db f7 fe ad 50 a0 
     pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
-    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 70 cb ce 93 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 173)
 
@@ -328,7 +328,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h1511 (GOOD)
      gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
@@ -351,7 +351,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :             rsvd : 4'h0 
      tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
      tcp[0] :           window : 16'hd4b 
-     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :         checksum : 16'hd457 (GOOD)
      tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : (Total Len  = 12)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
@@ -360,7 +360,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h81d6055e (GOOD)
+        toh :              crc : 32'h70cbce93 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,13 +368,13 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
     pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
     pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
-    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 15 11 | 18 a6 00 00 2f a7 60 5a 
     pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
     pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
     pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
-    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b d4 57 | 22 21 db f7 fe ad 50 a0 
     pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
-    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 70 cb ce 93 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 173)
 
@@ -415,7 +415,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h1511 (GOOD)
      gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
@@ -438,7 +438,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :             rsvd : 4'h0 
      tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
      tcp[0] :           window : 16'hd4b 
-     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :         checksum : 16'hd457 (GOOD)
      tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : (Total Len  = 12)
      tcp[0] :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
@@ -447,7 +447,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h81d6055e (GOOD)
+        toh :              crc : 32'h70cbce93 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -455,13 +455,13 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 00 9b 99 1d 40 00 d1 2f | 2f c3 8e 67 c0 5c 25 66 
     pkt_lib :   32 : e4 00 f9 7d 83 c1 cb 70 | 65 3e 39 9d d0 50 8e 6e 
     pkt_lib :   48 : 1a f2 f9 7f 96 84 a2 ab | e1 9f e4 2c ba 8e 43 2a 
-    pkt_lib :   64 : 28 4a 40 00 88 47 00 00 | 18 a6 00 00 2f a7 60 5a 
+    pkt_lib :   64 : 28 4a 40 00 88 47 15 11 | 18 a6 00 00 2f a7 60 5a 
     pkt_lib :   80 : 73 a5 00 33 06 60 f0 b5 | 84 09 86 65 a2 ec 7b 89 
     pkt_lib :   96 : 7b cf 17 76 ef 2f 9b df | 2d e4 3b e5 00 11 ac cd 
     pkt_lib :  112 : 28 d3 aa 35 56 1f 48 bb | c6 43 1c 42 d4 9b b4 12 
-    pkt_lib :  128 : 87 78 80 6a 0d 4b 00 00 | 22 21 db f7 fe ad 50 a0 
+    pkt_lib :  128 : 87 78 80 6a 0d 4b d4 57 | 22 21 db f7 fe ad 50 a0 
     pkt_lib :  144 : 0f 6e 24 8f e1 d6 85 a7 | e1 28 52 de 9b cb 05 39 
-    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 81 d6 05 5e 
+    pkt_lib :  160 : e7 b3 40 8e 70 1e 0d 41 | 87 70 cb ce 93 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 173)
 
@@ -497,7 +497,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h8847 (MPLS-UNICAST)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h1511 (GOOD)
      gre[0] :           offset : 16'h18a6 
     mpls[0] :     num_mpls_lbl : 1 
     mpls[0] :         label[0] : 20'h2 (IPV6 Explicit Null)
@@ -520,12 +520,12 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :             rsvd : 4'h0 
      tcp[0] :            flags : 8'h6a (=> CWR 0 ECE 1 URG 1 ACK 0 PSH 1 RST 0 SYN 1 FIN 0)
      tcp[0] :           window : 16'hd4b 
-     tcp[0] :         checksum : 16'h0 (GOOD)
+     tcp[0] :         checksum : 16'hd457 (GOOD)
      tcp[0] :       urgent_ptr : 16'h2221 
      tcp[0] :          options : Matched :-) Length Rcv => 12 Exp => 12
     data[0] :         data_len : 19 (data => 85 a7 e1 28 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h81d6055e (GOOD)
+        toh :              crc : 32'h70cbce93 (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 173 Exp => 173
 
 0 : INFO    : TEST      : Pack Pkt 3
@@ -569,7 +569,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :         checksum : 16'h4857 (GOOD)
     data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9365c385 (GOOD)
+        toh :              crc : 32'hc9646c48 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -577,8 +577,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
     pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
     pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
-    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
-    pkt_lib :   80 : c3 85 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 48 57 c9 64 
+    pkt_lib :   80 : 6c 48 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -620,10 +620,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h9639 
      udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
      udp[0] :           length : 16'h8 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h4857 (GOOD)
     data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9365c385 (GOOD)
+        toh :              crc : 32'hc9646c48 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -631,8 +631,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
     pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
     pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
-    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
-    pkt_lib :   80 : c3 85 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 48 57 c9 64 
+    pkt_lib :   80 : 6c 48 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -674,10 +674,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h9639 
      udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
      udp[0] :           length : 16'h8 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h4857 (GOOD)
     data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9365c385 (GOOD)
+        toh :              crc : 32'hc9646c48 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -685,8 +685,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 81 00 96 ec 08 00 4c 2d | 00 38 96 bb c0 00 9b 11 
     pkt_lib :   32 : 27 d0 03 30 0f 67 23 ea | 1c 71 c8 bb 46 37 b4 91 
     pkt_lib :   48 : 4f 28 6b 07 f6 dd 2b 73 | d9 b6 fd a7 7f cd 63 53 
-    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 00 00 93 65 
-    pkt_lib :   80 : c3 85 
+    pkt_lib :   64 : d3 51 d0 56 48 dc 96 39 | ce 5b 00 08 48 57 c9 64 
+    pkt_lib :   80 : 6c 48 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -723,10 +723,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h9639 
      udp[0] :          dst_prt : 16'hce5b (UNKNOWN)
      udp[0] :           length : 16'h8 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h4857 (GOOD)
     data[0] :         data_len : 0 (data => EMPTY)
         toh :          pad_len : 0 
-        toh :              crc : 32'h9365c385 (GOOD)
+        toh :              crc : 32'hc9646c48 (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 82 Exp => 82
 
 0 : INFO    : TEST      : Pack Pkt 4
@@ -762,16 +762,16 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :           offset : 16'h5ff7 
     data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hdd75aeb5 (GOOD)
+        toh :              crc : 32'h98f0a245 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
     pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
     pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
-    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 8e c3 
     pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
-    pkt_lib :   80 : bf dd 75 ae b5 
+    pkt_lib :   80 : bf 98 f0 a2 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 85)
 
@@ -804,20 +804,20 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h61a (UNKNOWN)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h8ec3 (GOOD)
      gre[0] :           offset : 16'h5ff7 
     data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hdd75aeb5 (GOOD)
+        toh :              crc : 32'h98f0a245 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
     pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
     pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
-    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 8e c3 
     pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
-    pkt_lib :   80 : bf dd 75 ae b5 
+    pkt_lib :   80 : bf 98 f0 a2 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 85)
 
@@ -850,20 +850,20 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h61a (UNKNOWN)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h8ec3 (GOOD)
      gre[0] :           offset : 16'h5ff7 
     data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hdd75aeb5 (GOOD)
+        toh :              crc : 32'h98f0a245 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : db 01 32 bc 77 58 52 c0 | a9 a0 78 f7 81 00 69 a4 
     pkt_lib :   16 : 86 dd 61 0e ae 96 00 17 | 2f 93 c1 c8 2e aa e1 46 
     pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | 34 bd 9a 89 4f f7 81 c3 
-    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 00 00 
+    pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | 0e 23 80 00 06 1a 8e c3 
     pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | a9 c9 e9 d7 b9 af 92 82 
-    pkt_lib :   80 : bf dd 75 ae b5 
+    pkt_lib :   80 : bf 98 f0 a2 45 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 85)
 
@@ -896,11 +896,11 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h61a (UNKNOWN)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h8ec3 (GOOD)
      gre[0] :           offset : 16'h5ff7 
     data[0] :         data_len : 15 (data => e7 a3 ba 48 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hdd75aeb5 (GOOD)
+        toh :              crc : 32'h98f0a245 (GOOD)
 0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 85 Exp => 85
     pkt_lib :        ~~~~~~~~~ RCV ~~~~~~~~~~|~~~~~~~~~ EXP ~~~~~~~~~~
     pkt_lib :        0   1  2  3  4  5  6  7 |  0  1  2  3  4  5  6  7
@@ -912,10 +912,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : fb 7e 5c 6f e6 c0 33 a6 | .. .. .. .. .. .. .. .. 
     pkt_lib :   40 : 34 bd 9a 89 4f f7 81 c3 | .. .. .. .. .. .. .. .. 
     pkt_lib :   48 : 10 c1 7b e1 ab da ed 01 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   56 : 0e 23 80 00 06 1a 00 00 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   56 : 0e 23 80 00 06 1a 8e c3 | .. .. .. .. .. .. .. .. 
     pkt_lib :   64 : 5f f7 e7 a3 ba 48 4a 69 | .. .. .. .. .. .. .. .. 
     pkt_lib :   72 : a9 c9 e9 d7 b9 af 92 82 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   80 : bf dd 75 ae b5          | .. .. .. .. .. 
+    pkt_lib :   80 : bf 98 f0 a2 45          | .. .. .. .. .. 
 
 0 : INFO    : TEST      : Pack Pkt 5
     cfg_hdr : {eth[0], itag[0], eth[1], ipv4[0], tcp[0], data[0]}
@@ -971,7 +971,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      tcp[0] :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     data[0] :         data_len : 16 (data => 99 b5 14 a1 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'ha450f347 (GOOD)
+        toh :              crc : 32'hfef45862 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -981,10 +981,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
     pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
     pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
-    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 96 | 08 75 1c 38 e2 23 cd 76 
     pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
     pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
-    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 fe | f4 58 62 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 156)
 
@@ -1015,7 +1015,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     snap[1] :            etype : 16'hf297 (UNKNOWN)
     data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h50f34700 (GOOD)
+        toh :              crc : 32'hf4586200 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1025,10 +1025,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
     pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
     pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
-    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 96 | 08 75 1c 38 e2 23 cd 76 
     pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
     pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
-    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 fe | f4 58 62 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 156)
 
@@ -1059,7 +1059,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     snap[1] :            etype : 16'hf297 (UNKNOWN)
     data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h50f34700 (GOOD)
+        toh :              crc : 32'hf4586200 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1069,10 +1069,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   48 : 96 26 d2 a7 0b 10 e6 ce | 29 97 6e 0c 14 a5 b4 38 
     pkt_lib :   64 : 06 2c 80 1c 03 50 ac a1 | 33 45 ca 78 74 d2 e7 b4 
     pkt_lib :   80 : 7a 2e 9e b0 be 7e 01 ad | c3 61 4c 71 70 e9 6c e4 
-    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 00 | 00 75 1c 38 e2 23 cd 76 
+    pkt_lib :   96 : 8d f8 8d c4 77 9b 1c 96 | 08 75 1c 38 e2 23 cd 76 
     pkt_lib :  112 : 88 4d 95 10 d7 fb 0d ba | d6 f3 80 b9 52 5d 94 d5 
     pkt_lib :  128 : fe ad 51 c0 52 dd 52 99 | b5 14 a1 63 63 99 7c 35 
-    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 a4 | 50 f3 47 00 
+    pkt_lib :  144 : 22 a6 33 d8 fc 97 f2 fe | f4 58 62 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 156)
 
@@ -1103,7 +1103,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     snap[1] :            etype : 16'hf297 (UNKNOWN)
     data[0] :         data_len : 104 (data => 96 26 d2 a7 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h50f34700 (GOOD)
+        toh :              crc : 32'hf4586200 (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 156 Exp => 156
 
 0 : INFO    : TEST      : Pack Pkt 6
@@ -1152,7 +1152,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :         checksum : 16'h396c (GOOD)
     data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h30fc84dc (GOOD)
+        toh :              crc : 32'h5af4ca0f (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1161,7 +1161,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
     pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
     pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
-    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
+    pkt_lib :   80 : 39 6c 14 63 5b 10 cd c2 | 4d 16 26 26 5a f4 ca 0f 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 96)
 
@@ -1208,10 +1208,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'heb6b 
      udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
      udp[0] :           length : 16'h12 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h396c (GOOD)
     data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h30fc84dc (GOOD)
+        toh :              crc : 32'h5af4ca0f (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1220,7 +1220,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
     pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
     pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
-    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
+    pkt_lib :   80 : 39 6c 14 63 5b 10 cd c2 | 4d 16 26 26 5a f4 ca 0f 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 96)
 
@@ -1267,10 +1267,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'heb6b 
      udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
      udp[0] :           length : 16'h12 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h396c (GOOD)
     data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h30fc84dc (GOOD)
+        toh :              crc : 32'h5af4ca0f (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1279,7 +1279,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : 19 45 66 11 17 43 30 47 | da be 89 11 a1 e0 54 71 
     pkt_lib :   48 : dc 29 4a 14 9d ed ac 8a | fc 66 2f 37 6b b8 bb e0 
     pkt_lib :   64 : b6 00 75 ca c6 62 fb df | f7 58 eb 6b f4 87 00 12 
-    pkt_lib :   80 : 00 00 14 63 5b 10 cd c2 | 4d 16 26 26 30 fc 84 dc 
+    pkt_lib :   80 : 39 6c 14 63 5b 10 cd c2 | 4d 16 26 26 5a f4 ca 0f 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 96)
 
@@ -1321,10 +1321,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'heb6b 
      udp[0] :          dst_prt : 16'hf487 (UNKNOWN)
      udp[0] :           length : 16'h12 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'h396c (GOOD)
     data[0] :         data_len : 10 (data => 14 63 5b 10 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h30fc84dc (GOOD)
+        toh :              crc : 32'h5af4ca0f (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 96 Exp => 96
 
 0 : INFO    : TEST      : Pack Pkt 7
@@ -1361,7 +1361,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :         checksum : 16'ha81f (GOOD)
     data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hccbba2c9 (GOOD)
+        toh :              crc : 32'h1c285dde (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1369,8 +1369,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
     pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
     pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
-    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
-    pkt_lib :   80 : a2 c9 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | a8 1f e8 39 d6 90 1c 28 
+    pkt_lib :   80 : 5d de 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -1405,10 +1405,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h8cb6 
      udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
      udp[0] :           length : 16'hc 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'ha81f (GOOD)
     data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hccbba2c9 (GOOD)
+        toh :              crc : 32'h1c285dde (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1416,8 +1416,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
     pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
     pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
-    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
-    pkt_lib :   80 : a2 c9 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | a8 1f e8 39 d6 90 1c 28 
+    pkt_lib :   80 : 5d de 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -1452,10 +1452,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h8cb6 
      udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
      udp[0] :           length : 16'hc 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'ha81f (GOOD)
     data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hccbba2c9 (GOOD)
+        toh :              crc : 32'h1c285dde (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1463,8 +1463,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   16 : 88 48 f8 bf 94 1e 00 00 | 21 9a 60 bf da e4 00 0c 
     pkt_lib :   32 : 11 e2 85 96 44 a0 c9 02 | 36 61 84 38 e1 74 d0 f8 
     pkt_lib :   48 : 27 65 eb af 93 fa 61 f6 | 01 95 4b 90 ea 56 08 02 
-    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | 00 00 e8 39 d6 90 cc bb 
-    pkt_lib :   80 : a2 c9 
+    pkt_lib :   64 : 9f af 8c b6 23 c1 00 0c | a8 1f e8 39 d6 90 1c 28 
+    pkt_lib :   80 : 5d de 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 82)
 
@@ -1499,10 +1499,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h8cb6 
      udp[0] :          dst_prt : 16'h23c1 (UNKNOWN)
      udp[0] :           length : 16'hc 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'ha81f (GOOD)
     data[0] :         data_len : 4 (data => e8 39 d6 90 )
         toh :          pad_len : 0 
-        toh :              crc : 32'hccbba2c9 (GOOD)
+        toh :              crc : 32'h1c285dde (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 82 Exp => 82
 
 0 : INFO    : TEST      : Pack Pkt 8
@@ -1673,17 +1673,17 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      eth[2] :            etype : 16'hf2bc (UNKNOWN)
     data[0] :         data_len : 16 (data => 5c b7 b6 4d ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'had223674 (GOOD)
+        toh :              crc : 32'hf46d1247 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
     pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
-    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 78 8d 
     pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
     pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
     pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
-    pkt_lib :   96 : f3 ad 22 36 74 00 
+    pkt_lib :   96 : f3 f4 6d 12 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 102)
 
@@ -1723,7 +1723,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h788d (GOOD)
      gre[0] :           offset : 16'h618d 
      eth[1] :               da : 48'hcd458a1e722c 
      eth[1] :               sa : 48'had720be0bd6b 
@@ -1738,17 +1738,17 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      eth[2] :            etype : 16'hbc5c (UNKNOWN)
     data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h22367400 (GOOD)
+        toh :              crc : 32'h6d124700 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
     pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
-    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 78 8d 
     pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
     pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
     pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
-    pkt_lib :   96 : f3 ad 22 36 74 00 
+    pkt_lib :   96 : f3 f4 6d 12 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 102)
 
@@ -1788,7 +1788,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h788d (GOOD)
      gre[0] :           offset : 16'h618d 
      eth[1] :               da : 48'hcd458a1e722c 
      eth[1] :               sa : 48'had720be0bd6b 
@@ -1803,17 +1803,17 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      eth[2] :            etype : 16'hbc5c (UNKNOWN)
     data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h22367400 (GOOD)
+        toh :              crc : 32'h6d124700 (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib :    0 : ce 18 7b 85 d3 0c ce 29 | 6e 15 2f 55 08 00 47 99 
     pkt_lib :   16 : 00 54 20 d6 c0 00 12 2f | e2 54 63 f3 54 6c 6e 82 
-    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 00 00 
+    pkt_lib :   32 : 7d fa 50 1f fa a9 43 7e | af 93 80 00 65 58 78 8d 
     pkt_lib :   48 : 61 8d cd 45 8a 1e 72 2c | ad 72 0b e0 bd 6b 88 e7 
     pkt_lib :   64 : f7 18 20 8d 81 e5 b6 1f | 0b 36 e0 be 0b bc a0 f2 
     pkt_lib :   80 : bc 5c b7 b6 4d 7e 02 cb | 24 0f b3 54 7d 4b 82 f9 
-    pkt_lib :   96 : f3 ad 22 36 74 00 
+    pkt_lib :   96 : f3 f4 6d 12 47 00 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 102)
 
@@ -1849,7 +1849,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      gre[0] :            flags : 4'h0 
      gre[0] :          version : 3'h0 
      gre[0] :         protocol : 16'h6558 (ETH)
-     gre[0] :         checksum : 16'h0 (GOOD)
+     gre[0] :         checksum : 16'h788d (GOOD)
      gre[0] :           offset : 16'h618d 
      eth[1] :               da : 48'hcd458a1e722c 
      eth[1] :               sa : 48'had720be0bd6b 
@@ -1864,7 +1864,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      eth[2] :            etype : 16'hbc5c (UNKNOWN)
     data[0] :         data_len : 16 (data => b7 b6 4d 7e ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'h22367400 (GOOD)
+        toh :              crc : 32'h6d124700 (GOOD)
 0 : INFO :     pkt_lib : Pkt Compares :-) Length Rcv => 102 Exp => 102
 
 0 : INFO    : TEST      : Pack Pkt 10
@@ -1914,7 +1914,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :         checksum : 16'he417 (GOOD)
     data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hb2f462ef (GOOD)
+        toh :              crc : 32'h6befcbd (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1923,8 +1923,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
     pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
     pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
-    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
-    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | e4 17 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd 06 be fc bd 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 103)
 
@@ -1972,10 +1972,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h8227 
      udp[0] :          dst_prt : 16'hbad2 (UNKNOWN)
      udp[0] :           length : 16'h11 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'he417 (GOOD)
     data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hb2f462ef (GOOD)
+        toh :              crc : 32'h6befcbd (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1984,8 +1984,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
     pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
     pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
-    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
-    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | e4 17 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd 06 be fc bd 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 103)
 
@@ -2033,10 +2033,10 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      udp[0] :          src_prt : 16'h8227 
      udp[0] :          dst_prt : 16'hbad2 (UNKNOWN)
      udp[0] :           length : 16'h11 
-     udp[0] :         checksum : 16'h0 (GOOD)
+     udp[0] :         checksum : 16'he417 (GOOD)
     data[0] :         data_len : 9 (data => 78 21 c1 55 ..)
         toh :          pad_len : 0 
-        toh :              crc : 32'hb2f462ef (GOOD)
+        toh :              crc : 32'h6befcbd (GOOD)
 
     pkt_lib :        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2045,8 +2045,8 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   32 : c0 00 68 11 7b 8a eb 24 | ce 3a 2f fa 63 54 a8 a9 
     pkt_lib :   48 : 3e 6b 28 7e 9c 28 49 09 | 76 fb bd f0 cf 83 96 fc 
     pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | 30 86 e7 35 4a ca c2 e5 
-    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | 00 00 78 21 c1 55 ea 22 
-    pkt_lib :   96 : 91 71 dd b2 f4 62 ef 
+    pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | e4 17 78 21 c1 55 ea 22 
+    pkt_lib :   96 : 91 71 dd 06 be fc bd 
     pkt_lib :        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
     pkt_lib : (Total Len  = 103)
 
@@ -2058,7 +2058,7 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
      eth[0] :               sa : 48'hd78486e97027 
      eth[0] :            etype : 16'h8100 != 16'h8181 (ERROR) (DOT1Q)
         toh :          pad_len : 0 
-        toh :              crc : 32'hb2f462ef (GOOD)
+        toh :              crc : 32'h6befcbd (GOOD)
 0 : ERROR :     pkt_lib : Pkt Miscompares :-( Length Rcv => 103 Exp => 103
     pkt_lib :        ~~~~~~~~~ RCV ~~~~~~~~~~|~~~~~~~~~ EXP ~~~~~~~~~~
     pkt_lib :        0   1  2  3  4  5  6  7 |  0  1  2  3  4  5  6  7
@@ -2074,12 +2074,12 @@ Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  May  2 16:
     pkt_lib :   64 : 6d 4b bb 04 02 1e 16 88 | .. .. .. .. .. .. .. .. 
     pkt_lib :   72 : 30 86 e7 35 4a ca c2 e5 | .. .. .. .. .. .. .. .. 
     pkt_lib :   80 : 0a f6 82 27 ba d2 00 11 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   88 : 00 00 78 21 c1 55 ea 22 | .. .. .. .. .. .. .. .. 
-    pkt_lib :   96 : 91 71 dd b2 f4 62 ef    | .. .. .. .. .. .. .. 
+    pkt_lib :   88 : e4 17 78 21 c1 55 ea 22 | .. .. .. .. .. .. .. .. 
+    pkt_lib :   96 : 91 71 dd 06 be fc bd    | .. .. .. .. .. .. .. 
 
 $finish called from file "test/pktlib_test.sv", line 114.
 $finish at simulation time                    0
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 0
 CPU Time:      0.350 seconds;       Data structure size:   0.0Mb
-Mon May  2 16:18:30 2011
+Wed May  4 18:00:08 2011

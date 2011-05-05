@@ -153,7 +153,7 @@ class udp_hdr_class extends hdr_class; // {
                           int       udp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
-    int            i;
+    int            i, idx;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
     // Calulate udp_chksm, corrupt it if asked
@@ -174,7 +174,8 @@ class udp_hdr_class extends hdr_class; // {
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
             end // }
         end // }
-        harray.copy_array(pkt, chksm_data, udp_idx, (pkt.size - udp_idx));
+        idx = udp_idx;
+        harray.copy_array(pkt, chksm_data, idx, (pkt.size - udp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

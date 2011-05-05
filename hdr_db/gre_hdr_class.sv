@@ -287,11 +287,13 @@ class gre_hdr_class extends hdr_class; // {
 
   function post_pack (ref bit [7:0] pkt [],
                           int       gre_idx); // {
-    bit [7:0]      chksm_data [];
+    bit [7:0] chksm_data [];
+    int       idx;
     // Calulate udp_chksm, corrupt it if asked
     if (cal_chksm)
     begin // {
-        harray.copy_array(pkt, chksm_data, gre_idx, (pkt.size - gre_idx));
+        idx = gre_idx;
+        harray.copy_array(pkt, chksm_data, idx, (pkt.size - gre_idx));
         if (chksm_data.size/2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

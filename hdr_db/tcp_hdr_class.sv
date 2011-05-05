@@ -216,7 +216,7 @@ class tcp_hdr_class extends hdr_class; // {
                           int       tcp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
-    int            i;
+    int            i, idx;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
     // Calulate tcp_chksm, corrupt it if asked
@@ -237,7 +237,8 @@ class tcp_hdr_class extends hdr_class; // {
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
             end // }
         end // }
-        harray.copy_array(pkt, chksm_data, tcp_idx, (pkt.size - tcp_idx));
+        idx = tcp_idx;
+        harray.copy_array(pkt, chksm_data, idx, (pkt.size - tcp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);

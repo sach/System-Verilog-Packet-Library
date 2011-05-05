@@ -87,6 +87,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     DUMB_UNPACK
   } unpack_mode;
 
+// ~~~~~~~~~~ enum defination for data type  ~~~~~~~~~~~~~
+  enum
+  {
+    INCR,
+    DECR,
+    INVR,
+    FIX,
+    RND 
+  } data_types;
+
 // ~~~~~~~~~~ enum defination for all the headers ~~~~~~~~~~~~~
   enum
   {
