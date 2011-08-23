@@ -210,6 +210,8 @@ class mpls_hdr_class extends hdr_class; // {
             if ((label[num_mpls_lbl-1] != ipv6_null_lbl) & (nxtB[7:4] == 4'h6)) 
                 nxt_hid = IPV6_HID;
         end // }
+        if (~unpack_en[nxt_hid])
+            nxt_hid = DATA_HID;
         $cast (lcl_class, this);
         super.update_nxt_hdr_info (lcl_class, hdr_q, nxt_hid);
     end // }

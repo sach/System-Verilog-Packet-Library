@@ -101,7 +101,7 @@ class xxx_hdr_class extends hdr_class; // {
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (pkt.size > index)
+        if (unpack_en[????] & (pkt.size > index))
             super.update_nxt_hdr_info (lcl_class, hdr_q, ????);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);

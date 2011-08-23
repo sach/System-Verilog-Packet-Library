@@ -147,7 +147,10 @@ class ntp_hdr_class extends hdr_class; // {
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
+        if (unpack_en[DATA_HID] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
+        else
+            super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // }
     // unpack next hdr
     if (~last_unpack)

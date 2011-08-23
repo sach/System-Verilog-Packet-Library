@@ -28,6 +28,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   rand   hdr_class              all_hdr [$];         // all the hdr of list;
          bit                    psnt         = 1'b0; // this hdr_class is psnt
   rand   int                    start_off;           // starting offset of hdr
+         bit [TOTAL_HID-1:0]    unpack_en    = {TOTAL_HID{1'b1}};
          pktlib_main_class      plib;
          pktlib_crc_chksm_class crc_chksm    = new ();
          pktlib_array_class     harray       = new ();
