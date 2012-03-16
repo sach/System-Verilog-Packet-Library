@@ -12,31 +12,58 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates <XXX> header
-//  <XXX> header Format
-//  +-----------------+
-//  |                 | 
-//  +-----------------+
+//  This hdr_class generates the IEEE 802.1Qbh VNTag
+//  802.1Qbh
+//  +---------------+
+//  | d             | -> direction (0/1 - from adaptor/switch)
+//  +---------------+ 
+//  | p             | -> pointer (1-dst_vif points to a list)
+//  +---------------+ 
+//  | dst_vif[13:0] | -> destination vif (used only when d = 1)
+//  +---------------+ 
+//  | l             | -> looped (frame origniated at adapter)
+//  +---------------+
+//  + rsvd          | -> reserved
+//  +---------------+
+//  + ver[1:0]      | -> version
+//  +---------------+
+//  + src_vif[11:0] | -> source vif
+//  +---------------+
+//  | etype[15:0]   | 
+//  +---------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
 //  +-------+---------+---------------------------+-------------------------------+
 //  | Width | Default | Variable                  | Description                   |
 //  +-------+---------+---------------------------+-------------------------------+
+//  | 1     | 1'b0    | corrupt_vntag_ver         | If 1, corrupts VNTag version  |
+//  |       |         |                           | (Version != 2'h0)             |
+//  +-------+---------+---------------------------+-------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class xxx_hdr_class extends hdr_class; // {
+
+class vntag_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
+  rand bit        d;      
+  rand bit        p;      
+  rand bit [13:0] dst_vif;
+  rand bit        l;      
+  rand bit        rsvd;   
+  rand bit [1:0]  ver;    
+  rand bit [11:0] src_vif;
+  rand bit [15:0] etype;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
+       bit        corrupt_vntag_ver = 1'b0;
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint xxx_hdr_user_constraint
+  constraint vntag_hdr_user_constraint
   {
   }
 
@@ -45,45 +72,46 @@ class xxx_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  // only if its L2 header
   constraint legal_etype
   {
     `LEGAL_ETH_TYPE_CONSTRAINTS;
   }
 
- // only if its L3/ip header
-  constraint legal_protocol
+  constraint legal_hdr_len
   {
-    `LEGAL_PROT_TYPE_CONSTRAINTS;
+    hdr_len == 6;
   }
 
-  constraint legal_hdr_len 
+  constraint legal_ver
   {
-    hdr_len == ?; <Length of this header bytes>
+    (corrupt_vntag_ver == 1'b0) -> (ver == 2'h0);
+    (corrupt_vntag_ver == 1'b1) -> (ver != 2'h0);
   }
-
-  // other constarints .. here
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
                 int               inst_no); // {
     super.new (plib);
-    hid          = XXX_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "xxx[%0d]",inst_no);
+    hid      = VNTAG_HID;
+    $sformat (hdr_name, "vntag[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  task pack_hdr (ref   bit [7:0] pkt [],
-                 ref   int       index,
-                 input bit       last_pack = 1'b0); // {
+  function void pre_randomize (); // {
+    if (super) super.pre_randomize();
+  endfunction : pre_randomize // }
+
+  task pack_hdr(ref   bit [7:0] pkt [],
+                ref   int       index,
+                input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    pack_vec = {d, p, dst_vif, l, rsvd, ver, src_vif, etype};
+    harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{}};
+    hdr = {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -103,24 +131,24 @@ class xxx_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = ?;
+    hdr_len   = 6;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {} = pack_vec;
+    {d, p, dst_vif, l, rsvd, ver, src_vif, etype} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{}} = hdr;
+    {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[????] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, ????);
+        if (unpack_en[get_hid_from_etype(etype)] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, get_hid_from_etype (etype));
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
-    end // } 
+    end // }
     // unpack next hdr
     if (~last_unpack)
     begin // {
@@ -136,43 +164,54 @@ class xxx_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    xxx_hdr_class lcl;
+    vntag_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
-    // ~~~~~~~~~~ Class members ~~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;             
-    // ~~~~~~~~~~ Local variables ~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;            
+    // ~~~~~~~~~~ Class members ~~~~~~~~~~
+    this.d                         = lcl.d;      
+    this.p                         = lcl.p;      
+    this.dst_vif                   = lcl.dst_vif;
+    this.l                         = lcl.l;      
+    this.rsvd                      = lcl.rsvd;   
+    this.ver                       = lcl.ver;    
+    this.src_vif                   = lcl.src_vif;
+    this.etype                     = lcl.etype;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;           
+    this.corrupt_vntag_ver         = lcl.corrupt_vntag_ver;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
+  // This task displays all the feilds of individual hdrs used
   task display_hdr (pktlib_display_class hdis,
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    xxx_hdr_class lcl;
+    vntag_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "xxx_ary", 0, 0, xxx_ary, lcl.xxx_ary);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "d", d, lcl.d);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "p", p, lcl.p);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "dst_vif", dst_vif, lcl.dst_vif);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "l", l, lcl.l);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "rsvd", rsvd, lcl.rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "ver", ver, lcl.ver);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "src_vif", src_vif, lcl.src_vif);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_vntag_ver", corrupt_vntag_ver, lcl.corrupt_vntag_ver);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
-    if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
+    if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : xxx_hdr_class // }
+endclass : vntag_hdr_class // }

@@ -103,6 +103,11 @@ class tcp_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
+  constraint legal_dst_prt
+  {
+    `LEGAL_TCP_DST_PRT_CONSTRAINTS;
+  }
+
   constraint legal_hdr_len 
   {
     (offset inside {[5:15]}) -> hdr_len == offset*4;
@@ -162,20 +167,36 @@ class tcp_hdr_class extends hdr_class; // {
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
-    int tcp_idx;
+    int tcp_idx, tmp_idx;
     tcp_idx = index;
     // making sure checksum is 0, incase pack_hdr was called before radomization
     if (cal_tcp_chksm && ~last_pack)
         checksum = 0;
     // pack class members
+    `ifdef SVFNYI_0
+    pack_vec = {src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr};
+    harray.pack_bit (pkt, pack_vec, index, 160);
+    if (offset > 5)
+    begin // {
+        tmp_idx = index / 8;
+        harray.pack_array_8(options, pkt, tmp_idx);
+        index  = tmp_idx * 8;
+    end // }
+    `else
     if (offset > 5)
         hdr = {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr, options}};
     else
         hdr = {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     // pack next hdr
     if (~last_pack)
-        nxt_hdr.pack_hdr (pkt, index);
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
+        this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
     // checksum calulation
     if (~last_pack)
         post_pack (pkt, tcp_idx);
@@ -190,8 +211,13 @@ class tcp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 20;
     start_off = index;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    {src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, hdr_len);
     {>>{src_prt, dst_prt, seq_number, ack_number, offset, rsvd, flags, window, checksum, urgent_ptr}} = hdr;
+    `endif
     hdr_len   = offset * 4;
     if (offset > 4'd5)
         harray.copy_array (pkt, options, index, (hdr_len - 20));
@@ -199,14 +225,19 @@ class tcp_hdr_class extends hdr_class; // {
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[DATA_HID] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
+        if (unpack_en[get_hid_from_tcp_dst_prt(dst_prt)] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, get_hid_from_tcp_dst_prt(dst_prt));
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // } 
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
@@ -237,7 +268,11 @@ class tcp_hdr_class extends hdr_class; // {
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
             end // }
         end // }
+        `ifdef SVFNYI_0
+        idx = tcp_idx/8;
+        `else
         idx = tcp_idx;
+        `endif
         harray.copy_array(pkt, chksm_data, idx, (pkt.size - tcp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
@@ -258,7 +293,7 @@ class tcp_hdr_class extends hdr_class; // {
   endfunction : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     tcp_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -289,8 +324,8 @@ class tcp_hdr_class extends hdr_class; // {
     this.cal_tcp_chksm         = lcl.cal_tcp_chksm;        
     this.corrupt_tcp_chksm     = lcl.corrupt_tcp_chksm;    
     this.corrupt_tcp_chksm_msk = lcl.corrupt_tcp_chksm_msk;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -301,25 +336,37 @@ class tcp_hdr_class extends hdr_class; // {
     tcp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     $sformat(flags_brk, "=> CWR %b ECE %b URG %b ACK %b PSH %b RST %b SYN %b FIN %b", flags[7],flags[6],flags[5],flags[4],flags[3],flags[2],flags[1],flags[0]);
-`ifdef DEBUG_CHKSM
-    hdis.display_fld (mode, hdr_name, "hdr_len",      16, HEX, BIT_VEC, hdr_len,   lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, "total_hdr_len",16, HEX, BIT_VEC, total_hdr_len,   lcl.total_hdr_len);
-`endif
-    hdis.display_fld (mode, hdr_name, "src_prt",      16, HEX, BIT_VEC, src_prt,   lcl.src_prt);
-    hdis.display_fld (mode, hdr_name, "dst_prt",      16, HEX, BIT_VEC, dst_prt,   lcl.dst_prt);
-    hdis.display_fld (mode, hdr_name, "seq_number",   32, HEX, BIT_VEC, seq_number,lcl.seq_number);
-    hdis.display_fld (mode, hdr_name, "ack_number",   32, HEX, BIT_VEC, ack_number,lcl.ack_number);
-    hdis.display_fld (mode, hdr_name, "offset",       04, HEX, BIT_VEC, offset,    lcl.offset);
-    hdis.display_fld (mode, hdr_name, "rsvd",         04, HEX, BIT_VEC, rsvd,      lcl.rsvd);
-    hdis.display_fld (mode, hdr_name, "flags",        08, HEX, BIT_VEC, flags,     lcl.flags,'{},'{}, flags_brk);
-    hdis.display_fld (mode, hdr_name, "window",       16, HEX, BIT_VEC, window,    lcl.window);
-    if (corrupt_tcp_chksm)
-    hdis.display_fld (mode, hdr_name, "checksum",     16, HEX, BIT_VEC, checksum,  lcl.checksum,'{},'{}, "BAD");
-    else
-    hdis.display_fld (mode, hdr_name, "checksum",     16, HEX, BIT_VEC, checksum,  lcl.checksum,'{},'{}, "GOOD");
-    hdis.display_fld (mode, hdr_name, "urgent_ptr",   16, HEX, BIT_VEC, urgent_ptr,lcl.urgent_ptr);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "src_prt", src_prt, lcl.src_prt);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,'{},'{}, get_tcp_dst_prt_name(dst_prt));
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "seq_number", seq_number, lcl.seq_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ack_number", ack_number, lcl.ack_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "offset", offset, lcl.offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "rsvd", rsvd, lcl.rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "flags", flags, lcl.flags,'{},'{}, flags_brk);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "window", window, lcl.window);
+    if (corrupt_tcp_chksm)                              
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
+    else                                                
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "urgent_ptr", urgent_ptr, lcl.urgent_ptr);
     if (options.size() !== 0)
-    hdis.display_fld (mode, hdr_name, "options",      00, DEF, ARRAY, 0, 0, options, lcl.options);
+    hdis.display_fld (mode, hdr_name, ARRAY,   HEX, 000, "options", 0, 0, options, lcl.options);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_offset", corrupt_offset, lcl.corrupt_offset);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_tcp_chksm", cal_tcp_chksm, lcl.cal_tcp_chksm);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_tcp_chksm", corrupt_tcp_chksm, lcl.corrupt_tcp_chksm);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "corrupt_tcp_chksm_msk", corrupt_tcp_chksm_msk, lcl.corrupt_tcp_chksm_msk);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }

@@ -64,7 +64,7 @@ class eoh_class extends hdr_class; // {
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     super.cpy_hdr (cpy_cls);
   endtask : cpy_hdr // }
 

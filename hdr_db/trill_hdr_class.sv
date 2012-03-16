@@ -12,31 +12,58 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates <XXX> header
-//  <XXX> header Format
-//  +-----------------+
-//  |                 | 
-//  +-----------------+
+//  This hdr_class generates Transport Interconnection for Lots of Links (TRILL) header
+//  (RFC 6325)
+//  TRILL header Format
+//  +--------------------+
+//  | V[1:0]             | -> Version 
+//  +--------------------+
+//  | R[1:0]             | -> Reserved 
+//  +--------------------+
+//  | M                  | -> Multi-destination 
+//  +--------------------+
+//  | op_length[4:0]     | -> Options Length gives length of options in units of 4 octets
+//  +--------------------+
+//  | hop_count[5:0]     | -> Hop count
+//  +--------------------+
+//  | egr_rb_nname[15:0] | -> Egress RBridge Nickname
+//  +--------------------+
+//  | igr_rb_nname[15:0] | -> Ingress RBridge Nickname
+//  +--------------------+
+//  | options[124][7:0]  | -> present if op_length is non-zero
+//  +--------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
 //  +-------+---------+---------------------------+-------------------------------+
 //  | Width | Default | Variable                  | Description                   |
 //  +-------+---------+---------------------------+-------------------------------+
+//  | 1     | 1'b0    | corrupt_trill_version     | If 1, corrupts trill version  |
+//  |       |         |                           | (V != 2'h0)                   |
+//  +-------+---------+---------------------------+-------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class xxx_hdr_class extends hdr_class; // {
+class trill_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
+  rand bit [1:0]     V;
+  rand bit [1:0]     R;
+  rand bit           M;
+  rand bit [4:0]     op_length;
+  rand bit [5:0]     hop_count;
+  rand bit [15:0]    egr_rb_nname;
+  rand bit [15:0]    igr_rb_nname;
+  rand bit [7:0]     options[];
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
+       bit           corrupt_trill_version = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint xxx_hdr_user_constraint
+  constraint trill_hdr_user_constraint
   {
   }
 
@@ -45,33 +72,37 @@ class xxx_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  // only if its L2 header
-  constraint legal_etype
-  {
-    `LEGAL_ETH_TYPE_CONSTRAINTS;
-  }
-
- // only if its L3/ip header
-  constraint legal_protocol
-  {
-    `LEGAL_PROT_TYPE_CONSTRAINTS;
-  }
-
   constraint legal_hdr_len 
   {
-    hdr_len == ?; <Length of this header bytes>
+   (op_length == 0) -> hdr_len == 6;
+   (op_length != 0) -> hdr_len == (6 + options.size);
   }
 
-  // other constarints .. here
+  constraint legal_V
+  {
+    (corrupt_trill_version == 1'b0) -> (V == 2'h0);
+    (corrupt_trill_version == 1'b1) -> (V != 2'h0);
+  }
+
+  constraint legal_R
+  {
+    R == 2'h0;
+  }
+
+  constraint legal_options_size
+  {
+   (op_length == 0) -> options.size == 0;
+   (op_length != 0) -> options.size == (op_length*4);
+  }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
                 int               inst_no); // {
     super.new (plib);
-    hid          = XXX_HID;
+    hid          = TRILL_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "xxx[%0d]",inst_no);
+    $sformat (hdr_name, "trill[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
@@ -80,10 +111,20 @@ class xxx_hdr_class extends hdr_class; // {
                  input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    int tmp_idx;
+    pack_vec = {V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname}; 
+    harray.pack_bit (pkt, pack_vec, index, 48);
+    if (op_length > 0)
+    begin // {
+        tmp_idx = index/8;
+        harray.pack_array_8(options, pkt, tmp_idx);
+        index = tmp_idx * 8;
+    end // }
     `else
-    hdr = {>>{}};
+    if (op_length > 5'd0)
+        hdr = {>>{V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname, options}};
+    else
+        hdr = {>>{V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -103,21 +144,23 @@ class xxx_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = ?;
     start_off = index;
     `ifdef SVFNYI_0
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {} = pack_vec;
+    harray.unpack_array (pkt, pack_vec, index, 6);
+    {V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname} = pack_vec;
     `else
-    harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{}} = hdr;
+    harray.copy_array (pkt, hdr, index, 6);
+    {>>{V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname}} = hdr;
     `endif
+    hdr_len   = 6 + op_length*4;
+    if (op_length > 5'd0)
+        harray.copy_array (pkt, options, index, (hdr_len - 6));
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[????] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, ????);
+        if (unpack_en[ETH_HID] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, ETH_HID);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // } 
@@ -136,15 +179,20 @@ class xxx_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    xxx_hdr_class lcl;
+    trill_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
-    // ~~~~~~~~~~ Class members ~~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;             
-    // ~~~~~~~~~~ Local variables ~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;            
+    // ~~~~~~~~~~ Class members ~~~~~~~~~~
+    this.V                         = lcl.V;
+    this.R                         = lcl.R;
+    this.M                         = lcl.M;
+    this.op_length                 = lcl.op_length;
+    this.hop_count                 = lcl.hop_count;
+    this.egr_rb_nname              = lcl.egr_rb_nname;
+    this.igr_rb_nname              = lcl.igr_rb_nname;
+    this.options                   = lcl.options;      
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;           
+    this.corrupt_trill_version     = lcl.corrupt_trill_version;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -153,26 +201,32 @@ class xxx_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    xxx_hdr_class lcl;
+    trill_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "xxx_ary", 0, 0, xxx_ary, lcl.xxx_ary);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "V", V, lcl.V);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "R", R, lcl.R);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "M", M, lcl.M);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 005, "op_length", op_length, lcl.op_length);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 006, "hop_count", hop_count, lcl.hop_count);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "egr_rb_nname", egr_rb_nname, lcl.egr_rb_nname);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "igr_rb_nname", igr_rb_nname, lcl.igr_rb_nname);
+    if (options.size() !== 0)                           
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,  0, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_trill_version", corrupt_trill_version, lcl.corrupt_trill_version);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : xxx_hdr_class // }
+endclass : trill_hdr_class // }

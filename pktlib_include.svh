@@ -64,7 +64,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   {
     BIT_VEC,
     ARRAY,
-    JUST_COMMENT
+    STRING
   } fld_type;
 
 // ~~~~~~~~~~ enum defination for path name ~~~~~~~~~~~~~~~~~
@@ -108,23 +108,28 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     ALT1Q_HID,               // 5
     STAG_HID,                // 6
     ITAG_HID,                // 7
-    SNAP_HID,                // 8
-    PTL2_HID,                // 9
-    MPLS_HID,                // 10
-    MMPLS_HID,               // 11
-    IPV4_HID,                // 12
-    IPV6_HID,                // 13
-    PTIP_HID,                // 14
-    IPSEC_HID,               // 15
-    TCP_HID,                 // 16
-    UDP_HID,                 // 17
-    GRE_HID,                 // 18
-    PTP_HID,                 // 19
-    NTP_HID,                 // 20 
-    DATA_HID,                // 21
-    EOH_HID,                 // 22
-//  XXX_HID,                 // 23
-    TOTAL_HID                // 23
+    VNTAG_HID,               // 8
+    TRILL_HID,               // 9
+    SNAP_HID,                // 10
+    PTL2_HID,                // 11
+    MPLS_HID,                // 12
+    MMPLS_HID,               // 13
+    IPV4_HID,                // 14
+    IPV6_HID,                // 15
+    PTIP_HID,                // 16
+    IPSEC_HID,               // 17
+    TCP_HID,                 // 18
+    UDP_HID,                 // 19
+    GRE_HID,                 // 20
+    PTP_HID,                 // 21
+    NTP_HID,                 // 22 
+    LISP_HID,                // 23 
+    OTV_HID,                 // 24 
+    STT_HID,                 // 25 
+    DATA_HID,                // 26
+    EOH_HID,                 // 27
+//  XXX_HID,                 // 27
+    TOTAL_HID                // 28
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -137,6 +142,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class snap_hdr_class;
   typedef class dot1q_hdr_class;
   typedef class itag_hdr_class;
+  typedef class vntag_hdr_class;
+  typedef class trill_hdr_class;
   typedef class ptl2_hdr_class;
   typedef class mpls_hdr_class;
   typedef class ipv4_hdr_class;
@@ -148,8 +155,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class tcp_hdr_class;
   typedef class udp_hdr_class;
   typedef class gre_hdr_class;
+  typedef class lisp_hdr_class;
+  typedef class otv_hdr_class;
+  typedef class stt_hdr_class;
   typedef class data_class;
-//typedef class xxx_class; 
+//typedef class xxx_class;
   typedef class eoh_class;
 
   // ~~~~~~~~~~ include all the classes ~~~~~~~~~~
@@ -166,6 +176,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "macsec_hdr_class.sv"
   `include "dot1q_hdr_class.sv"
   `include "itag_hdr_class.sv"
+  `include "vntag_hdr_class.sv"
+  `include "trill_hdr_class.sv"
   `include "snap_hdr_class.sv"
   `include "ptl2_hdr_class.sv"
   `include "mpls_hdr_class.sv"
@@ -178,6 +190,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "gre_hdr_class.sv"
   `include "ptp_hdr_class.sv"
   `include "ntp_hdr_class.sv"
+  `include "lisp_hdr_class.sv"
+  `include "otv_hdr_class.sv"
+  `include "stt_hdr_class.sv"
   `include "data_class.sv"
 //`include "xxx_class.sv"
   `include "eoh_class.sv"
@@ -192,6 +207,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   dot1q_hdr_class     alt1q   [`MAX_NUM_INSTS];\
   dot1q_hdr_class     stag    [`MAX_NUM_INSTS];\
   itag_hdr_class      itag    [`MAX_NUM_INSTS];\
+  vntag_hdr_class     vntag   [`MAX_NUM_INSTS];\
+  trill_hdr_class     trill   [`MAX_NUM_INSTS];\
   snap_hdr_class      snap    [`MAX_NUM_INSTS];\
   ptl2_hdr_class      ptl2    [`MAX_NUM_INSTS];\
   mpls_hdr_class      mpls    [`MAX_NUM_INSTS];\
@@ -205,6 +222,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   gre_hdr_class       gre     [`MAX_NUM_INSTS];\
   ptp_hdr_class       ptp     [`MAX_NUM_INSTS];\
   ntp_hdr_class       ntp     [`MAX_NUM_INSTS];\
+  lisp_hdr_class      lisp    [`MAX_NUM_INSTS];\
+  otv_hdr_class       otv     [`MAX_NUM_INSTS];\
+  stt_hdr_class       stt     [`MAX_NUM_INSTS];\
   data_class          data    [`MAX_NUM_INSTS];\
   eoh_class           eoh
   
@@ -219,6 +239,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         alt1q  [i] = new (this, i, 1);\
         stag   [i] = new (this, i, 2);\
         itag   [i] = new (this, i);\
+        vntag  [i] = new (this, i);\
+        trill  [i] = new (this, i);\
         ptl2   [i] = new (this, i);\
         snap   [i] = new (this, i);\
         mpls   [i] = new (this, i);\
@@ -232,6 +254,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         gre    [i] = new (this, i);\
         ptp    [i] = new (this, i);\
         ntp    [i] = new (this, i);\
+        lisp   [i] = new (this, i);\
+        otv    [i] = new (this, i);\
+        stt    [i] = new (this, i);\
         data   [i] = new (this, i);\
     end\
     toh  = new (this);\

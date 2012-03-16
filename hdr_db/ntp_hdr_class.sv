@@ -119,14 +119,27 @@ class ntp_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
+    `ifdef SVFNYI_0
+    if (auth_en)
+        pack_vec = {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest};
+    else
+        pack_vec = {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp};
+    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    `else
     if (auth_en)
         hdr = {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest}};
     else
         hdr = {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     // pack next hdr
     if (~last_pack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -138,11 +151,19 @@ class ntp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = (auth_en) ? 68 : 48;
     start_off = index;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    if (auth_en == 1'b1)
+        {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest} = pack_vec;
+    else
+        {li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, hdr_len);
     if (auth_en == 1'b1)
         {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp, key_ident, msg_digest}} = hdr;
     else
         {>>{li, vn, ntp_mode, stratum, poll, precision, root_delay, root_disp, ref_ident, ref_timestamp, org_timestamp, rcv_timestamp, xmt_timestamp}} = hdr;
+    `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -154,14 +175,19 @@ class ntp_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     ntp_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -183,8 +209,8 @@ class ntp_hdr_class extends hdr_class; // {
     this.msg_digest       = lcl.msg_digest;   
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
     this.auth_en          = lcl.auth_en;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -193,23 +219,36 @@ class ntp_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     ntp_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "li",             2, HEX, BIT_VEC, li,           lcl.li);           
-    hdis.display_fld (mode, hdr_name, "vn",             3, HEX, BIT_VEC, vn,           lcl.vn);           
-    hdis.display_fld (mode, hdr_name, "ntp_mode",       3, HEX, BIT_VEC, ntp_mode,     lcl.ntp_mode);         
-    hdis.display_fld (mode, hdr_name, "stratum",        8, HEX, BIT_VEC, stratum,      lcl.stratum);      
-    hdis.display_fld (mode, hdr_name, "poll",           8, HEX, BIT_VEC, poll,         lcl.poll);         
-    hdis.display_fld (mode, hdr_name, "precision",      8, HEX, BIT_VEC, precision,    lcl.precision);    
-    hdis.display_fld (mode, hdr_name, "root_delay",    32, HEX, BIT_VEC, root_delay,   lcl.root_delay);   
-    hdis.display_fld (mode, hdr_name, "root_disp",     32, HEX, BIT_VEC, root_disp,    lcl.root_disp);    
-    hdis.display_fld (mode, hdr_name, "ref_ident",     32, HEX, BIT_VEC, ref_ident,    lcl.ref_ident);    
-    hdis.display_fld (mode, hdr_name, "ref_timestamp", 64, HEX, BIT_VEC, ref_timestamp,lcl.ref_timestamp);
-    hdis.display_fld (mode, hdr_name, "org_timestamp", 64, HEX, BIT_VEC, org_timestamp,lcl.org_timestamp);
-    hdis.display_fld (mode, hdr_name, "rcv_timestamp", 64, HEX, BIT_VEC, rcv_timestamp,lcl.rcv_timestamp);
-    hdis.display_fld (mode, hdr_name, "xmt_timestamp", 64, HEX, BIT_VEC, xmt_timestamp,lcl.xmt_timestamp);
-    if (auth_en)
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "li", li, lcl.li);           
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "vn", vn, lcl.vn);           
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "ntp_mode", ntp_mode, lcl.ntp_mode);         
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "stratum", stratum, lcl.stratum);      
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "poll", poll, lcl.poll);         
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "precision", precision,   lcl.precision);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "root_delay", root_delay, lcl.root_delay);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "root_disp", root_disp, lcl.root_disp);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ref_ident", ref_ident, lcl.ref_ident);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "ref_timestamp", ref_timestamp, lcl.ref_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "org_timestamp", org_timestamp, lcl.org_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "rcv_timestamp", rcv_timestamp, lcl.rcv_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "xmt_timestamp", xmt_timestamp, lcl.xmt_timestamp);
+    if (auth_en)                                         
+    begin // {                                           
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "key_ident", key_ident, lcl.key_ident);     
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "msg_digest", msg_digest, lcl.msg_digest);   
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, "key_ident",     32, HEX, BIT_VEC, key_ident,    lcl.key_ident);     
-    hdis.display_fld (mode, hdr_name, "msg_digest",   128, HEX, BIT_VEC, msg_digest,   lcl.msg_digest);   
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "auth_en", auth_en, lcl.auth_en);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

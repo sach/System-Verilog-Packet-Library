@@ -301,7 +301,7 @@ class pktlib_main_class extends pktlib_object_class; // {
                           bit [7:0] p2 [],
                     ref   int       err,
                     input hdr_class hdr [$]   = {},
-                    input int       mode      = COMPARE_HDR,
+                    input int       mode      = COMPARE,
                     input string    path_name = "",
                     input string    hname     = "pkt_lib",
                     input string    cmp_type  = "Pkt",

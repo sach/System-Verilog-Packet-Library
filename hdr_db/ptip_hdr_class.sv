@@ -92,11 +92,25 @@ class ptip_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
+    `ifdef SVFNYI_0
+    int tmp_idx;
+    tmp_idx = index/8;
+    harray.pack_array_8 (pt_data, pkt, tmp_idx);
+    index    = (tmp_idx * 8);
+    pack_vec = protocol;
+    harray.pack_bit (pkt, pack_vec, index, 8);
+    `else
     hdr = {>>{pt_data, protocol}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     // pack next hdr
     if (~last_pack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -108,8 +122,14 @@ class ptip_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = pt_len;
     start_off = index;
+    `ifdef SVFNYI_0
+    harray.copy_array (pkt, pt_data, index, hdr_len-1);
+    harray.unpack_array (pkt, pack_vec, index, 1);
+    protocol = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, pt_len);
     {>>{pt_data, protocol}} = hdr;
+    `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -121,22 +141,27 @@ class ptip_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     ptip_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     this.pt_data  = lcl.pt_data;
     this.protocol = lcl.protocol;
     this.pt_len   = lcl.pt_len;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -145,8 +170,21 @@ class ptip_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     ptip_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "pt_data",  0, DEF, ARRAY,   0, 0, pt_data, lcl.pt_data);
-    hdis.display_fld (mode, hdr_name, "protocol", 8, HEX, BIT_VEC, protocol,      lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "pt_data", 0, 0, pt_data, lcl.pt_data);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "pt_len", pt_len, lcl.pt_len);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }

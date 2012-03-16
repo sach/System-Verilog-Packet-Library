@@ -44,16 +44,16 @@ program my_test (); // {
         
         // configure different hdrs for this packet
         case (i%10) // {
-            0 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.dot1q[1], p.data[0]});
-            1 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.mpls[0], p.ipv6[0], p.tcp[0], p.data[0]});
-            2 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.dot1q[1], p.ipv4[0], p.udp[0],  p.data[0]});
-            3 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.ipv6[0],  p.gre[0],  p.data[0]});
-            4 : p.cfg_hdr ({p.eth[0], p.itag[0],  p.eth[1],   p.ipv4[0], p.tcp[0],   p.data[0]});
-            5 : p.cfg_hdr ({p.eth[0], p.mpls[0],  p.ipv4[0],  p.udp[0],  p.data[0]});
-            6 : p.cfg_hdr ({p.eth[0], p.alt1q[0], p.mmpls[0], p.ipv6[0], p.udp[0],  p.data[0]});
-            7 : p.cfg_hdr ({p.eth[0], p.mmpls[0], p.eth[1],   p.data[0]});
-            8 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.eth[1],  p.itag[0], p.eth[2], p.data[0]});
-            9 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.mpls[0],  p.ipv4[0], p.udp[0],  p.data[0]});
+            0 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.mpls[0], p.ipv6[0],  p.tcp[0],  p.data[0]});
+            1 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.vntag[0], p.ipv4[0], p.udp[0],   p.ptp[0],  p.data[0]});
+            2 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.dot1q[1], p.ipv4[0], p.tcp[0],   p.stt[0],  p.eth[1],  p.ipv6[0], p.ipv4[1], p.data[0]});
+            3 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.trill[0], p.eth[1],  p.dot1q[1], p.ipv6[0], p.gre[0],  p.data[0]});
+            4 : p.cfg_hdr ({p.eth[0], p.itag[0],  p.eth[1],   p.ipv4[0], p.tcp[0],   p.stt[0],  p.eth[2],  p.ipv4[1], p.tcp[1], p.data[0]});
+            5 : p.cfg_hdr ({p.eth[0], p.mpls[0],  p.ipv4[0],  p.udp[0],  p.lisp[0],  p.ipv4[1], p.data[0]});
+            6 : p.cfg_hdr ({p.eth[0], p.alt1q[0], p.mmpls[0], p.ipv6[0], p.udp[0],   p.otv[0],  p.eth[1],  p.data[0]});
+            7 : p.cfg_hdr ({p.eth[0], p.mmpls[0], p.eth[1],   p.ipv6[0], p.udp[0],   p.lisp[0], p.ipv6[1], p.data[0]});
+            8 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.eth[1],  p.itag[0],  p.eth[2],  p.data[0]});
+            9 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.mpls[0],  p.ipv4[0], p.udp[0],   p.ntp[0],  p.data[0]});
         endcase // }
         
         // set max/min packet length

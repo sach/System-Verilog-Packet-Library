@@ -12,23 +12,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates <XXX> header
-//  <XXX> header Format
-//  +-----------------+
-//  |                 | 
-//  +-----------------+
+//  This hdr_class generates Overlay Transport Virtualization (OTV) header
+//  (draft-ietf)
+//  OTV header Format
+//  +---------+---+--------+
+//  | R1[3:0] | I | R2[2:0]| -> R1, R2 - Reserved, If I = 1, instance_id is valid  
+//  +---------+---+--------+
+//  | overlay_id[23:0]     | 
+//  +----------------------+
+//  | instance_id[23:0]    | 
+//  +----------------------+
+//  | rsvd[7:0]            | 
+//  +----------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
-//  +-------+---------+---------------------------+-------------------------------+
-//  | Width | Default | Variable                  | Description                   |
-//  +-------+---------+---------------------------+-------------------------------+
+//  +-------+---------+-----------------+---------------------------------+
+//  | Width | Default | Variable        | Description                     |
+//  +-------+---------+-----------------+---------------------------------+
+//  +-------+---------+-----------------+---------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class xxx_hdr_class extends hdr_class; // {
+class otv_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
+  rand bit [3:0]     R1;
+  rand bit           I;
+  rand bit [2:0]     R2;
+  rand bit [23:0]    overlay_id;
+  rand bit [23:0]    instance_id;
+  rand bit [2:0]     rsvd;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
@@ -36,7 +50,7 @@ class xxx_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint xxx_hdr_user_constraint
+  constraint otv_hdr_user_constraint
   {
   }
 
@@ -45,33 +59,27 @@ class xxx_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  // only if its L2 header
-  constraint legal_etype
-  {
-    `LEGAL_ETH_TYPE_CONSTRAINTS;
-  }
-
- // only if its L3/ip header
-  constraint legal_protocol
-  {
-    `LEGAL_PROT_TYPE_CONSTRAINTS;
-  }
-
   constraint legal_hdr_len 
   {
-    hdr_len == ?; <Length of this header bytes>
+    hdr_len == 8; 
   }
 
-  // other constarints .. here
+
+  constraint legal_rsvd
+  {
+    R1   == 3'h0;
+    R2   == 2'h0;
+    rsvd == 8'h0;
+  }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
                 int               inst_no); // {
     super.new (plib);
-    hid          = XXX_HID;
+    hid          = OTV_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "xxx[%0d]",inst_no);
+    $sformat (hdr_name, "otv[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
@@ -80,10 +88,10 @@ class xxx_hdr_class extends hdr_class; // {
                  input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {};
+    pack_vec = {R1, I, R2, overlay_id, instance_id, rsvd};
     harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{}};
+    hdr = {>>{R1, I, R2, overlay_id, instance_id, rsvd}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -101,23 +109,23 @@ class xxx_hdr_class extends hdr_class; // {
                    ref   hdr_class hdr_q [$],
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
-    hdr_class lcl_class;
+    hdr_class  lcl_class;
     // unpack class members
-    hdr_len   = ?;
+    hdr_len   = 8;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {} = pack_vec;
+    {R1, I, R2, overlay_id, instance_id, rsvd} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{}} = hdr;
+    {>>{R1, I, R2, overlay_id, instance_id, rsvd}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[????] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, ????);
+        if (unpack_en[ETH_HID] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, ETH_HID);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // } 
@@ -136,15 +144,18 @@ class xxx_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    xxx_hdr_class lcl;
+    otv_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;             
+    this.R1                    = lcl.R1; 
+    this.I                     = lcl.I; 
+    this.R2                    = lcl.R2; 
+    this.overlay_id            = lcl.overlay_id;
+    this.instance_id           = lcl.instance_id;
+    this.rsvd                  = lcl.rsvd;
     // ~~~~~~~~~~ Local variables ~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;            
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;           
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -153,26 +164,28 @@ class xxx_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    xxx_hdr_class lcl;
+    otv_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "xxx_ary", 0, 0, xxx_ary, lcl.xxx_ary);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 004, "R1", R1, lcl.R1); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "I", I, lcl.I); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 003, "R2", R1, lcl.R2); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "overlay_id", overlay_id, lcl.overlay_id); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "instance_id", instance_id, lcl.instance_id);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "rsvd", rsvd, lcl.rsvd); 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : xxx_hdr_class // }
+endclass : otv_hdr_class // }

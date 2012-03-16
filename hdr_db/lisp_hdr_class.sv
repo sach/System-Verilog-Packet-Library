@@ -12,31 +12,55 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates <XXX> header
-//  <XXX> header Format
-//  +-----------------+
-//  |                 | 
-//  +-----------------+
+//  This hdr_class generates Locator/ID Separation Protocol (LISP) header
+//  (draft-ietf)
+//  LISP header Format
+//  +------+------+------+------+----+------------+ 
+//  |  N   |  L   |  E   |  V   |  I | flags[2:0] |  
+//  +------+------+------+------+----+------------+
+//  | nonce[23:0]                             OR  | 
+//  +----------------------+----------------------+
+//  | src_map_ver[11:0]    | dst_map_ver[15:0]    | -> When V = 1'b1
+//  +----------------------+----------------------+
+//  | lsb[31:0]                               OR  | -> Locator Status Bit 
+//  +----------------------+----------------------+
+//  | instance_id[23:0]    | lsb[7:0]             | -> When I = 1'b1 
+//  +----------------------+----------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
-//  +-------+---------+---------------------------+-------------------------------+
-//  | Width | Default | Variable                  | Description                   |
-//  +-------+---------+---------------------------+-------------------------------+
+//  +-------+---------+-----------------+---------------------------------+
+//  | Width | Default | Variable        | Description                     |
+//  +-------+---------+-----------------+---------------------------------+
+//  | 1     | 1'b0    | corrupt_N_V     | If 1, corrupts N & V property   |
+//  |       |         |                 | i.e. N-V are mutually exclusive |
+//  +-------+---------+-----------------+---------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class xxx_hdr_class extends hdr_class; // {
+class lisp_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
+  rand bit           N;
+  rand bit           L;
+  rand bit           E;
+  rand bit           V;
+  rand bit           I;
+  rand bit [2:0]     flags;
+  rand bit [23:0]    nonce;
+  rand bit [11:0]    src_map_ver;
+  rand bit [11:0]    dst_map_ver;
+  rand bit [31:0]    lsb;
+  rand bit [23:0]    instance_id;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
+       bit           corrupt_N_V = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint xxx_hdr_user_constraint
+  constraint lisp_hdr_user_constraint
   {
   }
 
@@ -45,45 +69,57 @@ class xxx_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  // only if its L2 header
-  constraint legal_etype
-  {
-    `LEGAL_ETH_TYPE_CONSTRAINTS;
-  }
-
- // only if its L3/ip header
-  constraint legal_protocol
-  {
-    `LEGAL_PROT_TYPE_CONSTRAINTS;
-  }
-
   constraint legal_hdr_len 
   {
-    hdr_len == ?; <Length of this header bytes>
+    hdr_len == 8; 
   }
 
-  // other constarints .. here
+  // N & V are mutually exclusive
+  constraint legal_N_V
+  {
+    ~corrupt_N_V -> (N & V) == 1'b0;
+     corrupt_N_V -> (N & V) == 1'b1;
+  }
+
+  constraint legal_flags
+  {
+    flags == 3'h0;
+  }
+
+  constraint legal_lsb
+  {
+    (I & L) -> lsb[7:0] == 8'h0;
+  }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
                 int               inst_no); // {
     super.new (plib);
-    hid          = XXX_HID;
+    hid          = LISP_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "xxx[%0d]",inst_no);
+    $sformat (hdr_name, "lisp[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
+    bit [55:0] tmp_hdr;
     // pack class members
+    if (~V)
+    tmp_hdr[55:32] = nonce;
+    else
+    tmp_hdr[55:32] = {src_map_ver, dst_map_ver};
+    if (I)
+    tmp_hdr[31:0]  = {instance_id, lsb[7:0]};
+    else
+    tmp_hdr[31:0]  = lsb;
     `ifdef SVFNYI_0
-    pack_vec = {};
+    pack_vec = {N, L, E, V, I, flags, tmp_hdr};
     harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{}};
+    hdr = {>>{N, L, E, V, I, flags, tmp_hdr}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -101,23 +137,35 @@ class xxx_hdr_class extends hdr_class; // {
                    ref   hdr_class hdr_q [$],
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
-    hdr_class lcl_class;
+    hdr_class  lcl_class;
+    bit [7:0]  nxt_ip;
+    
     // unpack class members
-    hdr_len   = ?;
+    hdr_len   = 8;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {} = pack_vec;
+    {N, L, E, V, I, flags, nonce, lsb} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{}} = hdr;
+    {>>{N, L, E, V, I, flags, nonce, lsb}} = hdr;
     `endif
+    if (~V)
+        {src_map_ver, dst_map_ver} = nonce;
+    if (I)
+        instance_id = lsb[31:8];
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[????] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, ????);
+        if (pkt.size >= index)
+            nxt_ip = pkt[index];
+        else
+            nxt_ip = 0;
+        if (unpack_en[IPV4_HID] & (pkt.size > index & (nxt_ip[7:4] == 4'h4)))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, IPV4_HID);
+        else if (unpack_en[IPV6_HID] & (pkt.size > index & (nxt_ip[7:4] == 4'h6)))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, IPV6_HID);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // } 
@@ -136,15 +184,24 @@ class xxx_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    xxx_hdr_class lcl;
+    lisp_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;             
+    this.N                     = lcl.N; 
+    this.L                     = lcl.L; 
+    this.E                     = lcl.E; 
+    this.V                     = lcl.V; 
+    this.I                     = lcl.I; 
+    this.flags                 = lcl.flags; 
+    this.nonce                 = lcl.nonce; 
+    this.src_map_ver           = lcl.src_map_ver;
+    this.dst_map_ver           = lcl.dst_map_ver;
+    this.lsb                   = lcl.lsb; 
+    this.instance_id           = lcl.instance_id;
     // ~~~~~~~~~~ Local variables ~~~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;            
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.xxx_fld               = lcl.xxx_fld;           
+    this.corrupt_N_V           = lcl.corrupt_N_V;        
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -153,26 +210,41 @@ class xxx_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    xxx_hdr_class lcl;
+    lisp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "xxx_ary", 0, 0, xxx_ary, lcl.xxx_ary);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "N", N, lcl.N); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "L", L, lcl.L); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "E", E, lcl.E); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "V", V, lcl.V); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "I", I, lcl.I); 
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "flags", flags, lcl.flags); 
+    if (~V)
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "nonce", nonce, lcl.nonce); 
+    else
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "src_map_ver", src_map_ver, lcl.src_map_ver);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "dst_map_ver", dst_map_ver, lcl.dst_map_ver);
+    if (I)
+    begin // {
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "instance_id", instance_id, lcl.instance_id);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "lsb", lsb, lcl.lsb[7:0]); 
+    end // }
+    else
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "lsb", lsb, lcl.lsb); 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_N_V", corrupt_N_V, lcl.corrupt_N_V);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : xxx_hdr_class // }
+endclass : lisp_hdr_class // }

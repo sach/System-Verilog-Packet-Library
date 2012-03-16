@@ -49,7 +49,7 @@ virtual class hdr_class extends pktlib_object_class; // {
 
   // copy all the fields
   task cpy_hdr (hdr_class cpy_cls,
-                 bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     `HDR_INCLUDE_CPY;
   endtask : cpy_hdr // }
 

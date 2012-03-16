@@ -154,22 +154,41 @@ class ipsec_hdr_class extends hdr_class; // {
 
     // pack class members
     pkt_ptr = index;
+    `ifdef SVFNYI_0
+    pack_vec = {spi, seq_num, iv};
+    harray.pack_bit (pkt, pack_vec, index, sectag_sz*8);
+    `else
     hdr = {>>{spi, seq_num, iv}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
 
     // pack next hdr
     if (~last_pack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
 
     // pack trailer
+    `ifdef SVFNYI_0
+    pack_vec = {{pad_len*8{1'b0}}, pad_len, protocol};
+    harray.pack_bit (pkt, pack_vec, index, (pad_len+2)*8);
+    `else
     hdr = {>>{pad, pad_len, protocol}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
 
     // post_pack task to encrypt and add ICV to packet
     if (process_ae)
     begin // {
         post_pack (pkt, pkt_ptr);
+        `ifdef SVFNYI_0
+        index += (icv_sz * 8);
+        `else
         index += icv_sz;
+        `endif
     end // }
   endtask : pack_hdr // }
 
@@ -184,8 +203,13 @@ class ipsec_hdr_class extends hdr_class; // {
     start_off = index;
     pkt_ptr   = index;
     sectag_sz = 16;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, sectag_sz);
+    {spi, seq_num, iv} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, sectag_sz);
     {>>{spi, seq_num, iv}} = hdr;
+    `endif
 
     // decrypt pkt and remove icv from packet
     if (process_ae)
@@ -204,7 +228,12 @@ class ipsec_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
@@ -285,7 +314,7 @@ class ipsec_hdr_class extends hdr_class; // {
   endtask : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     ipsec_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -315,8 +344,8 @@ class ipsec_hdr_class extends hdr_class; // {
     this.enc_sz      = lcl.enc_sz;    
     this.sectag_sz   = lcl.sectag_sz; 
     this.icv_sz      = lcl.icv_sz;    
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -325,25 +354,39 @@ class ipsec_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     ipsec_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "",        0,  HEX, JUST_COMMENT, 0, 0, '{}, '{}, "IPSEC Header");
-    hdis.display_fld (mode, hdr_name, "spi",     32, HEX, BIT_VEC, spi,     lcl.spi);
-    hdis.display_fld (mode, hdr_name, "seq_num", 32, HEX, BIT_VEC, seq_num, lcl.seq_num);
-    hdis.display_fld (mode, hdr_name, "iv",      64, DEC, BIT_VEC, iv,      lcl.iv);
-    hdis.display_fld (mode, hdr_name, "",        0,  HEX, JUST_COMMENT, 0, 0, '{}, '{}, "IPSEC trailer");
-    hdis.display_fld (mode, hdr_name, "pad",     0,  DEF, ARRAY,   0, 0,      pad, lcl.pad);
-    hdis.display_fld (mode, hdr_name, "pad_len", 8,  HEX, BIT_VEC, pad_len,  lcl.pad_len);
-    hdis.display_fld (mode, hdr_name, "protocol",8,  HEX, BIT_VEC, protocol, lcl.protocol);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Header ~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "spi", spi, lcl.spi);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "seq_num", seq_num, lcl.seq_num);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEC,  64, "iv", iv, lcl.iv);
+    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Trailer ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,   0, "pad", 0, 0, pad, lcl.pad);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "pad_len", pad_len, lcl.pad_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "protocol", protocol, lcl.protocol);
     if (process_ae)
     begin // {
-    hdis.display_fld (mode, hdr_name, "", 0,  HEX, JUST_COMMENT, 0, 0, '{}, '{}, "Encryption Related");
-    hdis.display_fld (mode, hdr_name, "auth_st",     32, DEF, BIT_VEC, auth_st,     lcl.auth_st);
-    hdis.display_fld (mode, hdr_name, "auth_sz",     32, DEF, BIT_VEC, auth_sz,     lcl.auth_sz);
-    hdis.display_fld (mode, hdr_name, "auth_adjust",  8, DEC, BIT_VEC, auth_adjust, lcl.auth_adjust);
-    hdis.display_fld (mode, hdr_name, "enc_en",      32, DEF, BIT_VEC, enc_en,      lcl.enc_en);
-    hdis.display_fld (mode, hdr_name, "enc_sz",      32, DEF, BIT_VEC, enc_sz,      lcl.enc_sz);
-    hdis.display_fld (mode, hdr_name, "iv_offset",   32, HEX, BIT_VEC, iv_offset,   lcl.iv_offset);
-    hdis.display_fld (mode, hdr_name, "key",        128, HEX, BIT_VEC, key,         lcl.key);
-    hdis.display_fld (mode, hdr_name, "icv",          0, DEF, ARRAY,   0, 0, icv,   lcl.icv);
+    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Encryption Related ~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "auth_st", auth_st, lcl.auth_st);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "auth_sz", auth_sz, lcl.auth_sz);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEC,   8, "auth_adjust", auth_adjust, lcl.auth_adjust);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "enc_en", enc_en, lcl.enc_en);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "ipsec_type", ipsec_type, lcl.ipsec_type);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "enc_sz", enc_sz, lcl.enc_sz);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "iv_offset", iv_offset, lcl.iv_offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "key", key, lcl.key);
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,   0, "icv", 0, 0, icv, lcl.icv);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "process_ae", process_ae, lcl.process_ae);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

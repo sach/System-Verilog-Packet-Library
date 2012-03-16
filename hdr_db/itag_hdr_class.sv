@@ -76,11 +76,21 @@ class itag_hdr_class extends hdr_class; // {
                 ref   int       index,
                 input bit       last_pack = 1'b0); // {
     // pack class members
+    `ifdef SVFNYI_0
+    pack_vec = {pri, de, rsvd0, rsvd1, sid};
+    harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
+    `else
     hdr = {>>{pri, de, rsvd0, rsvd1, sid}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     // pack next hdr
     if (~last_pack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -92,8 +102,13 @@ class itag_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 4;
     start_off = index;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    {pri, de, rsvd0, rsvd1, sid} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, hdr_len);
     {>>{pri, de, rsvd0, rsvd1, sid}} = hdr;
+    `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -105,14 +120,19 @@ class itag_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     itag_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -122,8 +142,8 @@ class itag_hdr_class extends hdr_class; // {
     this.rsvd0       = lcl.rsvd0;
     this.rsvd1       = lcl.rsvd1;
     this.sid         = lcl.sid;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   // This task displays all the feilds of individual hdrs used
@@ -133,11 +153,23 @@ class itag_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     itag_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "pri",   03, HEX, BIT_VEC, pri,   lcl.pri);
-    hdis.display_fld (mode, hdr_name, "de",    01, HEX, BIT_VEC, de,    lcl.de);
-    hdis.display_fld (mode, hdr_name, "rsvd0", 02, HEX, BIT_VEC, rsvd0, lcl.rsvd0);
-    hdis.display_fld (mode, hdr_name, "rsvd1", 02, HEX, BIT_VEC, rsvd1, lcl.rsvd1);
-    hdis.display_fld (mode, hdr_name, "sid",   12, HEX, BIT_VEC, sid,   lcl.sid);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "pri", pri, lcl.pri);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "de", de, lcl.de);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "rsvd0", rsvd0, lcl.rsvd0);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "rsvd1", rsvd1, lcl.rsvd1);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "sid", sid, lcl.sid);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }

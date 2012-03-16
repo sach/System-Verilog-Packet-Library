@@ -104,10 +104,22 @@ class data_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
+    `ifdef SVFNYI_0
+    int tmp_idx;
+    tmp_idx = index/8;
+    harray.pack_array_8 (data, pkt, tmp_idx);
+    index = tmp_idx * 8;
+    `else
     harray.pack_array_8 (data, pkt, index);
+    `endif
     // pack next hdr
     if (~last_pack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }          
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -132,22 +144,27 @@ class data_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     data_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     this.data        = lcl.data;
     this.data_len    = lcl.data_len;
     this.mpls_chk_en = lcl.mpls_chk_en;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -157,12 +174,11 @@ class data_class extends hdr_class; // {
     string sample_data;
     data_class lcl;
     $cast (lcl, cmp_cls);
-`ifdef DEBUG_CHKSM
-    hdis.display_fld (mode, hdr_name, "hdr_len",       16, HEX, BIT_VEC, hdr_len,      lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, "total_hdr_len", 16, HEX, BIT_VEC, total_hdr_len,lcl.total_hdr_len);
-`endif
     if ((mode == COMPARE_FULL) | (mode == DISPLAY_FULL))
-        hdis.display_fld (mode, hdr_name, "data", 0, DEF, ARRAY, 0, 0, data, lcl.data);
+    begin // {
+        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+        hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "data", 0, 0, data, lcl.data);
+    end // }
     else
     begin // {
         if (data.size > 4)
@@ -177,7 +193,18 @@ class data_class extends hdr_class; // {
               0 : $sformat(sample_data, "data => EMPTY");
             endcase // }
         end // }
-        hdis.display_fld (mode, hdr_name, "data_len", 32, DEF, BIT_VEC, data.size, lcl.data.size, '{}, '{}, sample_data);
+        hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "data_len", data.size, lcl.data.size, '{}, '{}, sample_data);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "mpls_chk_en", mpls_chk_en, lcl.mpls_chk_en);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

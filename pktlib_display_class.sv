@@ -28,16 +28,16 @@ class pktlib_display_class; // {
 
   // This task displays the feild of individual hdr
   task display_fld (int               mode        = DISPLAY, // display or compare
-                    bit [10:0] [7:0]  hname,      // string literals
-                    bit [15:0] [7:0]  flname,     // string literals
-                    int               flsz,
-                    int               flval,
-                    int               fltype,
+                    bit [10:0] [7:0]  hname,                 // string literals
+                    int               fltype,                // Field type - BIT_VEC, ARRAY or STRING(for comments)
+                    int               flval,                 // Field value - DEC, BIN, HEX, etc..
+                    int               flsz,                  // Field size
+                    bit [31:0] [7:0]  flname,                // Field name - string literals
                     bit [`VEC_SZ-1:0] flvec,
                     bit [`VEC_SZ-1:0] flvec2      = `VEC_SZ'h0,
                     bit [7:0]         flarray  [] = '{},
                     bit [7:0]         flarray2 [] = '{},
-                    string            flcomment   = "NO"); // {
+                    string            flcomment   = "NO");   // comments if field type is STRING {
     if ((mode == NO_DISPLAY) |(mode == COMPARE_NO_DISPLAY))
     begin // {
         if (fltype == BIT_VEC)
@@ -50,7 +50,7 @@ class pktlib_display_class; // {
     end // }
     else
     begin // {
-        if (fltype == JUST_COMMENT)
+        if (fltype == STRING)
             $display ("%0s%s : %s", cls_name, hname, flcomment);
         if (fltype == BIT_VEC)
         begin // { 
@@ -140,7 +140,7 @@ class pktlib_display_class; // {
                        ref   int              cmp_err,
                        input int              mode           = COMPARE,
                        input bit [10:0] [7:0] hname          = "pkt_lib", // string literals
-                       input bit [15:0] [7:0] flname         = "",        // string literals
+                       input bit [31:0] [7:0] flname         = "",        // string literals
                        input string           cmp_type       = "Pkt",
                        input string           err_type       = "ERROR",   // string literals
                        input string           info_type      = "INFO",

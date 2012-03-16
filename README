@@ -32,20 +32,23 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #. Headers supported :
    ================
    Currently Pktlib supports the following headers. 
-   1.  eth (Basic Ethernet Header)
-   2.  macsec (IEEE 802.1AE MACSEC)
-   3.  snap (IEEE 802.3 LLC/SNAP Header)
-   4.  dot1q (IEEE 802.1q C-Tag and IEEE 802.1ad S-Tag) 
-   5.  itag (IEEE 802.1ah I-Tag)
-   6.  mpls, mmpls (MPLS and Multicast MPLS)
-   7.  ipv4, ipv6 (IPV4 and IPV6 IP Headers)
-   8.  ipsec (Not fully verified :-))
-   9.  ptp (IEEE 1588 PTP header - Version 1 and 2)
-   10. ntp (RFC 4330 - NTP version 4 Header) 
-   11. gre (different GRE headers)
-   12. udp, tcp (UDP and TCP protocols Headers)
-   13. data (Pkt Payload)
-   14. pth, ptl2, ptip (Proprietary headers :
+   1.  eth         (Basic Ethernet Header)
+   2.  macsec      (IEEE 802.1AE MACSEC)
+   3.  snap        (IEEE 802.3 LLC/SNAP Header)
+   4.  dot1q       (IEEE 802.1q C-Tag and IEEE 802.1ad S-Tag) 
+   5.  itag        (IEEE 802.1ah I-Tag)
+   6.  vntag       (IEEE 802.1Qbh VNTag)
+   7.  trill       (RFC 6325 TRILL header)
+   8.  mpls, mmpls (MPLS and Multicast MPLS)
+   9.  ipv4, ipv6  (IPV4 and IPV6 IP Headers)
+   10. ipsec       (Not fully verified :-))
+   11. ptp         (IEEE 1588 PTP header - Version 1 and 2)
+   12. ntp         (RFC 4330 - NTP version 4 Header) 
+   13. gre         (RFC 1701, 2637, 2784, 2890, NVGRE(Draft) - GRE headers)
+   14. udp, tcp    (UDP and TCP protocols Headers)
+   15. lisp        (Locator/ID Separation Protocol (LISP) Header - draft-ietf)
+   16. data        (Pkt Payload)
+   17. pth, ptl2, ptip (Proprietary headers :
                           a. pth -> Slapped in front of pkt
                           b. ptl2 -> Any proprietary L2 Headers
                           c. ptip -> Any proprietary L3/IP Headers)

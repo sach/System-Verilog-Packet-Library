@@ -128,17 +128,32 @@ class mpls_hdr_class extends hdr_class; // {
     // pack class members
     for (i = 0; i < num_mpls_lbl; i++)
     begin // {
+        `ifdef SVFNYI_0
+        pack_vec = {label[i], exp[i], s[i], ttl[i]};
+        harray.pack_bit (pkt, pack_vec, index, 32);
+        `else
         hdr = {>>{label[i], exp[i], s[i], ttl[i]}};
-         harray.pack_array_8 (hdr, pkt, index);
+        harray.pack_array_8 (hdr, pkt, index);
+        `endif
     end // }
     if ((nxt_hdr.hid == ETH_HID) & (label[0] !== eth_null_lbl))
     begin // {
+        `ifdef SVFNYI_0
+        pack_vec = eth_ctrl;
+        harray.pack_bit (pkt, pack_vec, index, 32);
+        `else
         hdr = {>>{eth_ctrl}};
         harray.pack_array_8 (hdr, pkt, index);
+        `endif
     end // }
     // pack next hdr
     if (~last_pack && this.nxt_hdr != null)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -167,8 +182,13 @@ class mpls_hdr_class extends hdr_class; // {
                `endif
                break;
             end // }
+            `ifdef SVFNYI_0
+            harray.unpack_array (pkt, pack_vec, index, 4);
+            {label[num_mpls_lbl-1], exp[num_mpls_lbl-1], s[num_mpls_lbl-1], ttl[num_mpls_lbl-1]} = pack_vec;
+            `else
             harray.copy_array (pkt, hdr, index, 4);
             {>>{label[num_mpls_lbl-1], exp[num_mpls_lbl-1], s[num_mpls_lbl-1], ttl[num_mpls_lbl-1]}} = hdr;
+            `endif
             if (s[num_mpls_lbl-1] == 1'b1)
             begin // {
                 unpack_done = 1;
@@ -185,8 +205,13 @@ class mpls_hdr_class extends hdr_class; // {
         nxtB = 8'hAA;
     if ((label[0] != eth_null_lbl) & (nxtB[7:4] == 4'h0))
     begin // {
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, 4);
+        eth_ctrl =  pack_vec;
+        `else
         harray.copy_array (pkt, hdr, index, 4);
         {>>{eth_ctrl}} =  hdr;
+        `endif
         hdr_len  = (num_mpls_lbl * 4) + 4;
     end // }
     else
@@ -217,14 +242,19 @@ class mpls_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     mpls_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -239,8 +269,8 @@ class mpls_hdr_class extends hdr_class; // {
     this.use_eth_null_lbl  = lcl.use_eth_null_lbl ;
     this.use_ipv4_null_lbl = lcl.use_ipv4_null_lbl;
     this.use_ipv6_null_lbl = lcl.use_ipv6_null_lbl;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -251,20 +281,36 @@ class mpls_hdr_class extends hdr_class; // {
     string         fld_name;
     mpls_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "num_mpls_lbl", 32, DEF, BIT_VEC, num_mpls_lbl, lcl.num_mpls_lbl);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
     for (i = 0; i < num_mpls_lbl; i++)
     begin // {
         $sformat(fld_name, "label[%0d]", i);
-        hdis.display_fld (mode, hdr_name, fld_name,   20, HEX, BIT_VEC, label[i], lcl.label[i], '{}, '{}, get_mpls_lbl_name(label[i]));
+        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 020, fld_name, label[i], lcl.label[i], '{}, '{}, get_mpls_lbl_name(label[i]));
         $sformat(fld_name, "exp[%0d]",   i);
-        hdis.display_fld (mode, hdr_name, fld_name,   03, HEX, BIT_VEC, exp[i],   lcl.exp[i]);
+        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, fld_name, exp[i], lcl.exp[i]);
         $sformat(fld_name, "s[%0d]",     i);
-        hdis.display_fld (mode, hdr_name, fld_name,   01, DEF, BIT_VEC, s[i],     lcl.s[i]);
+        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, fld_name, s[i], lcl.s[i]);
         $sformat(fld_name, "ttl[%0d]",   i);
-        hdis.display_fld (mode, hdr_name, fld_name,   08, HEX, BIT_VEC, ttl[i],   lcl.ttl[i]);
+        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, fld_name, ttl[i], lcl.ttl[i]);
     end // }
     if (hdr_len > (num_mpls_lbl * 4))
-        hdis.display_fld (mode, hdr_name, "eth_ctrl", 32, HEX, BIT_VEC, eth_ctrl, lcl.eth_ctrl);
+        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "eth_ctrl", eth_ctrl, lcl.eth_ctrl);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{},"~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_eth_null_lbl", use_eth_null_lbl, lcl.use_eth_null_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_ipv4_null_lbl", use_ipv4_null_lbl, lcl.use_ipv4_null_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_ipv6_null_lbl", use_ipv6_null_lbl, lcl.use_ipv6_null_lbl);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }

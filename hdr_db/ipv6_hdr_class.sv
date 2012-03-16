@@ -76,7 +76,7 @@ class ipv6_hdr_class extends hdr_class; // {
        bit [15:0]         corrupt_pyld_len_by = 16'h1;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
-  constraint ipv4_hdr_user_constraint
+  constraint ipv6_hdr_user_constraint
   {
   }
 
@@ -131,12 +131,22 @@ class ipv6_hdr_class extends hdr_class; // {
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     // pack class members
+    `ifdef SVFNYI_0
+    pack_vec = {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da};
+    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    `else
     hdr = {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     cal_pseudo_chksm ();
     // pack next hdr
     if (~last_pack)
-        nxt_hdr.pack_hdr (pkt, index);
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
+        this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -148,8 +158,13 @@ class ipv6_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = 40;
     start_off = index;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, hdr_len);
+    {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, hdr_len);
     {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}} = hdr;
+    `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -161,14 +176,19 @@ class ipv6_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     ipv6_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -190,8 +210,8 @@ class ipv6_hdr_class extends hdr_class; // {
     this.cal_payload_len     = lcl.cal_payload_len;
     this.corrupt_payload_len = lcl.corrupt_payload_len;
     this.corrupt_pyld_len_by = lcl.corrupt_pyld_len_by;
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -200,14 +220,35 @@ class ipv6_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     ipv6_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "version",      4, HEX, BIT_VEC, version,    lcl.version);
-    hdis.display_fld (mode, hdr_name, "tos",          8, HEX, BIT_VEC, tos,        lcl.tos);
-    hdis.display_fld (mode, hdr_name, "flow_label",  20, HEX, BIT_VEC, flow_label, lcl.flow_label);
-    hdis.display_fld (mode, hdr_name, "payload_len", 16, HEX, BIT_VEC, payload_len,lcl.payload_len);
-    hdis.display_fld (mode, hdr_name, "protocol",     8, HEX, BIT_VEC, protocol,   lcl.protocol, '{}, '{}, get_protocol_name(protocol));
-    hdis.display_fld (mode, hdr_name, "ttl",          8, HEX, BIT_VEC, ttl,   lcl.ttl);
-    hdis.display_fld (mode, hdr_name, "ip6_sa",     128, HEX, BIT_VEC, ip6_sa,lcl.ip6_sa);
-    hdis.display_fld (mode, hdr_name, "ip6_da",     128, HEX, BIT_VEC, ip6_da,lcl.ip6_da);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   4, "version", version, lcl.version);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "tos", tos, lcl.tos);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  20, "flow_label", flow_label, lcl.flow_label);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  16, "payload_len", payload_len, lcl.payload_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "ttl", ttl, lcl.ttl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "ip6_sa", ip6_sa, lcl.ip6_sa);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "ip6_da", ip6_da, lcl.ip6_da);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
+    end // }
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);
+    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "pseudo_chksm_data", 0, 0, pseudo_chksm_data, lcl.pseudo_chksm_data);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "pseudo_chksm_idx", pseudo_chksm_idx, lcl.pseudo_chksm_idx);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "pseudo_chksm", pseudo_chksm, lcl.pseudo_chksm);
+    end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
@@ -216,7 +257,13 @@ class ipv6_hdr_class extends hdr_class; // {
   task cal_pseudo_chksm (); // {
     pseudo_chksm_idx  = 0;
     pseudo_chksm      = 0;
+    `ifdef SVFNYI_0
+    pseudo_chksm_data = new[40];
+    pack_vec          = {32'h0, {8'h0, protocol}, payload_len, ip6_sa, ip6_da};
+    harray.pack_bit(pseudo_chksm_data, pack_vec, pseudo_chksm_idx, 320);
+    `else
     pseudo_chksm_data = {>>{32'h0, 8'h0, protocol, payload_len, ip6_sa, ip6_da}}; 
+    `endif
     pseudo_chksm      = crc_chksm.chksm16(pseudo_chksm_data, pseudo_chksm_data.size(), 0, 0, 16'hFFFF);
   endtask : cal_pseudo_chksm // }
 

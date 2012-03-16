@@ -22,7 +22,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define ALT1Q_HDR_ETYPE     16'h8200
 `define STAG_HDR_ETYPE      16'h88A8
 `define ITAG_HDR_ETYPE      16'h88E7
-`define ETH_HDR_ETYPE       16'h6558 // Ethernet-over-GRE Tunnel
+`define VNTAG_HDR_ETYPE     16'h8b8b
+`define TRILL_HDR_ETYPE     16'h22f3
+`define ETH_HDR_ETYPE       16'h6558 // Ethernet-over-GRE Tunnel (NVGRE)
 `define IPV4_HDR_ETYPE      16'h0800
 `define IPV6_HDR_ETYPE      16'h86DD
 `define PTL2_HDR_ETYPE      16'h5555
@@ -38,6 +40,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   bit [15:0]  alt1q_etype   = `ALT1Q_HDR_ETYPE;
   bit [15:0]  stag_etype    = `STAG_HDR_ETYPE;
   bit [15:0]  itag_etype    = `ITAG_HDR_ETYPE;
+  bit [15:0]  vntag_etype   = `VNTAG_HDR_ETYPE;
+  bit [15:0]  trill_etype   = `TRILL_HDR_ETYPE;
   bit [15:0]  eth_etype     = `ETH_HDR_ETYPE;
   bit [15:0]  ipv4_etype    = `IPV4_HDR_ETYPE;
   bit [15:0]  ipv6_etype    = `IPV6_HDR_ETYPE;
@@ -55,6 +59,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.alt1q_etype   = cpy_cls.alt1q_etype;\
     this.stag_etype    = cpy_cls.stag_etype;\
     this.itag_etype    = cpy_cls.itag_etype;\
+    this.vntag_etype   = cpy_cls.vntag_etype;\
+    this.trill_etype   = cpy_cls.trill_etype;\
     this.eth_etype     = cpy_cls.eth_etype;\
     this.ipv4_etype    = cpy_cls.ipv4_etype;\
     this.ipv6_etype    = cpy_cls.ipv6_etype;\
@@ -74,6 +80,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         (nxt_hdr.hid == ALT1Q_HID)  -> (etype == alt1q_etype) ;\
         (nxt_hdr.hid == STAG_HID)   -> (etype == stag_etype)  ;\
         (nxt_hdr.hid == ITAG_HID)   -> (etype == itag_etype)  ;\
+        (nxt_hdr.hid == VNTAG_HID)  -> (etype == vntag_etype) ;\
+        (nxt_hdr.hid == TRILL_HID)  -> (etype == trill_etype) ;\
         (nxt_hdr.hid == ETH_HID)    -> (etype == eth_etype)   ;\
         (nxt_hdr.hid == IPV4_HID)   -> (etype == ipv4_etype)  ;\
         (nxt_hdr.hid == IPV6_HID)   -> (etype == ipv6_etype)  ;\
@@ -85,6 +93,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                        (etype != alt1q_etype) &\
                                        (etype != stag_etype)  &\
                                        (etype != itag_etype)  &\
+                                       (etype != vntag_etype) &\
+                                       (etype != trill_etype) &\
                                        (etype != eth_etype)   &\
                                        (etype != ipv4_etype)  &\
                                        (etype != ipv6_etype)  &\
@@ -106,6 +116,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
              alt1q_etype   : get_etype_name = "ALT1Q";
              stag_etype    : get_etype_name = "STAG";
              itag_etype    : get_etype_name = "ITAG";
+             vntag_etype   : get_etype_name = "VNTAG";
+             trill_etype   : get_etype_name = "TRILL";
              snap_etype    : get_etype_name = "SNAP";
              eth_etype     : get_etype_name = "ETH";
              ipv4_etype    : get_etype_name = "IPV4";
@@ -129,6 +141,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         ALT1Q_HID   : get_etype = alt1q_etype;
         STAG_HID    : get_etype = stag_etype;
         ITAG_HID    : get_etype = itag_etype;
+        VNTAG_HID   : get_etype = vntag_etype;
+        TRILL_HID   : get_etype = trill_etype;
         ETH_HID     : get_etype = eth_etype;
         IPV4_HID    : get_etype = ipv4_etype;
         IPV6_HID    : get_etype = ipv6_etype;
@@ -153,6 +167,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
              alt1q_etype   : get_hid_from_etype = ALT1Q_HID;
              stag_etype    : get_hid_from_etype = STAG_HID;
              itag_etype    : get_hid_from_etype = ITAG_HID;
+             vntag_etype   : get_hid_from_etype = VNTAG_HID;
+             trill_etype   : get_hid_from_etype = TRILL_HID;
              eth_etype     : get_hid_from_etype = ETH_HID;
              ipv4_etype    : get_hid_from_etype = IPV4_HID;
              ipv6_etype    : get_hid_from_etype = IPV6_HID;

@@ -23,6 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
          int                    cfg_id  = 0;         // cfg_id number
          string                 hdr_name;
          bit [7:0]              hdr [];              // each hdr data in array
+         bit [`VEC_SZ-1:0]      pack_vec;            // packing vector
   rand   hdr_class              nxt_hdr;             // object handle to nxt hdr in list
   rand   hdr_class              prv_hdr;             // object handle to prv hdr in list
   rand   hdr_class              all_hdr [$];         // all the hdr of list;
@@ -71,6 +72,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.cfg_id              = cpy_cls.cfg_id;\
     this.hdr_name            = cpy_cls.hdr_name;\
     this.hdr                 = cpy_cls.hdr;\
+    this.pack_vec            = cpy_cls.pack_vec;\
     this.nxt_hdr             = cpy_cls.nxt_hdr;\
     this.prv_hdr             = cpy_cls.prv_hdr;\
     this.all_hdr             = cpy_cls.all_hdr;\
@@ -110,6 +112,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ~~~~~~~~~~ UDP defines/tasks/macros ~~~~~~~~~~
 `include "hdr_udp_include.svh"
+
+// ~~~~~~~~~~ TCP defines/tasks/macros ~~~~~~~~~~
+`include "hdr_tcp_include.svh"
 
 // ~~~~~~~~~~ XXX defines/tasks/macros ~~~~~~~~~~
 `include "hdr_xxx_include.svh"

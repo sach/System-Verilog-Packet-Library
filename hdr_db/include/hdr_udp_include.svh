@@ -18,28 +18,40 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Destination port defines ~~~~~~~~~~
 `define PTP_UDP_DST_PRT    16'h13F
 `define NTP_UDP_DST_PRT    16'h07b
+`define LISP_UDP_DST_PRT   16'd4341
+`define OTV_UDP_DST_PRT    16'd8472
 
 // ~~~~~~~~~~ UDP Type fields ~~~~~~~~~~
-  bit [15:0]  ptp_udp_dst_prt  = `PTP_UDP_DST_PRT;
-  bit [15:0]  ntp_udp_dst_prt  = `NTP_UDP_DST_PRT;
+  bit [15:0]  ptp_udp_dst_prt   = `PTP_UDP_DST_PRT;
+  bit [15:0]  ntp_udp_dst_prt   = `NTP_UDP_DST_PRT;
+  bit [15:0]  lisp_udp_dst_prt  = `LISP_UDP_DST_PRT;
+  bit [15:0]  otv_udp_dst_prt   = `OTV_UDP_DST_PRT;
 
 // ~~~~~~~~~~ define to copy UDP Type fields ~~~~~~~~~~
 `define HDR_UDP_INCLUDE_CPY\
-    this.ptp_udp_dst_prt  = cpy_cls.ptp_udp_dst_prt;\
-    this.ntp_udp_dst_prt  = cpy_cls.ntp_udp_dst_prt
+    this.ptp_udp_dst_prt   = cpy_cls.ptp_udp_dst_prt;\
+    this.ntp_udp_dst_prt   = cpy_cls.ntp_udp_dst_prt;\
+    this.lisp_udp_dst_prt  = cpy_cls.lisp_udp_dst_prt;\
+    this.otv_udp_dst_prt   = cpy_cls.otv_udp_dst_prt
 
 // ~~~~~~~~~~ Constraints Macro for ethertype ~~~~~~~~~~
 `define LEGAL_UDP_DST_PRT_CONSTRAINTS \
         (nxt_hdr.hid == PTP_HID)  -> (dst_prt == ptp_udp_dst_prt) ;\
         (nxt_hdr.hid == NTP_HID)  -> (dst_prt == ntp_udp_dst_prt) ;\
+        (nxt_hdr.hid == LISP_HID) -> (dst_prt == lisp_udp_dst_prt) ;\
+        (nxt_hdr.hid == OTV_HID)  -> (dst_prt == otv_udp_dst_prt) ;\
         (nxt_hdr.hid == DATA_HID) -> (dst_prt != ptp_udp_dst_prt) &\
-                                     (dst_prt != ntp_udp_dst_prt)
+                                     (dst_prt != ntp_udp_dst_prt) &\
+                                     (dst_prt != lisp_udp_dst_prt)&\
+                                     (dst_prt != otv_udp_dst_prt)
 
 // ~~~~~~~~~~ Function to get the name of Destination Port ~~~~~~~~~~
   function string get_udp_dst_prt_name(bit [15:0] dst_prt); // {
      case (dst_prt) // {
          ptp_udp_dst_prt  : get_udp_dst_prt_name = "PTP";
          ntp_udp_dst_prt  : get_udp_dst_prt_name = "NTP";
+         lisp_udp_dst_prt : get_udp_dst_prt_name = "LISP";
+         otv_udp_dst_prt  : get_udp_dst_prt_name = "OTV";
          default          : get_udp_dst_prt_name = "UNKNOWN";
      endcase // }
   endfunction : get_udp_dst_prt_name // }
@@ -48,18 +60,22 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   // function to get UDP dst_port based on hid
   function bit [15:0] get_udp_dst_prt(int hid); // {
      case (hid) // {
-        PTP_HID          : get_udp_dst_prt = ptp_udp_dst_prt;
-        NTP_HID          : get_udp_dst_prt = ntp_udp_dst_prt;
-        default          : get_udp_dst_prt = $urandom ();
+        PTP_HID           : get_udp_dst_prt = ptp_udp_dst_prt;
+        NTP_HID           : get_udp_dst_prt = ntp_udp_dst_prt;
+        LISP_HID          : get_udp_dst_prt = lisp_udp_dst_prt;
+        OTV_HID           : get_udp_dst_prt = otv_udp_dst_prt;
+        default           : get_udp_dst_prt = $urandom ();
      endcase // }
   endfunction : get_udp_dst_prt // }
 
 // ~~~~~~~~~~ Function to get HID from the destination port ~~~~~~~~~~
   function int get_hid_from_udp_dst_prt(bit [15:0] dst_prt); // {
      case (dst_prt) // {
-         ptp_udp_dst_prt : get_hid_from_udp_dst_prt = PTP_HID;
-         ntp_udp_dst_prt : get_hid_from_udp_dst_prt = NTP_HID;
-         default         : get_hid_from_udp_dst_prt = DATA_HID;
+         ptp_udp_dst_prt  : get_hid_from_udp_dst_prt = PTP_HID;
+         ntp_udp_dst_prt  : get_hid_from_udp_dst_prt = NTP_HID;
+         lisp_udp_dst_prt : get_hid_from_udp_dst_prt = LISP_HID;
+         otv_udp_dst_prt  : get_hid_from_udp_dst_prt = OTV_HID;
+         default          : get_hid_from_udp_dst_prt = DATA_HID;
      endcase // }
   endfunction : get_hid_from_udp_dst_prt // }
 

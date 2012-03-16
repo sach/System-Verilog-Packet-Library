@@ -12,52 +12,66 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  hdr class to generate GRE header
+//  hdr class to generate GRE (Generic Routing Encapsulation) header.
+//  Supports the following RFCs.
+//            - RFC 1701 (GRE - Version = 0)
+//            - RFC 2637 (Enhanced GRE - Version = 1)
+//            - RFC 2784 (Many fields were deprecated from RFC 1701) - Default
+//            - RFC 2890 (Key & Sequence number extension to GRE)    
+//            - NVGRE Draft                                         
 //  GRE header Format
 //  +--------------------------------+
-//  | C | R | K | S | s | recur[2:0] | -> C, R, K, s all are 0 for version = 1 
-//  +---+---+---+---+---+------------+
-//  | A | flags[3:0] | version[2:0]  | -> A is 0 for version = 0 
-//  +---+------------+---------------+
-//  | protocol[15:0] (etype)         | -> always 0x880B if version = 1 
+//  |  C   |  R   |  K   |  S   |  s | -> {C, R, s} = 0, K = 1 for version = 1 
+//  +------+------+------+------+----+ |  {R, K, S, s} = 0 for RFC 2784. {C, R, S, s} = 0, K = 1 for NVGRE
+//  | recur[2:0]  |  A   | flags[3:0]| |  A = 0 for version = 0 (RFC 1701, 2784, 2890, NVGRE) 
+//  +-------------+------+-----------+ -> recur & flags always 0. 
+//  | version[2:0]                   | -> version = 1 for RFC 2637 else 0
 //  +--------------------------------+
-//  | cheksum/payload_length[15:0]   | -> version = 0 : checksum (optional),= 1 : payload_length
+//  | protocol[15:0] (etype)         | -> always 0x880B if version = 1, 0x6558 if NVGRE 
 //  +--------------------------------+
-//  | offset/call_id[15:0]           | -> version = 0 : offset (optional),  = 1 : call_id 
+//  | cheksum[15:0]                  | -> checksum (present if (C | R) = 1) 
 //  +--------------------------------+
-//  | key[31:0]                      | -> version = 0 : (optional), version = 1 : not present  
+//  | offset[15:0]                   | -> offset (present if (C | R) = 1). For RFC 2784, 2890 set to 0 
 //  +--------------------------------+
-//  | sequence_number[31:0]          | -> optional
+//  | key[31:0]                  OR  | -> key (present if K = 1). RFC 1701, 2890  
 //  +--------------------------------+
-//  | ack_number[31:0]               | -> version = 0 : not present,        = 1 : Acknowledge Number(optional)
+//  | tni[23:0]  | reserved[7:0] OR  | -> Tenenat Network ID(tni), reserved} (present k = 1). NVGRE
+//  +--------------------------------+
+//  | payload_length[15:0]           | 
+//  | call_id[15:0]                  | -> {payload_length, call_id} (present if k = 1). Version = 1
+//  +--------------------------------+
+//  | sequence_number[31:0]          | -> sequence_number (present if S = 1)
+//  +--------------------------------+
+//  | ack_number[31:0]               | -> Acknowledge Number (present if A = 1)
 //  +--------------------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
-//  +-------+---------+---------------------------+-------------------------------+
-//  | Width | Default | Variable                  | Description                   |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | gre_4b                    | If 1, version = 0 & 4 byte hdr|
-//  |       |         |                           | C, R, K, S, s, A all 0        |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | version_1                 | If 1, version = 1, otherwise 0|
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_version           | If 1, corrupts version        |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b1    | cal_payload_length        | If 1, calculates payload len  |
-//  |       |         |                           | Otherwise it will be random   |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_payload_length    | If 1, corrupts payload_length |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 16    | 16'h1   | corrupt_payload_length_by | corrupts payload_length value |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b1    | cal_chksm                 | If 1, calculates checksum     |
-//  |       |         |                           | Otherwise it will be random   |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_chksm             | If 1, corrupts checksum       |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 16    | 16'hFFFF| corrupt_chksm_msk         | Msk used to corrupt chksm     |
-//  +-------+---------+---------------------------+-------------------------------+
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | Width | Default | Variable                  | Description                              |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | implement_rfc2637         | If 1, GRE is implemneted as per RFC 2637 |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | implement_rfc2784         | If 1, GRE is implemneted as per RFC 2784 |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | implement_rfc2890         | If 1, GRE is implemneted as per RFC 2890 |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | implement_nvgre           | If 1, GRE is implemneted as per NVGRE    |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | corrupt_version           | If 1, corrupts version                   |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b1    | cal_payload_length        | If 1, calculates payload len else random |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | corrupt_payload_length    | If 1, corrupts payload_length            |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 16    | 16'h1   | corrupt_payload_length_by | corrupts payload_length value            |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b1    | cal_chksm                 | If 1, calculates checksum else its random|
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 1     | 1'b0    | corrupt_chksm             | If 1, corrupts checksum                  |
+//  +-------+---------+---------------------------+------------------------------------------+
+//  | 16    | 16'hFFFF| corrupt_chksm_msk         | Msk used to corrupt chksm                |
+//  +-------+---------+---------------------------+------------------------------------------+
 //
 // ----------------------------------------------------------------------
 
@@ -75,10 +89,12 @@ class gre_hdr_class extends hdr_class; // {
   rand bit [2:0]     version;
   rand bit [15:0]    etype;    // protocol
   rand bit [15:0]    checksum;
-  rand bit [15:0]    payload_length;
   rand bit [15:0]    offset;      
-  rand bit [15:0]    call_id;
   rand bit [31:0]    key;
+  rand bit [23:0]    tni;
+  rand bit [7:0]     reserved;
+  rand bit [15:0]    payload_length;
+  rand bit [15:0]    call_id;
   rand bit [31:0]    sequence_number;
   rand bit [31:0]    ack_number;
 
@@ -89,8 +105,10 @@ class gre_hdr_class extends hdr_class; // {
   rand  int          ack_len;
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-       bit           gre_4b                    = 1'b0;
-       bit           version_1                 = 1'b0; 
+       bit           implement_rfc2637         = 1'b0; 
+       bit           implement_rfc2784         = 1'b0; 
+       bit           implement_rfc2890         = 1'b0; 
+       bit           implement_nvgre           = 1'b0; 
        bit           corrupt_version           = 1'b0; 
        bit           cal_payload_length        = 1'b1; 
        bit           corrupt_payload_length    = 1'b0; 
@@ -112,24 +130,27 @@ class gre_hdr_class extends hdr_class; // {
 
   constraint legal_hdr_len
   {
-    (C | R | version_1)  -> chkoff_len == 4;
-    ~(C ^ R ^ version_1) -> chkoff_len == 0;
-    (K)                  -> key_len    == 4;
-    (~K)                 -> key_len    == 0;
-    (S)                  -> seq_len    == 4;
-    (~S)                 -> seq_len    == 0;
-    (A)                  -> ack_len    == 4;
-    (~A)                 -> ack_len    == 0;
+    (C | R ) -> chkoff_len == 4;
+    ~(C ^ R) -> chkoff_len == 0;
+    (K)      -> key_len    == 4;
+    (~K)     -> key_len    == 0;
+    (S)      -> seq_len    == 4;
+    (~S)     -> seq_len    == 0;
+    (A)      -> ack_len    == 4;
+    (~A)     -> ack_len    == 0;
     hdr_len == 4 + chkoff_len + key_len + seq_len + ack_len;
   }
 
 
   constraint legal_CRKSsArecurflags
   {
-    (version_1 == 1'b0) -> A == 1'b0;
-    (version_1 == 1'b1) -> ((C | R | K) == 1'b0); 
-    (gre_4b    == 1'b1) -> ((C | R | K | S) == 1'b0); 
-    s     == 0;
+    (~implement_rfc2637) -> (A == 1'b0);
+    (implement_rfc2637 ) -> ((C | R | s) == 1'b0); 
+    (implement_rfc2637 ) -> (K == 1'b1);
+    (implement_rfc2784 ) -> ((R | K | S | s) == 1'b0); 
+    (implement_rfc2890 ) -> ((R | s) == 1'b0); 
+    (implement_nvgre   ) -> ((C | R | S | s) == 1'b0); 
+    (implement_nvgre   ) -> (K == 1'b1);
     recur == 0;
     flags == 0;
   }
@@ -137,7 +158,7 @@ class gre_hdr_class extends hdr_class; // {
 
   constraint legal_verison
   {
-    if (version_1 & ~gre_4b)
+    if (implement_rfc2637)
     {
       (corrupt_version == 1'b0) -> (version == 3'h1);
       (corrupt_version == 1'b1) -> (version != 3'h1);
@@ -171,6 +192,15 @@ class gre_hdr_class extends hdr_class; // {
     checksum == 16'h0;
   }
 
+  constraint legal_offset   
+  {
+    (implement_rfc2784  | implement_rfc2890) -> (offset == 1'b0); 
+  }
+
+  constraint legal_reserved
+  {
+    reserved == 16'h0;
+  }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
@@ -183,42 +213,109 @@ class gre_hdr_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
+  function void pre_randomize (); // {
+    if (super) super.pre_randomize();
+    if (implement_rfc2637)
+    begin // {
+        implement_rfc2784 = 1'b0;
+        implement_rfc2890 = 1'b0;
+        implement_nvgre   = 1'b0;
+    end // }
+    else if (implement_rfc2784)
+    begin // {
+        implement_rfc2890 = 1'b0;
+        implement_nvgre   = 1'b0;
+    end // }
+    else if (implement_nvgre)
+    begin // {
+        implement_rfc2890 = 1'b0;
+    end // }
+  endfunction : pre_randomize // }
+
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
     int gre_idx;
     gre_idx = index;
     // pack class members
+    `ifdef SVFNYI_0
+    pack_vec = {C, R, K, S, s, recur, A, flags, version, etype};
+    harray.pack_bit (pkt, pack_vec, index, 32);
+    `else
     hdr = {>>{C, R, K, S, s, recur, A, flags, version, etype}};
     harray.pack_array_8 (hdr, pkt, index);
+    `endif
     if (C | R)
     begin // {
+        `ifdef SVFNYI_0
+        pack_vec = {checksum, offset};
+        harray.pack_bit (pkt, pack_vec, index, 32);
+        `else
         hdr = {>>{checksum, offset}};
         harray.pack_array_8 (hdr, pkt, index);
-    end // }
-    if (version_1)
-    begin // {
-        hdr = {>>{payload_length, call_id}};
-        harray.pack_array_8 (hdr, pkt, index);
+        `endif
     end // }
     if (K)
     begin // {
-        hdr = {>>{key}};
-        harray.pack_array_8 (hdr, pkt, index);
+        if ((version == 1) | implement_rfc2637)
+        begin // {
+            `ifdef SVFNYI_0
+            pack_vec = {payload_length, call_id};
+            harray.pack_bit (pkt, pack_vec, index, 32);
+            `else
+            hdr = {>>{payload_length, call_id}};
+            harray.pack_array_8 (hdr, pkt, index);
+            `endif
+        end // }
+        else if ((etype == eth_etype) | implement_nvgre)
+        begin // {
+            `ifdef SVFNYI_0
+            pack_vec = {tni, reserved};
+            harray.pack_bit (pkt, pack_vec, index, 32);
+            `else
+            hdr = {>>{tni, reserved}};
+            harray.pack_array_8 (hdr, pkt, index);
+            `endif
+        end // }
+        else
+        begin // {
+            `ifdef SVFNYI_0
+            pack_vec = key;
+            harray.pack_bit (pkt, pack_vec, index, 32);
+            `else
+            hdr = {>>{key}};
+            harray.pack_array_8 (hdr, pkt, index);
+            `endif
+        end // }
     end // }
     if (S)
     begin // {
+        `ifdef SVFNYI_0
+        pack_vec = sequence_number;
+        harray.pack_bit (pkt, pack_vec, index, 32);
+        `else
         hdr = {>>{sequence_number}};
         harray.pack_array_8 (hdr, pkt, index);
+        `endif
     end // }
     if (A)
     begin // {
+        `ifdef SVFNYI_0
+        pack_vec = ack_number;
+        harray.pack_bit (pkt, pack_vec, index, 32);
+        `else
         hdr = {>>{ack_number}};
         harray.pack_array_8 (hdr, pkt, index);
+        `endif
     end // }
     // pack next hdr
     if (~last_pack)
-        nxt_hdr.pack_hdr (pkt, index);
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
+        this.nxt_hdr.pack_hdr (pkt, index);
+    end // }
     if (~last_pack & (C | R))
         post_pack (pkt, gre_idx);
   endtask : pack_hdr // }
@@ -236,37 +333,66 @@ class gre_hdr_class extends hdr_class; // {
     seq_len    = 0;
     ack_len    = 0;
     start_off  = index;
+    `ifdef SVFNYI_0
+    harray.unpack_array (pkt, pack_vec, index, 4);
+    {C, R, K, S, s, recur, A, flags, version, etype} = pack_vec;
+    `else
     harray.copy_array (pkt, hdr, index, hdr_len);
     {>>{C, R, K, S, s, recur, A, flags, version, etype}} = hdr;
+    `endif
     if (C | R)
     begin // {
         chkoff_len = 4;
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, 4);
+        {checksum, offset} = pack_vec;
+        `else
         harray.copy_array (pkt, hdr, index, chkoff_len);
         {>>{checksum, offset}} = hdr;
-    end // }
-    if (version == 1)
-    begin // {
-        chkoff_len = 4;
-        harray.copy_array (pkt, hdr, index, chkoff_len);
-        {>>{payload_length, call_id}} = hdr;
+        `endif
     end // }
     if (K)
     begin // {
         key_len = 4;
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, 4);
+        if ((version == 1) | implement_rfc2637)
+            {payload_length, call_id} = pack_vec;
+        else if ((etype == eth_etype) | implement_nvgre)
+            {tni, reserved} = pack_vec;
+        else
+            key = pack_vec;
+        `else
         harray.copy_array (pkt, hdr, index, key_len);
-        {>>{key}} = hdr;
+        if ((version == 1) | implement_rfc2637)
+            {>>{payload_length, call_id}} = hdr;
+        else if ((etype == eth_etype) | implement_nvgre)
+            {>>{tni, reserved}} = hdr;
+        else
+            {>>{key}} = hdr;
+        `endif
     end // }
     if (S)
     begin // {
         seq_len = 4;
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, 4);
+        sequence_number = pack_vec;
+        `else
         harray.copy_array (pkt, hdr, index, seq_len);
         {>>{sequence_number}} = hdr;
+        `endif
     end // }
     if (A)
     begin // {
         ack_len = 4;
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, 4);
+        ack_number = pack_vec;
+        `else
         harray.copy_array (pkt, hdr, index, ack_len);
         {>>{ack_number}} = hdr;
+        `endif
     end // }
     hdr_len += chkoff_len + key_len + seq_len + ack_len;
     if (mode == SMART_UNPACK)
@@ -279,7 +405,12 @@ class gre_hdr_class extends hdr_class; // {
     end // }
     // unpack next hdr
     if (~last_unpack)
+    begin // {
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+        `endif
         this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    end // }
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
@@ -313,7 +444,7 @@ class gre_hdr_class extends hdr_class; // {
   endfunction : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
-                bit       last_unpack = 1'b0); // {
+                bit       last_cpy = 1'b0); // {
     gre_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
@@ -341,8 +472,10 @@ class gre_hdr_class extends hdr_class; // {
     this.seq_len                   = lcl.seq_len;
     this.ack_len                   = lcl.ack_len;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.gre_4b                    = lcl.gre_4b;                   
-    this.version_1                 = lcl.version_1;                
+    this.implement_rfc2637         = lcl.implement_rfc2637;                
+    this.implement_rfc2784         = lcl.implement_rfc2784;                
+    this.implement_rfc2890         = lcl.implement_rfc2890;                
+    this.implement_nvgre           = lcl.implement_nvgre;                   
     this.corrupt_version           = lcl.corrupt_version;          
     this.cal_payload_length        = lcl.cal_payload_length;       
     this.corrupt_payload_length    = lcl.corrupt_payload_length;   
@@ -350,8 +483,8 @@ class gre_hdr_class extends hdr_class; // {
     this.cal_chksm                 = lcl.cal_chksm;                
     this.corrupt_chksm             = lcl.corrupt_chksm;            
     this.corrupt_chksm_msk         = lcl.corrupt_chksm_msk;        
-    if (~last_unpack)
-        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_unpack);
+    if (~last_cpy)
+        this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
   task display_hdr (pktlib_display_class hdis,
@@ -360,35 +493,70 @@ class gre_hdr_class extends hdr_class; // {
                     bit                  last_display = 1'b0); // {
     gre_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, "C",              01, BIN, BIT_VEC, C,              lcl.C);
-    hdis.display_fld (mode, hdr_name, "R",              01, BIN, BIT_VEC, R,              lcl.R);
-    hdis.display_fld (mode, hdr_name, "K",              01, BIN, BIT_VEC, K,              lcl.K);
-    hdis.display_fld (mode, hdr_name, "S",              01, BIN, BIT_VEC, S,              lcl.S);
-    hdis.display_fld (mode, hdr_name, "s",              01, BIN, BIT_VEC, s,              lcl.s);
-    hdis.display_fld (mode, hdr_name, "recur",          03, HEX, BIT_VEC, recur,          lcl.recur);
-    hdis.display_fld (mode, hdr_name, "A",              01, BIN, BIT_VEC, A,              lcl.A);
-    hdis.display_fld (mode, hdr_name, "flags",          04, HEX, BIT_VEC, flags,          lcl.flags);
-    hdis.display_fld (mode, hdr_name, "version",        03, HEX, BIT_VEC, version,        lcl.version);
-    hdis.display_fld (mode, hdr_name, "protocol",       16, HEX, BIT_VEC, etype   ,       lcl.etype, '{}, '{}, get_etype_name(etype));
-    if (C | R)
-    begin // {
-    if (corrupt_chksm)
-    hdis.display_fld (mode, hdr_name, "checksum",       16, HEX, BIT_VEC, checksum,       lcl.checksum, '{}, '{}, "BAD");
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "C", C, lcl.C);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "R", R, lcl.R);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "K", K, lcl.K);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "S", S, lcl.S);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "s", s, lcl.s);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "recur", recur, lcl.recur);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "A", A, lcl.A);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "flags", flags, lcl.flags);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "version", version, lcl.version);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "protocol", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    if (C | R)                                       
+    begin // {                                       
+    if (corrupt_chksm)                               
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, "checksum",       16, HEX, BIT_VEC, checksum,       lcl.checksum, '{}, '{}, "GOOD");
-    hdis.display_fld (mode, hdr_name, "offset",         16, HEX, BIT_VEC, offset,         lcl.offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "offset", offset, lcl.offset);
+    end // }                                         
+    if (K)                                           
+    begin // {                                       
+    if ((version == 1) | implement_rfc2637)
+    begin // {                                       
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "payload_length", payload_length, lcl.payload_length);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "call_id", call_id, lcl.call_id);
+    end // }                                         
+    else if ((etype == eth_etype) | implement_nvgre)
+    begin // {                                       
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "tni", tni, lcl.tni);            
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "reserved", reserved, lcl.reserved);
+    end // }                                         
+    else                                             
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "key", key, lcl.key);
+    end // }                                         
+    if (S)                                           
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "sequence_number", sequence_number, lcl.sequence_number);
+    if (A)                                           
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ack_number", ack_number, lcl.ack_number);
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
+    begin // {                                       
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2637", implement_rfc2637, lcl.implement_rfc2637);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2784", implement_rfc2784, lcl.implement_rfc2784);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2890", implement_rfc2890, lcl.implement_rfc2890);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_nvgre", implement_nvgre, lcl.implement_nvgre);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_version", corrupt_version, lcl.corrupt_version);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_payload_length", cal_payload_length, lcl.cal_payload_length);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_payload_length", corrupt_payload_length, lcl.corrupt_payload_length);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "corrupt_payload_length_by", corrupt_payload_length_by,lcl.corrupt_payload_length_by);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_chksm", cal_chksm, lcl.cal_chksm);                
+    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_chksm", corrupt_chksm, lcl.corrupt_chksm);            
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "corrupt_chksm_msk", corrupt_chksm_msk, lcl.corrupt_chksm_msk);             
     end // }
-    if ((version == 1) | version_1)
+    if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, "payload_length", 16, HEX, BIT_VEC, payload_length, lcl.payload_length);
-    hdis.display_fld (mode, hdr_name, "call_id",        16, HEX, BIT_VEC, call_id,        lcl.call_id);
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chkoff_len", chkoff_len, lcl.chkoff_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "key_len", key_len, lcl.key_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "seq_len", seq_len, lcl.seq_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "ack_len", ack_len, lcl.ack_len);
     end // }
-    if (K)
-    hdis.display_fld (mode, hdr_name, "key",            32, HEX, BIT_VEC, key,            lcl.key);
-    if (S)
-    hdis.display_fld (mode, hdr_name, "sequence_number",32, HEX, BIT_VEC, sequence_number,lcl.sequence_number);
-    if (A)
-    hdis.display_fld (mode, hdr_name, "ack_number",     32, HEX, BIT_VEC, ack_number,     lcl.ack_number);
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
