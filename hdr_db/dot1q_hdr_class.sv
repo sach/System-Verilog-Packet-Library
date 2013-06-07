@@ -67,17 +67,17 @@ class dot1q_hdr_class extends hdr_class; // {
     super.new (plib);
     this.inst_no = inst_no;
     case (hid_ctrl) // {
-      1 : // {
+      1 : 
       begin // {
           hid      = ALT1Q_HID;
           $sformat (hdr_name, "alt1q[%0d]",inst_no);
       end // }
-      2 : // {
+      2 : 
       begin // {
           hid      = STAG_HID;
           $sformat (hdr_name, "stag[%0d]",inst_no);
       end // }
-      default : // {
+      default : 
       begin // {
           hid      = DOT1Q_HID;
           $sformat (hdr_name, "dot1q[%0d]",inst_no);
@@ -182,9 +182,9 @@ class dot1q_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

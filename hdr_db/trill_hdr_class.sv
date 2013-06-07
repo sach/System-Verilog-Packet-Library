@@ -204,26 +204,26 @@ class trill_hdr_class extends hdr_class; // {
     trill_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "V", V, lcl.V);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "R", R, lcl.R);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "M", M, lcl.M);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 005, "op_length", op_length, lcl.op_length);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 006, "hop_count", hop_count, lcl.hop_count);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "egr_rb_nname", egr_rb_nname, lcl.egr_rb_nname);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "igr_rb_nname", igr_rb_nname, lcl.igr_rb_nname);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "V", V, lcl.V);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "R", R, lcl.R);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "M", M, lcl.M);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 005, "op_length", op_length, lcl.op_length);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "hop_count", hop_count, lcl.hop_count);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "egr_rb_nname", egr_rb_nname, lcl.egr_rb_nname);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "igr_rb_nname", igr_rb_nname, lcl.igr_rb_nname);
     if (options.size() !== 0)                           
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,  0, "options", 0, 0, options, lcl.options);
+    hdis.display_fld (mode, hdr_name, ARRAY,      DEF,  0, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_trill_version", corrupt_trill_version, lcl.corrupt_trill_version);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_trill_version", corrupt_trill_version, lcl.corrupt_trill_version);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

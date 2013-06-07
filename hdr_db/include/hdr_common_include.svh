@@ -116,6 +116,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ TCP defines/tasks/macros ~~~~~~~~~~
 `include "hdr_tcp_include.svh"
 
+// ~~~~~~~~~~ IGMP defines/tasks/macros ~~~~~~~~~~
+`include "hdr_igmp_include.svh"
+
 // ~~~~~~~~~~ XXX defines/tasks/macros ~~~~~~~~~~
 `include "hdr_xxx_include.svh"
+
 // ~~~~~~~~~~ EOF ~~~~~~~~~~

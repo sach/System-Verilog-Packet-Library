@@ -19,9 +19,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------------+
 //  | de          | -> (1 bit Drop Indicate Ellibable) 
 //  +-------------+
-//  | rsvd0[1:0]  |
+//  | uca         |
 //  +-------------+
-//  | rsvd1[1:0]  |
+//  | rsvd[2:0]   |
 //  +-------------+
 //  | sid[11:0]   |
 //  +-------------+
@@ -32,9 +32,9 @@ class itag_hdr_class extends hdr_class; // {
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
   rand bit [2:0]  pri;
   rand bit        de;
-  rand bit [1:0]  rsvd0;
-  rand bit [1:0]  rsvd1;
-  rand bit [11:0] sid;
+  rand bit        uca;
+  rand bit [2:0]  rsvd;
+  rand bit [23:0] sid;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
@@ -77,10 +77,10 @@ class itag_hdr_class extends hdr_class; // {
                 input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {pri, de, rsvd0, rsvd1, sid};
+    pack_vec = {pri, de, uca, rsvd, sid};
     harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{pri, de, rsvd0, rsvd1, sid}};
+    hdr = {>>{pri, de, uca, rsvd, sid}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -104,10 +104,10 @@ class itag_hdr_class extends hdr_class; // {
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {pri, de, rsvd0, rsvd1, sid} = pack_vec;
+    {pri, de, uca, rsvd, sid} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{pri, de, rsvd0, rsvd1, sid}} = hdr;
+    {>>{pri, de, uca, rsvd, sid}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
@@ -139,8 +139,8 @@ class itag_hdr_class extends hdr_class; // {
     // ~~~~~~~~~~ Class members ~~~~~~~~~~
     this.pri         = lcl.pri;
     this.de          = lcl.de;
-    this.rsvd0       = lcl.rsvd0;
-    this.rsvd1       = lcl.rsvd1;
+    this.uca         = lcl.uca;
+    this.rsvd        = lcl.rsvd;
     this.sid         = lcl.sid;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
@@ -157,18 +157,18 @@ class itag_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "pri", pri, lcl.pri);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "de", de, lcl.de);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "rsvd0", rsvd0, lcl.rsvd0);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "rsvd1", rsvd1, lcl.rsvd1);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "sid", sid, lcl.sid);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "uca", uca, lcl.uca);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "rsvd", rsvd, lcl.rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "sid", sid, lcl.sid);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

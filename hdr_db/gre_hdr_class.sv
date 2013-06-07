@@ -494,68 +494,68 @@ class gre_hdr_class extends hdr_class; // {
     gre_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "C", C, lcl.C);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "R", R, lcl.R);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "K", K, lcl.K);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "S", S, lcl.S);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "s", s, lcl.s);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "recur", recur, lcl.recur);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "A", A, lcl.A);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "flags", flags, lcl.flags);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "version", version, lcl.version);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "protocol", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "C", C, lcl.C);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "R", R, lcl.R);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "K", K, lcl.K);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "S", S, lcl.S);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "s", s, lcl.s);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "recur", recur, lcl.recur);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "A", A, lcl.A);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "flags", flags, lcl.flags);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "version", version, lcl.version);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "protocol", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
     if (C | R)                                       
     begin // {                                       
     if (corrupt_chksm)                               
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "GOOD");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "offset", offset, lcl.offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "offset", offset, lcl.offset);
     end // }                                         
     if (K)                                           
     begin // {                                       
     if ((version == 1) | implement_rfc2637)
     begin // {                                       
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "payload_length", payload_length, lcl.payload_length);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "call_id", call_id, lcl.call_id);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "payload_length", payload_length, lcl.payload_length);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "call_id", call_id, lcl.call_id);
     end // }                                         
     else if ((etype == eth_etype) | implement_nvgre)
     begin // {                                       
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 024, "tni", tni, lcl.tni);            
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "reserved", reserved, lcl.reserved);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 024, "tni", tni, lcl.tni);            
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "reserved", reserved, lcl.reserved);
     end // }                                         
     else                                             
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "key", key, lcl.key);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "key", key, lcl.key);
     end // }                                         
     if (S)                                           
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "sequence_number", sequence_number, lcl.sequence_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "sequence_number", sequence_number, lcl.sequence_number);
     if (A)                                           
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ack_number", ack_number, lcl.ack_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "ack_number", ack_number, lcl.ack_number);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {                                       
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2637", implement_rfc2637, lcl.implement_rfc2637);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2784", implement_rfc2784, lcl.implement_rfc2784);       
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_rfc2890", implement_rfc2890, lcl.implement_rfc2890);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "implement_nvgre", implement_nvgre, lcl.implement_nvgre);          
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_version", corrupt_version, lcl.corrupt_version);          
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_payload_length", cal_payload_length, lcl.cal_payload_length);       
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_payload_length", corrupt_payload_length, lcl.corrupt_payload_length);   
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "corrupt_payload_length_by", corrupt_payload_length_by,lcl.corrupt_payload_length_by);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_chksm", cal_chksm, lcl.cal_chksm);                
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_chksm", corrupt_chksm, lcl.corrupt_chksm);            
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "corrupt_chksm_msk", corrupt_chksm_msk, lcl.corrupt_chksm_msk);             
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "implement_rfc2637", implement_rfc2637, lcl.implement_rfc2637);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "implement_rfc2784", implement_rfc2784, lcl.implement_rfc2784);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "implement_rfc2890", implement_rfc2890, lcl.implement_rfc2890);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "implement_nvgre", implement_nvgre, lcl.implement_nvgre);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_version", corrupt_version, lcl.corrupt_version);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_payload_length", cal_payload_length, lcl.cal_payload_length);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_payload_length", corrupt_payload_length, lcl.corrupt_payload_length);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "corrupt_payload_length_by", corrupt_payload_length_by,lcl.corrupt_payload_length_by);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_chksm", cal_chksm, lcl.cal_chksm);                
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_chksm", corrupt_chksm, lcl.corrupt_chksm);            
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_chksm_msk", corrupt_chksm_msk, lcl.corrupt_chksm_msk);             
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chkoff_len", chkoff_len, lcl.chkoff_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "key_len", key_len, lcl.key_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "seq_len", seq_len, lcl.seq_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "ack_len", ack_len, lcl.ack_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chkoff_len", chkoff_len, lcl.chkoff_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "key_len", key_len, lcl.key_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "seq_len", seq_len, lcl.seq_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "ack_len", ack_len, lcl.ack_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

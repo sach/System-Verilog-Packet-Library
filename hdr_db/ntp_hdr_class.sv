@@ -220,35 +220,35 @@ class ntp_hdr_class extends hdr_class; // {
     ntp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "li", li, lcl.li);           
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "vn", vn, lcl.vn);           
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "ntp_mode", ntp_mode, lcl.ntp_mode);         
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "stratum", stratum, lcl.stratum);      
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "poll", poll, lcl.poll);         
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "precision", precision,   lcl.precision);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "root_delay", root_delay, lcl.root_delay);   
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "root_disp", root_disp, lcl.root_disp);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ref_ident", ref_ident, lcl.ref_ident);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "ref_timestamp", ref_timestamp, lcl.ref_timestamp);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "org_timestamp", org_timestamp, lcl.org_timestamp);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "rcv_timestamp", rcv_timestamp, lcl.rcv_timestamp);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "xmt_timestamp", xmt_timestamp, lcl.xmt_timestamp);
-    if (auth_en)                                         
-    begin // {                                           
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "key_ident", key_ident, lcl.key_ident);     
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "msg_digest", msg_digest, lcl.msg_digest);   
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "li", li, lcl.li);           
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "vn", vn, lcl.vn);           
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "ntp_mode", ntp_mode, lcl.ntp_mode);         
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "stratum", stratum, lcl.stratum);      
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "poll", poll, lcl.poll);         
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "precision", precision,   lcl.precision);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "root_delay", root_delay, lcl.root_delay);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "root_disp", root_disp, lcl.root_disp);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "ref_ident", ref_ident, lcl.ref_ident);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "ref_timestamp", ref_timestamp, lcl.ref_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "org_timestamp", org_timestamp, lcl.org_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "rcv_timestamp", rcv_timestamp, lcl.rcv_timestamp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "xmt_timestamp", xmt_timestamp, lcl.xmt_timestamp);
+    if (auth_en)                                            
+    begin // {                                              
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "key_ident", key_ident, lcl.key_ident);     
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "msg_digest", msg_digest, lcl.msg_digest);   
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "auth_en", auth_en, lcl.auth_en);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "auth_en", auth_en, lcl.auth_en);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

@@ -21,8 +21,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    1. Configure different networking headers 
    2. Randomize all the headers which need to be configured.
    3. Corrupt any fields as per the test requirement.
-   4. Pack them into array of packets
-   5. Smartly unpack an array(pkt) to different headers  
+   4. Pack them into array of packets. Can also generates this packet in pcap format.
+   5. Smartly unpack an array(pkt) to different headers. Can also unpack pcap files  
    6. Deep and shallow copy entire library to new library
    7. Smartly compares to array by unpacking them and pointing out error in a
       particular field
@@ -32,23 +32,29 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #. Headers supported :
    ================
    Currently Pktlib supports the following headers. 
-   1.  eth         (Basic Ethernet Header)
-   2.  macsec      (IEEE 802.1AE MACSEC)
-   3.  snap        (IEEE 802.3 LLC/SNAP Header)
-   4.  dot1q       (IEEE 802.1q C-Tag and IEEE 802.1ad S-Tag) 
-   5.  itag        (IEEE 802.1ah I-Tag)
-   6.  vntag       (IEEE 802.1Qbh VNTag)
-   7.  trill       (RFC 6325 TRILL header)
-   8.  mpls, mmpls (MPLS and Multicast MPLS)
-   9.  ipv4, ipv6  (IPV4 and IPV6 IP Headers)
-   10. ipsec       (Not fully verified :-))
-   11. ptp         (IEEE 1588 PTP header - Version 1 and 2)
-   12. ntp         (RFC 4330 - NTP version 4 Header) 
-   13. gre         (RFC 1701, 2637, 2784, 2890, NVGRE(Draft) - GRE headers)
-   14. udp, tcp    (UDP and TCP protocols Headers)
-   15. lisp        (Locator/ID Separation Protocol (LISP) Header - draft-ietf)
-   16. data        (Pkt Payload)
-   17. pth, ptl2, ptip (Proprietary headers :
+   1.  eth             (Basic Ethernet Header)
+   2.  macsec          (IEEE 802.1AE MACSEC)
+   3.  snap            (IEEE 802.3 LLC/SNAP Header)
+   4.  arp, rarp       (RFC 826, 903, 2390)
+   5.  dot1q           (IEEE 802.1q C-Tag and IEEE 802.1ad S-Tag) 
+   6.  itag            (IEEE 802.1ah I-Tag)
+   7.  etag            (IEEE 802.1BR E-Tag)
+   8.  vntag           (IEEE 802.1Qbh VNTag)
+   9.  trill           (RFC 6325 TRILL header)
+   10. mpls, mmpls     (MPLS and Multicast MPLS)
+   11. ipv4, ipv6      (IPV4 and IPV6 IP Headers)
+   12. ipsec           (Not fully verified :-))
+   13. icmp, icmpv6    (RFC 792, 4443)
+   14. igmp            (RFC 1112, 2236, 3376)
+   15. ptp             (IEEE 1588 PTP header - Version 1 and 2)
+   16. ntp             (RFC 4330 - NTP version 4 Header) 
+   17. gre             (RFC 1701, 2637, 2784, 2890, NVGRE(Draft) - GRE headers)
+   18. udp, tcp        (UDP and TCP protocols Headers)
+   19. lisp            (Locator/ID Separation Protocol (LISP) Header - draft-ietf)
+   20. otv             (Overlay Transport Virtulization (OTV) Header - draft-ietf)
+   21. vxlan           (Virtual Extensible Local Area Network (VxLAN) Header - draft-ietf)
+   22. data            (Pkt Payload)
+   23. pth, ptl2, ptip (Proprietary headers :
                           a. pth -> Slapped in front of pkt
                           b. ptl2 -> Any proprietary L2 Headers
                           c. ptip -> Any proprietary L3/IP Headers)
@@ -62,11 +68,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    Once entire library is downloaded, use following command
    scripts/pktlib_run <test_name>
       - currently script uses VCS. Make changes as per the license available
-      - There are two tests in test directory
-               - pktlib_test : Will give an idea about the capability of the
-                 pktlib
-               - pktlib_dump_unpack : just covers two functionality of the
-                 pktlib
+      - Run any of the below two tests from test directory
+               - pktlib_test : Will give an idea about the capability of the pktlib
+               - pktlib_dump_unpack : just covers two functionality of the pktlib
       - All the log files will be saved in log directory.
 
 #. Directory Structure :
@@ -193,6 +197,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         c>. Add class members, control variables, constraints
         b>. Code all the tasks and you are ready to go :-)
 
+#. PCAP Support :
+   ===========
+   Pktlib can create the pcap file from the packet it generates.
+   Also it can load the pcap files and uses pktlib to unpack it.
+   Run Command  : scripts/pktlib_pcap_run <test_name>
+      - Run any of the below two tests from test directory 
+               - pktlib_pcap : Sample test to create pcap file from pktlib
+               - pktlib_pcap_capture.sv : Sample test to load pcap file and 
+                                          use pktlib to unpack it
+      - Pcap files are loaded or created from pcap_log directory
+
 #. Disclaimers :
    ===========
    1. The documentation is minimum and may be incomplete at places.
@@ -200,7 +215,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    
 #. Future Releases :
    ===============
-   1. Adding more headers. For Example : Pause Frames, FCOE, ICMP, IPV6
+   1. Adding more headers. For Example : Pause Frames, FCOE, IPV6
       extension etc..
    2. Scripts to add new headers.
    3. Convert it to UVM, OVM and VMM.

@@ -12,45 +12,56 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  MPLS defines/tasks/function
+// Sample test to load pcap file and use pktlib to unpack it
+// Run Command : scripts/pktlib_pcap_run <test_name>
+//
 // ----------------------------------------------------------------------
 
-`ifndef MAX_MPLS_LBL
-  `define MAX_MPLS_LBL          4
-`endif
 
-// ~~~~~~~~~~  MPLS Label defines ~~~~~~~~~~
-`define MPLS_HDR_IPV4_NULL    20'h0
-`define MPLS_HDR_ROUTER_ALERT 20'h1
-`define MPLS_HDR_IPV6_NULL    20'h2
-`define MPLS_HDR_ETH_NULL     20'h3
-`define MPLS_HDR_IMPL_NULL    20'h4
+program my_test (); // {
 
-// ~~~~~~~~~~ MPLS Label fields ~~~~~~~~~~
-  bit [15:0]  ipv4_null_lbl    = `MPLS_HDR_IPV4_NULL;
-  bit [15:0]  router_alert_lbl = `MPLS_HDR_ROUTER_ALERT;
-  bit [15:0]  ipv6_null_lbl    = `MPLS_HDR_IPV6_NULL;
-  bit [15:0]  eth_null_lbl     = `MPLS_HDR_ETH_NULL;
-  bit [15:0]  impl_null_lbl    = `MPLS_HDR_IMPL_NULL;
+  // include files
+  `include "pktlib_class.sv"
+  `include "../hdr_db/include/pcap/pcap_dpi.sv"
 
-// ~~~~~~~~~~ define to copy MPLS Label fields ~~~~~~~~~~
-`define HDR_MPLS_INCLUDE_CPY\
-    this.ipv4_null_lbl    = cpy_cls.ipv4_null_lbl;\
-    this.router_alert_lbl = cpy_cls.router_alert_lbl;\
-    this.ipv6_null_lbl    = cpy_cls.ipv6_null_lbl;\
-    this.eth_null_lbl     = cpy_cls.eth_null_lbl;\
-    this.impl_null_lbl    = cpy_cls.impl_null_lbl
+  // local defines
+  int phandle, pkt_len;
+  pktlib_class p;
+  bit [7:0]    pkt [2000];
+  bit [7:0]    p_pkt [];
+  bit [63:0]   sm_time;
+  int          i = 0;
 
-// ~~~~~~~~~~ Function to get the name of mpls lbl ~~~~~~~~~~
-  function string get_mpls_lbl_name(bit [19:0] lbl); // {
-     case (lbl) // {
-         ipv4_null_lbl    : get_mpls_lbl_name = "IPV4 Explicit Null";
-         router_alert_lbl : get_mpls_lbl_name = "Router Alert";
-         ipv6_null_lbl    : get_mpls_lbl_name = "IPV6 Explicit Null";
-         eth_null_lbl     : get_mpls_lbl_name = "ETH Explicit Null";
-         impl_null_lbl    : get_mpls_lbl_name = "Implicit Null";
-         default          : get_mpls_lbl_name = "UNKNOWN";
-     endcase // }
-  endfunction : get_mpls_lbl_name // }
+  initial
+  begin // {
+    // register pcap handle
+    pv_register ();
 
-// ~~~~~~~~~~ EOF ~~~~~~~~~~
+    // open pcap handle for reading
+    pv_open (phandle, "pcap_log/sample-capture.pcap", 1);
+
+    // get first pkt from phandle
+    pv_get_pkt (phandle, pkt_len, pkt, sm_time);
+    while (pkt_len != 0)
+    begin // {
+	// new pktlib for unpack
+        p = new();
+        p_pkt = new [pkt_len] (pkt);
+
+        // unpack 
+        p.unpack_hdr (p_pkt, SMART_UNPACK);
+
+        // display hdr and pkt content
+        $display("%0t : INFO    : TEST      : Unpack Pkt %0d", sm_time, i+1);
+        p.display_hdr_pkt (p_pkt);
+        i++;
+
+        // get all pkt from phandle
+        pv_get_pkt (phandle, pkt_len, pkt, sm_time);
+    end // }
+    // end simulation
+    $finish ();
+  end // }
+
+endprogram : my_test // }
+

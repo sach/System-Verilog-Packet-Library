@@ -63,8 +63,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   enum
   {
     BIT_VEC,
+    BIT_VEC_NH,
     ARRAY,
-    STRING
+    ARRAY_NH,
+    STRING,
+    STRING_NH // NH means its not a header field
   } fld_type;
 
 // ~~~~~~~~~~ enum defination for path name ~~~~~~~~~~~~~~~~~
@@ -104,32 +107,39 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     PTH_HID,                 // 1
     ETH_HID,                 // 2
     MACSEC_HID,              // 3
-    DOT1Q_HID,               // 4
-    ALT1Q_HID,               // 5
-    STAG_HID,                // 6
-    ITAG_HID,                // 7
-    VNTAG_HID,               // 8
-    TRILL_HID,               // 9
-    SNAP_HID,                // 10
-    PTL2_HID,                // 11
-    MPLS_HID,                // 12
-    MMPLS_HID,               // 13
-    IPV4_HID,                // 14
-    IPV6_HID,                // 15
-    PTIP_HID,                // 16
-    IPSEC_HID,               // 17
-    TCP_HID,                 // 18
-    UDP_HID,                 // 19
-    GRE_HID,                 // 20
-    PTP_HID,                 // 21
-    NTP_HID,                 // 22 
-    LISP_HID,                // 23 
-    OTV_HID,                 // 24 
-    STT_HID,                 // 25 
-    DATA_HID,                // 26
-    EOH_HID,                 // 27
-//  XXX_HID,                 // 27
-    TOTAL_HID                // 28
+    ARP_HID,                 // 4
+    RARP_HID,                // 5
+    DOT1Q_HID,               // 6
+    ALT1Q_HID,               // 7
+    STAG_HID,                // 8
+    ITAG_HID,                // 9
+    ETAG_HID,                // 10
+    VNTAG_HID,               // 11
+    TRILL_HID,               // 12
+    SNAP_HID,                // 13
+    PTL2_HID,                // 14
+    MPLS_HID,                // 15
+    MMPLS_HID,               // 16
+    IPV4_HID,                // 17
+    IPV6_HID,                // 18
+    PTIP_HID,                // 19
+    IPSEC_HID,               // 20
+    ICMP_HID,                // 21
+    ICMPV6_HID,              // 22
+    IGMP_HID,                // 23
+    TCP_HID,                 // 24
+    UDP_HID,                 // 25
+    GRE_HID,                 // 26
+    PTP_HID,                 // 27
+    NTP_HID,                 // 28 
+    LISP_HID,                // 29 
+    OTV_HID,                 // 30 
+    STT_HID,                 // 31 
+    VXLAN_HID,               // 32
+    DATA_HID,                // 33
+    EOH_HID,                 // 34
+//  XXX_HID,                 // 35
+    TOTAL_HID                // 35
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -139,9 +149,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class pt_hdr_class;
   typedef class eth_hdr_class;
   typedef class macsec_hdr_class;
+  typedef class arp_hdr_class;
   typedef class snap_hdr_class;
   typedef class dot1q_hdr_class;
   typedef class itag_hdr_class;
+  typedef class etag_hdr_class;
   typedef class vntag_hdr_class;
   typedef class trill_hdr_class;
   typedef class ptl2_hdr_class;
@@ -150,6 +162,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class ipv6_hdr_class;
   typedef class ptip_hdr_class;
   typedef class ipsec_hdr_class;
+  typedef class icmp_hdr_class;
+  typedef class igmp_hdr_class;
   typedef class ptp_hdr_class;
   typedef class ntp_hdr_class;
   typedef class tcp_hdr_class;
@@ -158,9 +172,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class lisp_hdr_class;
   typedef class otv_hdr_class;
   typedef class stt_hdr_class;
+  typedef class vxlan_hdr_class;
   typedef class data_class;
 //typedef class xxx_class;
   typedef class eoh_class;
+
 
   // ~~~~~~~~~~ include all the classes ~~~~~~~~~~
   `include "pktlib_object_class.sv"
@@ -174,8 +190,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "pt_hdr_class.sv"
   `include "eth_hdr_class.sv"
   `include "macsec_hdr_class.sv"
+  `include "arp_hdr_class.sv"
   `include "dot1q_hdr_class.sv"
   `include "itag_hdr_class.sv"
+  `include "etag_hdr_class.sv"
   `include "vntag_hdr_class.sv"
   `include "trill_hdr_class.sv"
   `include "snap_hdr_class.sv"
@@ -185,6 +203,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "ipv6_hdr_class.sv"
   `include "ptip_hdr_class.sv"
   `include "ipsec_hdr_class.sv"
+  `include "icmp_hdr_class.sv"
+  `include "igmp_hdr_class.sv"
   `include "tcp_hdr_class.sv"
   `include "udp_hdr_class.sv"
   `include "gre_hdr_class.sv"
@@ -193,6 +213,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "lisp_hdr_class.sv"
   `include "otv_hdr_class.sv"
   `include "stt_hdr_class.sv"
+  `include "vxlan_hdr_class.sv"
   `include "data_class.sv"
 //`include "xxx_class.sv"
   `include "eoh_class.sv"
@@ -203,10 +224,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   pt_hdr_class        pth     [`MAX_NUM_INSTS];\
   eth_hdr_class       eth     [`MAX_NUM_INSTS];\
   macsec_hdr_class    macsec  [`MAX_NUM_INSTS];\
+  arp_hdr_class       arp     [`MAX_NUM_INSTS];\
+  arp_hdr_class       rarp    [`MAX_NUM_INSTS];\
   dot1q_hdr_class     dot1q   [`MAX_NUM_INSTS];\
   dot1q_hdr_class     alt1q   [`MAX_NUM_INSTS];\
   dot1q_hdr_class     stag    [`MAX_NUM_INSTS];\
   itag_hdr_class      itag    [`MAX_NUM_INSTS];\
+  etag_hdr_class      etag    [`MAX_NUM_INSTS];\
   vntag_hdr_class     vntag   [`MAX_NUM_INSTS];\
   trill_hdr_class     trill   [`MAX_NUM_INSTS];\
   snap_hdr_class      snap    [`MAX_NUM_INSTS];\
@@ -217,6 +241,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   ipv6_hdr_class      ipv6    [`MAX_NUM_INSTS];\
   ptip_hdr_class      ptip    [`MAX_NUM_INSTS];\
   ipsec_hdr_class     ipsec   [`MAX_NUM_INSTS];\
+  icmp_hdr_class      icmp    [`MAX_NUM_INSTS];\
+  icmp_hdr_class      icmpv6  [`MAX_NUM_INSTS];\
+  igmp_hdr_class      igmp    [`MAX_NUM_INSTS];\
   tcp_hdr_class       tcp     [`MAX_NUM_INSTS];\
   udp_hdr_class       udp     [`MAX_NUM_INSTS];\
   gre_hdr_class       gre     [`MAX_NUM_INSTS];\
@@ -225,6 +252,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   lisp_hdr_class      lisp    [`MAX_NUM_INSTS];\
   otv_hdr_class       otv     [`MAX_NUM_INSTS];\
   stt_hdr_class       stt     [`MAX_NUM_INSTS];\
+  vxlan_hdr_class     vxlan   [`MAX_NUM_INSTS];\
   data_class          data    [`MAX_NUM_INSTS];\
   eoh_class           eoh
   
@@ -235,10 +263,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         pth    [i] = new (this, i);\
         eth    [i] = new (this, i);\
         macsec [i] = new (this, i);\
+        arp    [i] = new (this, i);\
+        rarp   [i] = new (this, i, 1);\
         dot1q  [i] = new (this, i);\
         alt1q  [i] = new (this, i, 1);\
         stag   [i] = new (this, i, 2);\
         itag   [i] = new (this, i);\
+        etag   [i] = new (this, i);\
         vntag  [i] = new (this, i);\
         trill  [i] = new (this, i);\
         ptl2   [i] = new (this, i);\
@@ -249,6 +280,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         ipv6   [i] = new (this, i);\
         ptip   [i] = new (this, i);\
         ipsec  [i] = new (this, i);\
+        icmp   [i] = new (this, i);\
+        icmpv6 [i] = new (this, i, 1);\
+        igmp   [i] = new (this, i);\
         tcp    [i] = new (this, i);\
         udp    [i] = new (this, i);\
         gre    [i] = new (this, i);\
@@ -257,6 +291,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         lisp   [i] = new (this, i);\
         otv    [i] = new (this, i);\
         stt    [i] = new (this, i);\
+        vxlan  [i] = new (this, i);\
         data   [i] = new (this, i);\
     end\
     toh  = new (this);\

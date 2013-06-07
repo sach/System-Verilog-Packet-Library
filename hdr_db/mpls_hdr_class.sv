@@ -282,8 +282,10 @@ class mpls_hdr_class extends hdr_class; // {
     mpls_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
+    begin
+       hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+       hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
+    end
     for (i = 0; i < num_mpls_lbl; i++)
     begin // {
         $sformat(fld_name, "label[%0d]", i);
@@ -299,17 +301,17 @@ class mpls_hdr_class extends hdr_class; // {
         hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "eth_ctrl", eth_ctrl, lcl.eth_ctrl);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{},"~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_eth_null_lbl", use_eth_null_lbl, lcl.use_eth_null_lbl);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_ipv4_null_lbl", use_ipv4_null_lbl, lcl.use_ipv4_null_lbl);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "use_ipv6_null_lbl", use_ipv6_null_lbl, lcl.use_ipv6_null_lbl);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{},"~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "use_eth_null_lbl", use_eth_null_lbl, lcl.use_eth_null_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "use_ipv4_null_lbl", use_ipv4_null_lbl, lcl.use_ipv4_null_lbl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "use_ipv6_null_lbl", use_ipv6_null_lbl, lcl.use_ipv6_null_lbl);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

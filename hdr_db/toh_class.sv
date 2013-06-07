@@ -231,42 +231,42 @@ class toh_class extends hdr_class; // {
     toh_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Random Variables ~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "plen", plen, lcl.plen);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chop_plen_to", chop_plen_to, lcl.chop_plen_to);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Random Variables ~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "plen", plen, lcl.plen);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chop_plen_to", chop_plen_to, lcl.chop_plen_to);
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "pad_len", pad_len, lcl.pad_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "pad_len", pad_len, lcl.pad_len);
     if (pad_len != 0)
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000,  "pad_data", 0, 0, pad_data, lcl.pad_data);
+    hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000,  "pad_data", 0, 0, pad_data, lcl.pad_data);
     if (cal_n_add_crc)
     begin // {
     if (corrupt_crc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "GOOD");
     end // } 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_n_add_crc", cal_n_add_crc, lcl.cal_n_add_crc);   
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_crc", corrupt_crc, lcl.corrupt_crc);     
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "max_plen", max_plen, lcl.max_plen);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "min_plen", min_plen, lcl.min_plen);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "plen_multiple_of", plen_multiple_of, lcl.plen_multiple_of);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "plen_residue", plen_residue, lcl.plen_residue);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chop_plen_to", chop_plen_to, lcl.chop_plen_to);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "min_chop_plen", min_chop_plen, lcl.min_chop_plen);   
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "max_pad_len", max_pad_len, lcl.max_pad_len);     
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "usr_pad", usr_pad, lcl.usr_pad);                 
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "rnd_pad_en", rnd_pad_en, lcl.rnd_pad_en);      
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_n_add_crc", cal_n_add_crc, lcl.cal_n_add_crc);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_crc", corrupt_crc, lcl.corrupt_crc);     
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "max_plen", max_plen, lcl.max_plen);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "min_plen", min_plen, lcl.min_plen);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "plen_multiple_of", plen_multiple_of, lcl.plen_multiple_of);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "plen_residue", plen_residue, lcl.plen_residue);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chop_plen_to", chop_plen_to, lcl.chop_plen_to);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "min_chop_plen", min_chop_plen, lcl.min_chop_plen);   
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "max_pad_len", max_pad_len, lcl.max_pad_len);     
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "usr_pad", usr_pad, lcl.usr_pad);                 
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "rnd_pad_en", rnd_pad_en, lcl.rnd_pad_en);      
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "crc_sz", crc_sz, lcl.crc_sz);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "crc_sz", crc_sz, lcl.crc_sz);
     end // }
   endtask : display_hdr // }
 

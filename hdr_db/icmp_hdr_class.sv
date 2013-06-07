@@ -12,55 +12,54 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates UDP header
-//  UDP header Format
-//  +-----------------+
-//  | src_prt [15:0]  | 
-//  +-----------------+
-//  | dst_prt [15:0]  | 
-//  +-----------------+
-//  | length  [15:0]  | 
-//  +-----------------+
-//  | checksum[15:0]  |
-//  +-----------------+
+//  This hdr_class generates Internet Control Message Protocol (ICMP for IPv4 and ICMPv6 for IPv6) header
+//  Supports  the following RFC
+//            - RFC  792 (Internet control message protocol)
+//            - RFC 4443 (ICMPv6 for IPv6 specification)
+//  ICMP/ICMPv6 header Format
+//  +-------------------+
+//  | icmp_type   [7:0] | 
+//  +-------------------+
+//  | code        [7:0] | 
+//  +-------------------+
+//  | checksum   [15:0] | 
+//  +-------------------+
+//  | msg_body   [31:0] | -> Message body contents varies based on icmp_type/code 
+//  +-------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
 //  +-------+---------+---------------------------+-------------------------------+
 //  | Width | Default | Variable                  | Description                   |
 //  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b1    | cal_udp_chksm             | If 1, calculates udp checksum |
+//  | 1     | 1'b1    | cal_icmp_chksm            | If 1,calculates icmp checksum |
 //  |       |         |                           | Otherwise it will be random   |
 //  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b1    | cal_length                | If 1, calculates length       |
-//  |       |         |                           | Otherwise it will be random   |
+//  | 1     | 1'b0    | corrupt_icmp_chksm        | If 1, corrupts icmp checksum  |
 //  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_udp_chksm         | If 1, corrupts udp checksum   |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 16    | 16'hFFFF| corrupt_udp_chksm_msk     | Msk used to corrupt udp_chksm |
+//  | 16    | 16'hFFFF| corrupt_icmp_chksm_msk    | Msk used to corrupt icmp_chksm|
 //  +-------+---------+---------------------------+-------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class udp_hdr_class extends hdr_class; // {
+class icmp_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
-  rand  bit [15:0]    src_prt;
-  rand  bit [15:0]    dst_prt;
-  rand  bit [15:0]    length;
+  rand  bit [7:0]     icmp_type;
+  rand  bit [7:0]     code; 
   rand  bit [15:0]    checksum;
+  rand  bit [31:0]    msg_body;   
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-        bit           cal_length            = 1'b1;
-        bit           cal_udp_chksm         = 1'b1;
-        bit           corrupt_udp_chksm     = 1'b0;
-        bit [15:0]    corrupt_udp_chksm_msk = 16'hffff;
+        bit           cal_icmp_chksm         = 1'b1;
+        bit           corrupt_icmp_chksm     = 1'b0;
+        bit [15:0]    corrupt_icmp_chksm_msk = 16'hffff;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint udp_hdr_user_constraint
+  constraint icmp_hdr_user_constraint
   {
   }
 
@@ -69,22 +68,10 @@ class udp_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  constraint legal_length
-  {
-    if (cal_length)
-    {
-        length == this.total_hdr_len;
-    }
-  }
 
   constraint legal_hdr_len 
   {
     hdr_len == 8;
-  }
-
-  constraint legal_dst_prt
-  {
-    `LEGAL_UDP_DST_PRT_CONSTRAINTS;
   }
 
   constraint legal_checksum
@@ -95,28 +82,58 @@ class udp_hdr_class extends hdr_class; // {
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
-                int               inst_no); // {
+                int               inst_no,
+                int               hid_ctrl = 0); // {
     super.new (plib);
-    hid          = UDP_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "udp[%0d]",inst_no);
+    case (hid_ctrl) // {
+      1 : 
+      begin // {
+          hid      = ICMPV6_HID;
+          $sformat (hdr_name, "icmpv6[%0d]",inst_no);
+      end // }
+      default : 
+      begin // {
+          hid      = ICMP_HID;
+          $sformat (hdr_name, "icmp[%0d]",inst_no);
+      end // }
+    endcase // }
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
-    int udp_idx;
-    udp_idx = index;
+    bit [7:0] cdata [];
+    int       icmp_idx;
     // making sure checksum is 0, incase pack_hdr was called before radomization
-    if (cal_udp_chksm && ~last_pack)
-        checksum = 0;
+    if (~last_pack)
+    begin // {
+        if (cal_icmp_chksm)
+        begin // {
+            checksum = 0;
+            // calculate checksum if its ICMP
+            if (hid === ICMP_HID)
+            begin // {
+                cdata    = new[hdr_len];
+                icmp_idx = 0;
+                pack_hdr (cdata, icmp_idx, 1'b1);
+                checksum = crc_chksm.chksm16(cdata, cdata.size(), 0, corrupt_icmp_chksm, corrupt_icmp_chksm_msk);
+            end // }
+        end // }
+        else if (hid === ICMP_HID)
+        begin // {
+            if (corrupt_icmp_chksm)
+                checksum ^= corrupt_icmp_chksm_msk;
+        end // }
+    end // }
+    icmp_idx = index;
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {src_prt, dst_prt, length, checksum};
+    pack_vec = {icmp_type, code, checksum, msg_body};
     harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{src_prt, dst_prt, length, checksum}};  
+     hdr = {>>{icmp_type, code, checksum, msg_body}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -127,8 +144,9 @@ class udp_hdr_class extends hdr_class; // {
         `endif
         this.nxt_hdr.pack_hdr (pkt, index);
     end // }
-    if (~last_pack)
-        post_pack (pkt, udp_idx);
+    // checksum calulation
+    if (~last_pack & (hid === ICMPV6_HID))
+        post_pack (pkt, icmp_idx);
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -142,20 +160,20 @@ class udp_hdr_class extends hdr_class; // {
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {src_prt, dst_prt, length, checksum} = pack_vec;
+    {icmp_type, code, checksum, msg_body} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{src_prt, dst_prt, length, checksum}} = hdr;
+    {>>{icmp_type, code, checksum, msg_body}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[get_hid_from_udp_dst_prt(dst_prt)] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, get_hid_from_udp_dst_prt (dst_prt));
+        if (unpack_en[DATA_HID] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
-    end // } 
+    end // }
     // unpack next hdr
     if (~last_unpack)
     begin // {
@@ -170,14 +188,14 @@ class udp_hdr_class extends hdr_class; // {
   endtask : unpack_hdr // }
 
   function post_pack (ref bit [7:0] pkt [],
-                          int       udp_idx); // {
+                          int       icmp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
     int            i, idx;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
-    // Calulate udp_chksm, corrupt it if asked
-    if (cal_udp_chksm)
+    // Calulate icmp_chksm, corrupt it if asked
+    if (cal_icmp_chksm)
     begin // {
         for (i = 0; i < this.cfg_id; i++)
         begin // {
@@ -195,44 +213,43 @@ class udp_hdr_class extends hdr_class; // {
             end // }
         end // }
         `ifdef SVFNYI_0
-        idx = udp_idx/8;;
+        idx = icmp_idx/8;
         `else
-        idx = udp_idx;
+        idx = icmp_idx;
         `endif
-        harray.copy_array(pkt, chksm_data, idx, (pkt.size - udp_idx));
+        harray.copy_array(pkt, chksm_data, idx, (pkt.size - icmp_idx));
         if (chksm_data.size%2 != 0)
         begin // {
             chksm_data                      = new [chksm_data.size + 1] (chksm_data);
             chksm_data [chksm_data.size -1] = 8'h00;
         end // }
-        checksum = crc_chksm.chksm16(chksm_data, chksm_data.size(), 0, corrupt_udp_chksm, corrupt_udp_chksm_msk, pseudo_chksm);
-        pack_hdr (pkt, udp_idx, 1'b1);
+        checksum = crc_chksm.chksm16(chksm_data, chksm_data.size(), 0, corrupt_icmp_chksm, corrupt_icmp_chksm_msk, pseudo_chksm);
+        pack_hdr (pkt, icmp_idx, 1'b1);
     end // }
     else
     begin // {
-        if (corrupt_udp_chksm)
+        if (corrupt_icmp_chksm)
         begin // {
-            checksum ^= corrupt_udp_chksm_msk;
-            pack_hdr (pkt, udp_idx, 1'b1);
+            checksum ^= corrupt_icmp_chksm_msk;
+            pack_hdr (pkt, icmp_idx, 1'b1);
         end // }
     end // }
   endfunction : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    udp_hdr_class lcl;
+    icmp_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~
-    this.src_prt               = lcl.src_prt;             
-    this.dst_prt               = lcl.dst_prt;
-    this.length                = lcl.length;
-    this.checksum              = lcl.checksum;
+    this.icmp_type              = lcl.icmp_type;             
+    this.code                   = lcl.code;             
+    this.checksum               = lcl.checksum;
+    this.msg_body               = lcl.msg_body;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.cal_length            = lcl.cal_length;        
-    this.cal_udp_chksm         = lcl.cal_udp_chksm;        
-    this.corrupt_udp_chksm     = lcl.corrupt_udp_chksm;    
-    this.corrupt_udp_chksm_msk = lcl.corrupt_udp_chksm_msk;
+    this.cal_icmp_chksm         = lcl.cal_icmp_chksm;        
+    this.corrupt_icmp_chksm     = lcl.corrupt_icmp_chksm;    
+    this.corrupt_icmp_chksm_msk = lcl.corrupt_icmp_chksm_msk;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -241,23 +258,23 @@ class udp_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    udp_hdr_class lcl;
+    icmp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "src_prt", src_prt, lcl.src_prt);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,'{},'{}, get_udp_dst_prt_name(dst_prt));
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "length", length, lcl.length);
-    if (corrupt_udp_chksm)
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "icmp_type", icmp_type, lcl.icmp_type);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "code", code, lcl.code);
+    if (corrupt_icmp_chksm)                              
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
-    else                                                   
+    else                                                
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "msg_body", msg_body, lcl.msg_body);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_udp_chksm", cal_udp_chksm, lcl.cal_udp_chksm);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_udp_chksm", corrupt_udp_chksm, lcl.corrupt_udp_chksm);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_udp_chksm_msk", corrupt_udp_chksm_msk, lcl.corrupt_udp_chksm_msk);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_icmp_chksm", cal_icmp_chksm, lcl.cal_icmp_chksm);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_icmp_chksm", corrupt_icmp_chksm, lcl.corrupt_icmp_chksm);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_icmp_chksm_msk", corrupt_icmp_chksm_msk, lcl.corrupt_icmp_chksm_msk);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
@@ -269,4 +286,4 @@ class udp_hdr_class extends hdr_class; // {
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : udp_hdr_class // }
+endclass : icmp_hdr_class // }

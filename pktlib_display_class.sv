@@ -20,10 +20,12 @@ class pktlib_display_class; // {
   // ~~~~~~~~~~ Class variables ~~~~~~~~~~
         string       cls_name;
         int          err;
+        int index;
 
   function new (string cls_name = ""); // {
     this.cls_name = cls_name;
     this.err      = 0;
+    this.index    = 0;
   endfunction : new // }
 
   // This task displays the feild of individual hdr
@@ -40,7 +42,7 @@ class pktlib_display_class; // {
                     string            flcomment   = "NO");   // comments if field type is STRING {
     if ((mode == NO_DISPLAY) |(mode == COMPARE_NO_DISPLAY))
     begin // {
-        if (fltype == BIT_VEC)
+        if ((fltype == BIT_VEC) | (fltype == BIT_VEC_NH))
         begin // {
             if (flvec != flvec2)
                 err++;
@@ -48,13 +50,16 @@ class pktlib_display_class; // {
         if ((mode == COMPARE_NO_DISPLAY) && (fltype == ARRAY))
             compare_array8 (flarray, flarray2, err, mode, hname, flname, "pkt_lib");
     end // }
-    else
+    else 
     begin // {
         if (fltype == STRING)
             $display ("%0s%s : %s", cls_name, hname, flcomment);
-        if (fltype == BIT_VEC)
+        if ((fltype == BIT_VEC) | (fltype == BIT_VEC_NH))
         begin // { 
-            $write("%0s%s : %s : ", cls_name, hname, flname);
+            if (fltype == BIT_VEC)
+                $write("%0s%s : [%4d : %4d] : %3d : %s : ", cls_name, hname, index, index+flsz-1, index/8, flname);
+            else
+                $write("%0s%s :                       %s : ", cls_name, hname, flname);
             case (flval) // {
                 HEX     : $write ("%0d'h%0x ", flsz, flvec);
                 BIN     : $write ("%0d'b%0b ", flsz, flvec);
@@ -77,13 +82,16 @@ class pktlib_display_class; // {
                 $write   ("(%s)", flcomment);
             $write("\n");
         end // }
-        if (fltype == ARRAY)
+        if ((fltype == ARRAY) | (fltype == ARRAY_NH))
         begin // {
              if ((mode === COMPARE) | (mode === COMPARE_FULL))
                  compare_array8 (flarray, flarray2, err, mode, hname, flname, "pkt_lib");
              else
              begin // {
-                 $write("%0s%s : %s : ", cls_name, hname, flname);
+                 if (fltype == ARRAY)
+                     $write("%0s%s :               : %3d : %s : ", cls_name, hname, index/8, flname);
+                 else
+                     $write("%0s%s :                       %s : ", cls_name, hname, flname);
                  if (flarray.size != 0)
                  begin // {
                      $write ("(Total Len  = %0d)\n", flarray.size());
@@ -94,6 +102,10 @@ class pktlib_display_class; // {
              end // }
         end // }
     end // }
+    if (fltype == BIT_VEC)
+        index += flsz;
+    if (fltype == ARRAY)
+        index += flarray.size*8;
   endtask : display_fld // }
 
   // This task displays each byte of array entire pkt

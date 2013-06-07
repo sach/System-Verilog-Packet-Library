@@ -18,10 +18,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Ether Type defines ~~~~~~~~~~
 `define MACSEC_HDR_ETYPE    16'h88E5
 `define SNAP_HDR_ETYPE      16'h8870
+`define ARP_HDR_ETYPE       16'h0806
+`define RARP_HDR_ETYPE      16'h8035
 `define DOT1Q_HDR_ETYPE     16'h8100
 `define ALT1Q_HDR_ETYPE     16'h8200
 `define STAG_HDR_ETYPE      16'h88A8
 `define ITAG_HDR_ETYPE      16'h88E7
+`define ETAG_HDR_ETYPE      16'h893F
 `define VNTAG_HDR_ETYPE     16'h8b8b
 `define TRILL_HDR_ETYPE     16'h22f3
 `define ETH_HDR_ETYPE       16'h6558 // Ethernet-over-GRE Tunnel (NVGRE)
@@ -36,10 +39,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Ether Type fields ~~~~~~~~~~
   bit [15:0]  macsec_etype  = `MACSEC_HDR_ETYPE;
   bit [15:0]  snap_etype    = `SNAP_HDR_ETYPE;
+  bit [15:0]  arp_etype     = `ARP_HDR_ETYPE;
+  bit [15:0]  rarp_etype    = `RARP_HDR_ETYPE;
   bit [15:0]  dot1q_etype   = `DOT1Q_HDR_ETYPE;
   bit [15:0]  alt1q_etype   = `ALT1Q_HDR_ETYPE;
   bit [15:0]  stag_etype    = `STAG_HDR_ETYPE;
   bit [15:0]  itag_etype    = `ITAG_HDR_ETYPE;
+  bit [15:0]  etag_etype    = `ETAG_HDR_ETYPE;
   bit [15:0]  vntag_etype   = `VNTAG_HDR_ETYPE;
   bit [15:0]  trill_etype   = `TRILL_HDR_ETYPE;
   bit [15:0]  eth_etype     = `ETH_HDR_ETYPE;
@@ -55,10 +61,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define HDR_L2_INCLUDE_CPY\
     this.macsec_etype  = cpy_cls.macsec_etype;\
     this.snap_etype    = cpy_cls.snap_etype;\
+    this.arp_etype     = cpy_cls.arp_etype;\
+    this.rarp_etype    = cpy_cls.rarp_etype;\
     this.dot1q_etype   = cpy_cls.dot1q_etype;\
     this.alt1q_etype   = cpy_cls.alt1q_etype;\
     this.stag_etype    = cpy_cls.stag_etype;\
     this.itag_etype    = cpy_cls.itag_etype;\
+    this.etag_etype    = cpy_cls.etag_etype;\
     this.vntag_etype   = cpy_cls.vntag_etype;\
     this.trill_etype   = cpy_cls.trill_etype;\
     this.eth_etype     = cpy_cls.eth_etype;\
@@ -76,10 +85,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         (nxt_hdr.hid == SNAP_HID) & (etype != snap_etype) -> (this.total_hdr_len inside { [16'd1 : llc_max_len] });\
         (nxt_hdr.hid != SNAP_HID)   -> (etype >  llc_max_len) ;\
         (nxt_hdr.hid == MACSEC_HID) -> (etype == macsec_etype);\
+        (nxt_hdr.hid == ARP_HID)    -> (etype == arp_etype)   ;\
+        (nxt_hdr.hid == RARP_HID)   -> (etype == rarp_etype)  ;\
         (nxt_hdr.hid == DOT1Q_HID)  -> (etype == dot1q_etype) ;\
         (nxt_hdr.hid == ALT1Q_HID)  -> (etype == alt1q_etype) ;\
         (nxt_hdr.hid == STAG_HID)   -> (etype == stag_etype)  ;\
         (nxt_hdr.hid == ITAG_HID)   -> (etype == itag_etype)  ;\
+        (nxt_hdr.hid == ETAG_HID)   -> (etype == etag_etype)  ;\
         (nxt_hdr.hid == VNTAG_HID)  -> (etype == vntag_etype) ;\
         (nxt_hdr.hid == TRILL_HID)  -> (etype == trill_etype) ;\
         (nxt_hdr.hid == ETH_HID)    -> (etype == eth_etype)   ;\
@@ -93,6 +105,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                        (etype != alt1q_etype) &\
                                        (etype != stag_etype)  &\
                                        (etype != itag_etype)  &\
+                                       (etype != etag_etype)  &\
                                        (etype != vntag_etype) &\
                                        (etype != trill_etype) &\
                                        (etype != eth_etype)   &\
@@ -112,10 +125,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      begin // {
          case (etype) // {
              macsec_etype  : get_etype_name = "MACSEC";
+             arp_etype     : get_etype_name = "ARP";
+             rarp_etype    : get_etype_name = "RARP";
              dot1q_etype   : get_etype_name = "DOT1Q";
              alt1q_etype   : get_etype_name = "ALT1Q";
              stag_etype    : get_etype_name = "STAG";
              itag_etype    : get_etype_name = "ITAG";
+             etag_etype    : get_etype_name = "ETAG";
              vntag_etype   : get_etype_name = "VNTAG";
              trill_etype   : get_etype_name = "TRILL";
              snap_etype    : get_etype_name = "SNAP";
@@ -137,10 +153,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      case (hid) // {
         MACSEC_HID  : get_etype = macsec_etype;
         SNAP_HID    : get_etype = snap_etype;
+        ARP_HID     : get_etype = arp_etype;
+        RARP_HID    : get_etype = rarp_etype;
         DOT1Q_HID   : get_etype = dot1q_etype;
         ALT1Q_HID   : get_etype = alt1q_etype;
         STAG_HID    : get_etype = stag_etype;
         ITAG_HID    : get_etype = itag_etype;
+        ETAG_HID    : get_etype = etag_etype;
         VNTAG_HID   : get_etype = vntag_etype;
         TRILL_HID   : get_etype = trill_etype;
         ETH_HID     : get_etype = eth_etype;
@@ -163,10 +182,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
          case (etype) // {
              macsec_etype  : get_hid_from_etype = MACSEC_HID;
              snap_etype    : get_hid_from_etype = SNAP_HID;
+             arp_etype     : get_hid_from_etype = ARP_HID;
+             rarp_etype    : get_hid_from_etype = RARP_HID;
              dot1q_etype   : get_hid_from_etype = DOT1Q_HID;
              alt1q_etype   : get_hid_from_etype = ALT1Q_HID;
              stag_etype    : get_hid_from_etype = STAG_HID;
              itag_etype    : get_hid_from_etype = ITAG_HID;
+             etag_etype    : get_hid_from_etype = ETAG_HID;
              vntag_etype   : get_hid_from_etype = VNTAG_HID;
              trill_etype   : get_hid_from_etype = TRILL_HID;
              eth_etype     : get_hid_from_etype = ETH_HID;

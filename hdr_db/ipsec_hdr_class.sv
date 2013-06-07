@@ -40,19 +40,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+--------------------+-----------------------------------+
 //  | 1     | 1'b1    | process_ae         | If 1, add ICV and optionally enc  |
 //  +-------+---------+--------------------+-----------------------------------+
-//  | 1     | 1'b0    | corrupt_tci_ver    | If 1, corrupts tci version        |
-//  +-------+---------+--------------------+-----------------------------------+
-//  | 1     | 1'b0    | corrupt_tci_es_sc  | If 1, corrupts tci ES-SC property |
-//  |       |         |                    | i.e. ES-SC are mutually exclusive |
-//  +-------+---------+--------------------+-----------------------------------+
-//  | 1     | 1'b0    | corrupt_tci_scb    | If 1, corrupts tci SCB            |
-//  |       |         |                    | i.e. if (ES || SC) -> SCB = 0     |
-//  +-------+---------+--------------------+-----------------------------------+
-//  | 1     | 1'b0    | corrupt_tci_e_c    | If 1, corrupts tci E-C property   |
-//  |       |         |                    | i.e. EC are not mutually exclusive|
-//  +-------+---------+--------------------+-----------------------------------+
-//  | 1     | 1'b0    | corrupt_sl         | If 1, corrupts SL. SL will be rnd |
-//  +-------+---------+--------------------+-----------------------------------+
 //  | 1     | 1'b1    | enc_en             | If 1, encrypt the data            |
 //  +-------+---------+--------------------+-----------------------------------+
 //
@@ -83,7 +70,7 @@ class ipsec_hdr_class extends hdr_class; // {
        bit [127:0] key                = 0;
        bit [31:0]  iv_offset          = 0;
 
-  // ~~~~~~~~~~ Local MACsec related variables ~~~~~~~~~~
+  // ~~~~~~~~~~ Local IPSec related variables ~~~~~~~~~~
        int         auth_st            = 0;
        int         auth_sz            = 0;
        int         auth_only          = 0;
@@ -337,7 +324,7 @@ class ipsec_hdr_class extends hdr_class; // {
     this.auth_adjust = lcl.auth_adjust; 
     this.key         = lcl.key;         
     this.iv_offset   = lcl.iv_offset;   
-    // ~~~~~~~~~~ Local MACsec related variables ~~~~~~~~~~
+    // ~~~~~~~~~~ Local IPSec related variables ~~~~~~~~~~
     this.auth_st     = lcl.auth_st;   
     this.auth_sz     = lcl.auth_sz;   
     this.auth_only   = lcl.auth_only; 
@@ -355,38 +342,38 @@ class ipsec_hdr_class extends hdr_class; // {
     ipsec_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Header ~~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "spi", spi, lcl.spi);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "seq_num", seq_num, lcl.seq_num);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEC,  64, "iv", iv, lcl.iv);
-    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Trailer ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,   0, "pad", 0, 0, pad, lcl.pad);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "pad_len", pad_len, lcl.pad_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "protocol", protocol, lcl.protocol);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Header ~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "spi", spi, lcl.spi);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "seq_num", seq_num, lcl.seq_num);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    DEC,  64, "iv", iv, lcl.iv);
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Trailer ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, ARRAY,      DEF,   0, "pad", 0, 0, pad, lcl.pad);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "pad_len", pad_len, lcl.pad_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol);
     if (process_ae)
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Encryption Related ~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "auth_st", auth_st, lcl.auth_st);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "auth_sz", auth_sz, lcl.auth_sz);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEC,   8, "auth_adjust", auth_adjust, lcl.auth_adjust);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "enc_en", enc_en, lcl.enc_en);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "ipsec_type", ipsec_type, lcl.ipsec_type);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF,  32, "enc_sz", enc_sz, lcl.enc_sz);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  32, "iv_offset", iv_offset, lcl.iv_offset);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "key", key, lcl.key);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF,   0, "icv", 0, 0, icv, lcl.icv);
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Encryption Related ~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "auth_st", auth_st, lcl.auth_st);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "auth_sz", auth_sz, lcl.auth_sz);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEC,   8, "auth_adjust", auth_adjust, lcl.auth_adjust);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "enc_en", enc_en, lcl.enc_en);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "ipsec_type", ipsec_type, lcl.ipsec_type);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "enc_sz", enc_sz, lcl.enc_sz);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX,  32, "iv_offset", iv_offset, lcl.iv_offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 128, "key", key, lcl.key);
+    hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF,   0, "icv", 0, 0, icv, lcl.icv);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "process_ae", process_ae, lcl.process_ae);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "process_ae", process_ae, lcl.process_ae);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

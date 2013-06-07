@@ -12,58 +12,55 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates the IEEE 802.1Qbh VNTag
-//  802.1Qbh
-//  +---------------+
-//  | d             | -> direction (0/1 - from adaptor/switch)
-//  +---------------+ 
-//  | p             | -> pointer (1-dst_vif points to a list)
-//  +---------------+ 
-//  | dst_vif[13:0] | -> destination vif (used only when d = 1)
-//  +---------------+ 
-//  | l             | -> looped (frame origniated at adapter)
-//  +---------------+
-//  + rsvd          | -> reserved
-//  +---------------+
-//  + ver[1:0]      | -> version
-//  +---------------+
-//  + src_vif[11:0] | -> source vif
-//  +---------------+
-//  | etype[15:0]   | 
-//  +---------------+
+//  This hdr_class generates Internet Group Managment Protocol (IGMP) header
+//  Supports  the following RFC
+//            - RFC 1112 (IGMP Version 1)
+//            - RFC 2236 (IGMP Version 2) Updates  RFC 1112
+//            - RFC 3376 (IGMP Version 2) Obsoltes RFC 2236
+//  IGMP header Format
+//  +-------------------+
+//  | igmp_type   [7:0] | 
+//  +-------------------+
+//  | max_res_code[7:0] | 
+//  +-------------------+
+//  | checksum   [15:0] | 
+//  +-------------------+
+//  | group_addr [31:0] | 
+//  +-------------------+
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
 //  +-------+---------+---------------------------+-------------------------------+
 //  | Width | Default | Variable                  | Description                   |
 //  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_vntag_ver         | If 1, corrupts VNTag version  |
-//  |       |         |                           | (Version != 2'h0)             |
+//  | 1     | 1'b1    | cal_igmp_chksm            | If 1,calculates igmp checksum |
+//  |       |         |                           | Otherwise it will be random   |
+//  +-------+---------+---------------------------+-------------------------------+
+//  | 1     | 1'b0    | corrupt_igmp_chksm        | If 1, corrupts igmp checksum  |
+//  +-------+---------+---------------------------+-------------------------------+
+//  | 16    | 16'hFFFF| corrupt_igmp_chksm_msk    | Msk used to corrupt igmp_chksm|
 //  +-------+---------+---------------------------+-------------------------------+
 //
 // ----------------------------------------------------------------------
 
-
-class vntag_hdr_class extends hdr_class; // {
+class igmp_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
-  rand bit        d;      
-  rand bit        p;      
-  rand bit [13:0] dst_vif;
-  rand bit        l;      
-  rand bit        rsvd;   
-  rand bit [1:0]  ver;    
-  rand bit [11:0] src_vif;
-  rand bit [15:0] etype;
+  rand  bit [7:0]     igmp_type;
+  rand  bit [7:0]     max_res_code; 
+  rand  bit [15:0]    checksum;
+  rand  bit [31:0]    group_addr;   
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
-       bit        corrupt_vntag_ver = 1'b0;
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
+        bit           cal_igmp_chksm         = 1'b1;
+        bit           corrupt_igmp_chksm     = 1'b0;
+        bit [15:0]    corrupt_igmp_chksm_msk = 16'hffff;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint vntag_hdr_user_constraint
+  constraint igmp_hdr_user_constraint
   {
   }
 
@@ -72,46 +69,47 @@ class vntag_hdr_class extends hdr_class; // {
     `LEGAL_TOTAL_HDR_LEN_CONSTRAINTS;
   }
 
-  constraint legal_etype
+  constraint legal_hdr_len 
   {
-    `LEGAL_ETH_TYPE_CONSTRAINTS;
+    hdr_len == 8;
   }
 
-  constraint legal_hdr_len
+  constraint legal_igmp_type
   {
-    hdr_len == 6;
+    `LEGAL_IGMP_TYPE_CONSTRAINTS;
   }
 
-  constraint legal_ver
+  constraint legal_checksum
   {
-    (corrupt_vntag_ver == 1'b0) -> (ver == 2'h0);
-    (corrupt_vntag_ver == 1'b1) -> (ver != 2'h0);
+    checksum == 16'h0;
   }
+
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
                 int               inst_no); // {
     super.new (plib);
+    this.hid     = IGMP_HID;
     this.inst_no = inst_no;
-    hid      = VNTAG_HID;
-    $sformat (hdr_name, "vntag[%0d]",inst_no);
+    $sformat (hdr_name, "igmp[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
-
-  task pack_hdr(ref   bit [7:0] pkt [],
-                ref   int       index,
-                input bit       last_pack = 1'b0); // {
+  task pack_hdr (ref   bit [7:0] pkt [],
+                 ref   int       index,
+                 input bit       last_pack = 1'b0); // {
+    int       igmp_idx;
+    // making sure checksum is 0, incase pack_hdr was called before radomization
+    if (~last_pack & cal_igmp_chksm)
+        checksum = 0;
+    igmp_idx = index;
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {d, p, dst_vif, l, rsvd, ver, src_vif, etype};
-    harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
+    pack_vec = {igmp_type, max_res_code, checksum, group_addr};
+    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}};
+     hdr = {>>{igmp_type, max_res_code, checksum, group_addr}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -122,6 +120,9 @@ class vntag_hdr_class extends hdr_class; // {
         `endif
         this.nxt_hdr.pack_hdr (pkt, index);
     end // }
+    // checksum calulation
+    if (~last_pack)
+        post_pack (pkt, igmp_idx);
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -131,21 +132,21 @@ class vntag_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = 6;
+    hdr_len   = 8;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {d, p, dst_vif, l, rsvd, ver, src_vif, etype} = pack_vec;
+    {igmp_type, max_res_code, checksum, group_addr} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}} = hdr;
+    {>>{igmp_type, max_res_code, checksum, group_addr}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
-        if (unpack_en[get_hid_from_etype(etype)] & (pkt.size > index))
-            super.update_nxt_hdr_info (lcl_class, hdr_q, get_hid_from_etype (etype));
+        if (unpack_en[DATA_HID] & (pkt.size > index))
+            super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
         else
             super.update_nxt_hdr_info (lcl_class, hdr_q, DATA_HID);
     end // }
@@ -162,47 +163,65 @@ class vntag_hdr_class extends hdr_class; // {
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
+  function post_pack (ref bit [7:0] pkt [],
+                          int       igmp_idx); // {
+    bit [7:0] chksm_data [];
+    // Calulate igmp_chksm, corrupt it if asked
+    if (cal_igmp_chksm)
+    begin // {
+        harray.copy_array(pkt, chksm_data, igmp_idx, (pkt.size - igmp_idx));
+        checksum = crc_chksm.chksm16(chksm_data, chksm_data.size(), 0, corrupt_igmp_chksm, corrupt_igmp_chksm_msk);
+        pack_hdr (pkt, igmp_idx, 1'b1);
+    end // }
+    else
+    begin // {
+        if (corrupt_igmp_chksm)
+        begin // {
+            checksum ^= corrupt_igmp_chksm_msk;
+            pack_hdr (pkt, igmp_idx, 1'b1);
+        end // }
+    end // }
+  endfunction : post_pack // }
+
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    vntag_hdr_class lcl;
+    igmp_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~
-    this.d                         = lcl.d;      
-    this.p                         = lcl.p;      
-    this.dst_vif                   = lcl.dst_vif;
-    this.l                         = lcl.l;      
-    this.rsvd                      = lcl.rsvd;   
-    this.ver                       = lcl.ver;    
-    this.src_vif                   = lcl.src_vif;
-    this.etype                     = lcl.etype;
+    this.igmp_type              = lcl.igmp_type;             
+    this.max_res_code           = lcl.max_res_code;             
+    this.checksum               = lcl.checksum;
+    this.group_addr             = lcl.group_addr;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.corrupt_vntag_ver         = lcl.corrupt_vntag_ver;
+    this.cal_igmp_chksm         = lcl.cal_igmp_chksm;        
+    this.corrupt_igmp_chksm     = lcl.corrupt_igmp_chksm;    
+    this.corrupt_igmp_chksm_msk = lcl.corrupt_igmp_chksm_msk;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
 
-  // This task displays all the feilds of individual hdrs used
   task display_hdr (pktlib_display_class hdis,
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    vntag_hdr_class lcl;
+    igmp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "d", d, lcl.d);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "p", p, lcl.p);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 014, "dst_vif", dst_vif, lcl.dst_vif);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "l", l, lcl.l);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "rsvd", rsvd, lcl.rsvd);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "ver", ver, lcl.ver);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 012, "src_vif", src_vif, lcl.src_vif);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "igmp_type", igmp_type, lcl.igmp_type);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "max_res_code", max_res_code, lcl.max_res_code);
+    if (corrupt_igmp_chksm)                              
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
+    else                                                
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "group_addr", group_addr, lcl.group_addr);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_vntag_ver", corrupt_vntag_ver, lcl.corrupt_vntag_ver);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_igmp_chksm", cal_igmp_chksm, lcl.cal_igmp_chksm);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_igmp_chksm", corrupt_igmp_chksm, lcl.corrupt_igmp_chksm);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_igmp_chksm_msk", corrupt_igmp_chksm_msk, lcl.corrupt_igmp_chksm_msk);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
@@ -210,8 +229,8 @@ class vntag_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
-    if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
+    if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : vntag_hdr_class // }
+endclass : igmp_hdr_class // }

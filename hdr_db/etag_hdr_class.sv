@@ -12,58 +12,49 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates the IEEE 802.1Qbh VNTag
-//  802.1Qbh
-//  +---------------+
-//  | d             | -> direction (0/1 - from adaptor/switch)
-//  +---------------+ 
-//  | p             | -> pointer (1-dst_vif points to a list)
-//  +---------------+ 
-//  | dst_vif[13:0] | -> destination vif (used only when d = 1)
-//  +---------------+ 
-//  | l             | -> looped (frame origniated at adapter)
-//  +---------------+
-//  + rsvd          | -> reserved
-//  +---------------+
-//  + ver[1:0]      | -> version
-//  +---------------+
-//  + src_vif[11:0] | -> source vif
-//  +---------------+
-//  | etype[15:0]   | 
-//  +---------------+
-// ----------------------------------------------------------------------
-//  Control Variables :
-//  ==================
-//  +-------+---------+---------------------------+-------------------------------+
-//  | Width | Default | Variable                  | Description                   |
-//  +-------+---------+---------------------------+-------------------------------+
-//  | 1     | 1'b0    | corrupt_vntag_ver         | If 1, corrupts VNTag version  |
-//  |       |         |                           | (Version != 2'h0)             |
-//  +-------+---------+---------------------------+-------------------------------+
-//
+//  This hdr_class generates the IEEE 802.1BR (E-Tag) 
+//  802.1BR (E-Tag) Format
+//  +---------------------+
+//  | e_pcp[2:0]          | 
+//  +---------------------+
+//  | e_dei               | -> (1 bit Drop Indicate Ellibable) 
+//  +---------------------+
+//  | igr_e_cid_base[11:0]|
+//  +---------------------+
+//  | rsvd[1:0]           |
+//  +---------------------+
+//  | grp[1:0]            |
+//  +---------------------+
+//  | e_cid_base[11:0]    |
+//  +---------------------+
+//  | igr_e_cid_ext[7:0]  |
+//  +---------------------+
+//  | e_cid_ext[7:0]      |
+//  +---------------------+
+//  | etype[15:0]         |
+//  +---------------------+
 // ----------------------------------------------------------------------
 
-
-class vntag_hdr_class extends hdr_class; // {
+class etag_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
-  rand bit        d;      
-  rand bit        p;      
-  rand bit [13:0] dst_vif;
-  rand bit        l;      
-  rand bit        rsvd;   
-  rand bit [1:0]  ver;    
-  rand bit [11:0] src_vif;
+  rand bit [2:0]  e_pcp;
+  rand bit        e_dei;
+  rand bit [11:0] igr_e_cid_base;
+  rand bit [1:0]  rsvd;
+  rand bit [1:0]  grp;
+  rand bit [11:0] e_cid_base;
+  rand bit [7:0]  igr_e_cid_ext;
+  rand bit [7:0]  e_cid_ext;
   rand bit [15:0] etype;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
-       bit        corrupt_vntag_ver = 1'b0;
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
-  constraint vntag_hdr_user_constraint
+  constraint etag_hdr_user_constraint
   {
   }
 
@@ -79,13 +70,7 @@ class vntag_hdr_class extends hdr_class; // {
 
   constraint legal_hdr_len
   {
-    hdr_len == 6;
-  }
-
-  constraint legal_ver
-  {
-    (corrupt_vntag_ver == 1'b0) -> (ver == 2'h0);
-    (corrupt_vntag_ver == 1'b1) -> (ver != 2'h0);
+    hdr_len == 8;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -94,8 +79,8 @@ class vntag_hdr_class extends hdr_class; // {
                 int               inst_no); // {
     super.new (plib);
     this.inst_no = inst_no;
-    hid      = VNTAG_HID;
-    $sformat (hdr_name, "vntag[%0d]",inst_no);
+    hid      = ETAG_HID;
+    $sformat (hdr_name, "etag[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
@@ -108,10 +93,10 @@ class vntag_hdr_class extends hdr_class; // {
                 input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {d, p, dst_vif, l, rsvd, ver, src_vif, etype};
+    pack_vec = {e_pcp, e_dei, igr_e_cid_base, rsvd, grp, e_cid_base, igr_e_cid_ext, e_cid_ext, etype};
     harray.pack_bit(pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}};
+    hdr = {>>{e_pcp, e_dei, igr_e_cid_base, rsvd, grp, e_cid_base, igr_e_cid_ext, e_cid_ext, etype}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -131,14 +116,14 @@ class vntag_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = 6;
+    hdr_len   = 8;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {d, p, dst_vif, l, rsvd, ver, src_vif, etype} = pack_vec;
+    {e_pcp, e_dei, igr_e_cid_base, rsvd, grp, e_cid_base, igr_e_cid_ext, e_cid_ext, etype} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{d, p, dst_vif, l, rsvd, ver, src_vif, etype}} = hdr;
+    {>>{e_pcp, e_dei, igr_e_cid_base, rsvd, grp, e_cid_base, igr_e_cid_ext, e_cid_ext, etype}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
@@ -164,20 +149,19 @@ class vntag_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    vntag_hdr_class lcl;
+    etag_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~
-    this.d                         = lcl.d;      
-    this.p                         = lcl.p;      
-    this.dst_vif                   = lcl.dst_vif;
-    this.l                         = lcl.l;      
-    this.rsvd                      = lcl.rsvd;   
-    this.ver                       = lcl.ver;    
-    this.src_vif                   = lcl.src_vif;
-    this.etype                     = lcl.etype;
-    // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.corrupt_vntag_ver         = lcl.corrupt_vntag_ver;
+    this.e_pcp          = lcl.e_pcp;             
+    this.e_dei          = lcl.e_dei;
+    this.igr_e_cid_base = lcl.igr_e_cid_base;
+    this.rsvd           = lcl.rsvd;
+    this.grp            = lcl.grp;
+    this.e_cid_base     = lcl.e_cid_base;
+    this.igr_e_cid_ext  = lcl.igr_e_cid_ext;
+    this.e_cid_ext      = lcl.e_cid_ext;
+    this.etype          = lcl.etype;            
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -187,22 +171,22 @@ class vntag_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    vntag_hdr_class lcl;
+    etag_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "d", d, lcl.d);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "p", p, lcl.p);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 014, "dst_vif", dst_vif, lcl.dst_vif);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "l", l, lcl.l);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "rsvd", rsvd, lcl.rsvd);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "ver", ver, lcl.ver);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 012, "src_vif", src_vif, lcl.src_vif);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "e_pcp",         e_pcp,         lcl.e_pcp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "e_dei",         e_dei,         lcl.e_dei);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "igr_e_cid_base",igr_e_cid_base,lcl.igr_e_cid_base);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "rsvd",          rsvd,          lcl.rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 002, "grp",           grp,           lcl.grp);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "e_cid_base",    e_cid_base,    lcl.e_cid_base);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "igr_e_cid_ext", igr_e_cid_ext, lcl.igr_e_cid_ext);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "e_cid_ext",     e_cid_ext,     lcl.e_cid_ext);
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype",         etype,         lcl.etype, '{}, '{}, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_vntag_ver", corrupt_vntag_ver, lcl.corrupt_vntag_ver);
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
@@ -214,4 +198,4 @@ class vntag_hdr_class extends hdr_class; // {
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-endclass : vntag_hdr_class // }
+endclass : etag_hdr_class // }

@@ -237,7 +237,7 @@ class ptp_hdr_class extends hdr_class; // {
     end // }
     else
         hdr = {>>{v1_ptp_ver, v1_nw_ver, v1_subdomain, v1_msg_type, v1_src_com_tech, v1_src_uid, v1_src_port_id, v1_seq_id, v1_cntrl, v1_rsvd0, v1_flags, v1_rsvd1}};
-    harray.pack_array_8 (pkt, hdr, index);
+    harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
     if (~last_pack)
@@ -368,59 +368,59 @@ class ptp_hdr_class extends hdr_class; // {
     ptp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     if (ptp_ver == 1'b1)
     begin // {
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "v2_trans_spec", v2_trans_spec, lcl.v2_trans_spec); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "v2_msg_type", v2_msg_type, lcl.v2_msg_type); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v2_ptp_ver", v2_ptp_ver, lcl.v2_ptp_ver); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v2_msg_len", v2_msg_len, lcl.v2_msg_len); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v2_domain_no", v2_domain_no, lcl.v2_domain_no); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v2_rsvd0", v2_rsvd0, lcl.v2_rsvd0); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 006, "v2_flags", v2_flags, lcl.v2_flags);  
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 064, "v2_crct_fld", v2_crct_fld, lcl.v2_crct_fld); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "v2_rsvd1", v2_rsvd1, lcl.v2_rsvd1); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 080, "v2_src_port_id", v2_src_port_id, lcl.v2_src_port_id);  
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v2_seq_id", v2_seq_id, lcl.v2_seq_id); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v2_cntrl", v2_cntrl, lcl.v2_cntrl); 
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v2_logmsgintrl", v2_logmsgintrl, lcl.v2_logmsgintrl);    
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "v2_trans_spec", v2_trans_spec, lcl.v2_trans_spec); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "v2_msg_type", v2_msg_type, lcl.v2_msg_type); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v2_ptp_ver", v2_ptp_ver, lcl.v2_ptp_ver); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v2_msg_len", v2_msg_len, lcl.v2_msg_len); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v2_domain_no", v2_domain_no, lcl.v2_domain_no); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v2_rsvd0", v2_rsvd0, lcl.v2_rsvd0); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "v2_flags", v2_flags, lcl.v2_flags);  
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "v2_crct_fld", v2_crct_fld, lcl.v2_crct_fld); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "v2_rsvd1", v2_rsvd1, lcl.v2_rsvd1); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 080, "v2_src_port_id", v2_src_port_id, lcl.v2_src_port_id);  
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v2_seq_id", v2_seq_id, lcl.v2_seq_id); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v2_cntrl", v2_cntrl, lcl.v2_cntrl); 
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v2_logmsgintrl", v2_logmsgintrl, lcl.v2_logmsgintrl);    
         if (v2_msg_type == 4'h0)
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 080, "v2_synctimestamp", v2_synctimestamp, lcl.v2_synctimestamp);    
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 080, "v2_synctimestamp", v2_synctimestamp, lcl.v2_synctimestamp);    
     end // }
     else
     begin // {
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v1_ptp_ver", v1_ptp_ver, lcl.v1_ptp_ver);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v1_nw_ver", v1_nw_ver, lcl.v1_nw_ver);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "v1_subdomain", v1_subdomain, lcl.v1_subdomain);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v1_msg_type", v1_msg_type, lcl.v1_msg_type);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v1_src_com_tech", v1_src_com_tech, lcl.v1_src_com_tech);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 048, "v1_src_uid", v1_src_uid, lcl.v1_src_uid);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v1_src_port_id", v1_src_port_id, lcl.v1_src_port_id);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v1_seq_id", v1_seq_id, lcl.v1_seq_id);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v1_cntrl", v1_cntrl, lcl.v1_cntrl);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "v1_rsvd0", v1_rsvd0, lcl.v1_rsvd0);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "v1_flags", v1_flags, lcl.v1_flags);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "v1_rsvd1", v1_rsvd1, lcl.v1_rsvd1);        
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v1_ptp_ver", v1_ptp_ver, lcl.v1_ptp_ver);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v1_nw_ver", v1_nw_ver, lcl.v1_nw_ver);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "v1_subdomain", v1_subdomain, lcl.v1_subdomain);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v1_msg_type", v1_msg_type, lcl.v1_msg_type);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v1_src_com_tech", v1_src_com_tech, lcl.v1_src_com_tech);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 048, "v1_src_uid", v1_src_uid, lcl.v1_src_uid);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v1_src_port_id", v1_src_port_id, lcl.v1_src_port_id);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v1_seq_id", v1_seq_id, lcl.v1_seq_id);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v1_cntrl", v1_cntrl, lcl.v1_cntrl);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "v1_rsvd0", v1_rsvd0, lcl.v1_rsvd0);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "v1_flags", v1_flags, lcl.v1_flags);
+        hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "v1_rsvd1", v1_rsvd1, lcl.v1_rsvd1);        
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-        hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "sync_msg_hdr", sync_msg_hdr, lcl.sync_msg_hdr);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "ptp_ver", ptp_ver, lcl.ptp_ver);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "is_ptp", is_ptp, lcl.is_ptp);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "tspec_chk_dis", tspec_chk_dis, lcl.tspec_chk_dis);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 004, "usr_tspec", usr_tspec, lcl.usr_tspec);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_ptp_ver", corrupt_ptp_ver, lcl.corrupt_ptp_ver);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_msg_len", cal_msg_len, lcl.cal_msg_len);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_msg_len", corrupt_msg_len, lcl.corrupt_msg_len);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 016, "corrupt_msg_len_by", corrupt_msg_len_by, lcl.corrupt_msg_len_by);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_syncts", corrupt_syncts, lcl.corrupt_syncts);
+        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "sync_msg_hdr", sync_msg_hdr, lcl.sync_msg_hdr);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "ptp_ver", ptp_ver, lcl.ptp_ver);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "is_ptp", is_ptp, lcl.is_ptp);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "tspec_chk_dis", tspec_chk_dis, lcl.tspec_chk_dis);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 004, "usr_tspec", usr_tspec, lcl.usr_tspec);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ptp_ver", corrupt_ptp_ver, lcl.corrupt_ptp_ver);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_msg_len", cal_msg_len, lcl.cal_msg_len);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_msg_len", corrupt_msg_len, lcl.corrupt_msg_len);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 016, "corrupt_msg_len_by", corrupt_msg_len_by, lcl.corrupt_msg_len_by);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_syncts", corrupt_syncts, lcl.corrupt_syncts);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-        hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

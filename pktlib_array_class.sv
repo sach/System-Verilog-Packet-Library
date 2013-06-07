@@ -46,10 +46,11 @@ class pktlib_array_class;
   endfunction : new // }
 
   // this task converts bit vector into pkt array of 8 bit
-  task pack_bit (ref   bit [7:0]         pkt [],       // Output array
-                 input bit [`VEC_SZ-1:0] bit_vec,      // bit vector to pack 
-                 ref   int               start_offset, // starting offset in bits
-                 input int               length);      // how much data to pack {
+  task pack_bit (ref   bit [7:0]         pkt [],         // Output array
+                 input bit [`VEC_SZ-1:0] bit_vec,        // bit vector to pack 
+                 ref   int               start_offset,   // starting offset in bits
+                 input int               length,         // how much data to unpack 
+                 input bit               no_icr = 1'b0); // don't increment start_offset if 1 {
     bit [7:0] hold_reg;
     int       i;
     for (i = start_offset/8; i < (start_offset+length)/8; i++)
@@ -64,24 +65,28 @@ class pktlib_array_class;
         hold_reg = bit_vec;
         pkt[i]  |= hold_reg << (start_offset % 8);
     end // }
-    start_offset += length;
+    if (~no_icr)
+        start_offset += length;
   endtask : pack_bit // }
 
   // this tasks replaces bytes of pkt array from start offset with array_8
-  task pack_array_8 (    bit [7:0] array_8 [],
-                     ref bit [7:0] pkt     [],
-                     ref int       start_offset); // starting offset in bytes {
+  task pack_array_8 (input bit [7:0] array_8 [],
+                     ref   bit [7:0] pkt     [],
+                     ref   int       start_offset,   // starting offset in bytes 
+                     input bit       no_icr = 1'b0); // don't increment start_offset if 1 {
     foreach (array_8[a_ls])
         pkt [start_offset + a_ls] = array_8[a_ls];
-    start_offset += array_8.size;
+    if (~no_icr)
+        start_offset += array_8.size;
   endtask : pack_array_8 // }
 
   // this tasks converts 8 byte array into unpack vector
   task unpack_array (input bit [7:0]         array_8 [],
                      ref   bit [`VEC_SZ-1:0] unpack_vec,
                      ref   int               start_offset,
-                     input int               length);      // how much data to unpack {
-    int               i;
+                     input int               length,         // how much data to unpack 
+                     input bit               no_icr = 1'b0); // don't increment start_offset if 1 {
+    int i;
     for (i = start_offset; i < start_offset+length; i++)
     begin // {
         unpack_vec = unpack_vec << 8;
@@ -94,25 +99,27 @@ class pktlib_array_class;
             unpack_vec[7:0] = 8'h0;
         end // }
     end // }
-    start_offset += length; 
+    if (~no_icr)
+        start_offset += length; 
   endtask : unpack_array // }
 
   // this task copies m to n bytes of an array into new array
   task copy_array (input bit [7:0] copy_from [],
                    ref   bit [7:0] copy_to   [],
                    ref   int       start_offset,
-                   input int       length); // {
-    int i;
+                   input int       length,    
+                   input bit       no_icr = 1'b0); // {
     if (length > 0)
     begin // {
         copy_to = new [length];
-        for (i = 0; i < copy_to.size; i++)
+        foreach (copy_to[c_to])
         begin // {
-            if (copy_from.size >= start_offset)
-                copy_to [i] = copy_from [start_offset];
-            start_offset++;
+            if (copy_from.size >= (start_offset + c_to))
+                copy_to [c_to] = copy_from [start_offset + c_to];
         end // }
     end // }
+    if (~no_icr)
+        start_offset += length; 
   endtask : copy_array // }
 
   // task to fill data array

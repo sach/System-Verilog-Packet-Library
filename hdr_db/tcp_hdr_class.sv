@@ -337,35 +337,35 @@ class tcp_hdr_class extends hdr_class; // {
     $cast (lcl, cmp_cls);
     $sformat(flags_brk, "=> CWR %b ECE %b URG %b ACK %b PSH %b RST %b SYN %b FIN %b", flags[7],flags[6],flags[5],flags[4],flags[3],flags[2],flags[1],flags[0]);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "src_prt", src_prt, lcl.src_prt);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,'{},'{}, get_tcp_dst_prt_name(dst_prt));
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "seq_number", seq_number, lcl.seq_number);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "ack_number", ack_number, lcl.ack_number);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "offset", offset, lcl.offset);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 004, "rsvd", rsvd, lcl.rsvd);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "flags", flags, lcl.flags,'{},'{}, flags_brk);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "window", window, lcl.window);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "src_prt", src_prt, lcl.src_prt);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,'{},'{}, get_tcp_dst_prt_name(dst_prt));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "seq_number", seq_number, lcl.seq_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "ack_number", ack_number, lcl.ack_number);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "offset", offset, lcl.offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "rsvd", rsvd, lcl.rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "flags", flags, lcl.flags,'{},'{}, flags_brk);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "window", window, lcl.window);
     if (corrupt_tcp_chksm)                              
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
     else                                                
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "urgent_ptr", urgent_ptr, lcl.urgent_ptr);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "urgent_ptr", urgent_ptr, lcl.urgent_ptr);
     if (options.size() !== 0)
-    hdis.display_fld (mode, hdr_name, ARRAY,   HEX, 000, "options", 0, 0, options, lcl.options);
+    hdis.display_fld (mode, hdr_name, ARRAY,      HEX, 000, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_offset", corrupt_offset, lcl.corrupt_offset);       
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_tcp_chksm", cal_tcp_chksm, lcl.cal_tcp_chksm);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_tcp_chksm", corrupt_tcp_chksm, lcl.corrupt_tcp_chksm);    
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "corrupt_tcp_chksm_msk", corrupt_tcp_chksm_msk, lcl.corrupt_tcp_chksm_msk);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_offset", corrupt_offset, lcl.corrupt_offset);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_tcp_chksm", cal_tcp_chksm, lcl.cal_tcp_chksm);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tcp_chksm", corrupt_tcp_chksm, lcl.corrupt_tcp_chksm);    
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_tcp_chksm_msk", corrupt_tcp_chksm_msk, lcl.corrupt_tcp_chksm_msk);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

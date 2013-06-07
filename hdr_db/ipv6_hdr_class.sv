@@ -221,33 +221,33 @@ class ipv6_hdr_class extends hdr_class; // {
     ipv6_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   4, "version", version, lcl.version);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "tos", tos, lcl.tos);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  20, "flow_label", flow_label, lcl.flow_label);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,  16, "payload_len", payload_len, lcl.payload_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX,   8, "ttl", ttl, lcl.ttl);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "ip6_sa", ip6_sa, lcl.ip6_sa);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 128, "ip6_da", ip6_da, lcl.ip6_da);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "version", version, lcl.version);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "tos", tos, lcl.tos);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  20, "flow_label", flow_label, lcl.flow_label);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  16, "payload_len", payload_len, lcl.payload_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "ttl", ttl, lcl.ttl);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "ip6_sa", ip6_sa, lcl.ip6_sa);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "ip6_da", ip6_da, lcl.ip6_da);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
-    hdis.display_fld (mode, hdr_name, BIT_VEC, BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);
-    hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "pseudo_chksm_data", 0, 0, pseudo_chksm_data, lcl.pseudo_chksm_data);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "pseudo_chksm_idx", pseudo_chksm_idx, lcl.pseudo_chksm_idx);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 016, "pseudo_chksm", pseudo_chksm, lcl.pseudo_chksm);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);
+    hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "pseudo_chksm_data", 0, 0, pseudo_chksm_data, lcl.pseudo_chksm_data);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "pseudo_chksm_idx", pseudo_chksm_idx, lcl.pseudo_chksm_idx);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "pseudo_chksm", pseudo_chksm, lcl.pseudo_chksm);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
