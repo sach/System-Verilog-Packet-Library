@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //
 // ----------------------------------------------------------------------
 
-`define NUM_PKTS 12
+`define NUM_PKTS 15
 
 program my_test (); // {
 
@@ -56,6 +56,9 @@ program my_test (); // {
             9  : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.mpls[0],  p.ipv6[0], p.udp[0],   p.vxlan[0], p.eth[1],  p.dot1q[1],  p.arp[0],  p.data[0]});
             10 : p.cfg_hdr ({p.eth[0], p.itag[0],  p.eth[1],   p.ipv4[0], p.tcp[0],   p.stt[0],   p.eth[2],  p.ipv4[1],   p.tcp[1],  p.data[0]});
             11 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.dot1q[1], p.ipv4[0], p.tcp[0],   p.stt[0],   p.eth[1],  p.ipv6[0],   p.ipv4[1], p.igmp[0], p.data[0]});
+            12 : p.cfg_hdr ({p.eth[0], p.roce[0],  p.grh[0],   p.bth[0], p.data[0]});
+            13 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.eth[1],  p.itag[0],  p.eth[2],   p.roce[0], p.grh[0],    p.bth[0],  p.data[0]});
+            14 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.fcoe[0],  p.fc[0], p.data[0]});
         endcase // }
         
         // set max/min packet length

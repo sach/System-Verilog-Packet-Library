@@ -17,7 +17,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //            - RFC  826 (Ethernet Address Resolution Protocol)
 //            - RFC  903 (Reversible Address Resolution Protocol) (Obsolete) 
 //            - RFC 2390 (Inverse Address Resolution Protocol)
-//  ARP, RARP, InvArp header format
+//  ARP, RARP, InvArp header format (hdr_len == 2(hlen + plen) + 8B), trl_len = 0)
 //  (RARP has different ethertype)
 //  +-------------+
 //  | htype[15:0] | -> Hardware Type (Ethernet is 1) 
@@ -85,6 +85,7 @@ class arp_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == 8 + 2*hlen + 2*plen;
+    trl_len == 0;
   }
 
   constraint legal_htype
@@ -141,10 +142,6 @@ class arp_hdr_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
-
   task pack_hdr(ref   bit [7:0] pkt [],
                 ref   int       index,
                 input bit       last_pack = 1'b0); // {
@@ -181,6 +178,7 @@ class arp_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 8;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -283,6 +281,7 @@ class arp_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len",       hdr_len,       lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len",       hdr_len,       lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))

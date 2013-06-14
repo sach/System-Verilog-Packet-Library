@@ -16,7 +16,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  Supports  the following RFC
 //            - RFC  792 (Internet control message protocol)
 //            - RFC 4443 (ICMPv6 for IPv6 specification)
-//  ICMP/ICMPv6 header Format
+//  ICMP/ICMPv6 header Format (8B, No trailer)
 //  +-------------------+
 //  | icmp_type   [7:0] | 
 //  +-------------------+
@@ -72,6 +72,7 @@ class icmp_hdr_class extends hdr_class; // {
   constraint legal_hdr_len 
   {
     hdr_len == 8;
+    trl_len == 0;
   }
 
   constraint legal_checksum
@@ -157,6 +158,7 @@ class icmp_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 8;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -280,6 +282,7 @@ class icmp_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

@@ -26,9 +26,9 @@ class pktlib_main_class extends pktlib_object_class; // {
          int                  inst_db [TOTAL_HID]; // instance number database needed for unpack
   rand   hdr_class            first_hdr;
          hdr_class            hdr_q   [$];
-         bit [7:0]            org_pkt [];          // original packet after build was done
-         bit [7:0]            pkt     [];          // pkt after build was done
-         bit                  pkt_modified = 1'b0; // indicates wether pkt got modified in post_pack
+         bit [7:0]            org_pkt [];            // original packet after build was done
+         bit [7:0]            pkt     [];            // pkt after build was done
+         bit                  pkt_modified  = 1'b0;  // indicates wether pkt got modified in post_pack
          string               cfg_hdr_list;
 
   // ~~~~~~~~~~ Contol variables for pkt driver ~~~~~~~~~~

@@ -53,6 +53,7 @@ class data_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == data_len;
+    trl_len == 0;
   }
 
   constraint legal_data_len
@@ -72,10 +73,6 @@ class data_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
-
   function void post_randomize (); // {
     bit [7:0] tmp_data;
     if (super) super.post_randomize();
@@ -86,14 +83,14 @@ class data_class extends hdr_class; // {
         if ((super.prv_hdr.hid === MPLS_HID) & (data_len > 0))
         begin // {
             tmp_data = data[0];
-            if ((tmp_data[7:4] === 8'h0) | (tmp_data[7:4] === 8'h4) | (tmp_data[7:4] === 8'h6))
+            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
                 tmp_data[7:4] = $urandom_range(7, 15);
             data[0] = tmp_data;
         end // }
         if ((super.prv_hdr.hid === MMPLS_HID) & (data_len > 0))
         begin // {
             tmp_data = data[0];
-            if ((tmp_data[7:4] === 8'h0) | (tmp_data[7:4] === 8'h4) | (tmp_data[7:4] === 8'h6))
+            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
                 tmp_data[7:4] = $urandom_range(7, 15);
             data[0] = tmp_data;
         end // }
@@ -127,14 +124,21 @@ class data_class extends hdr_class; // {
                    ref   hdr_class hdr_q [$],
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
-    hdr_class lcl_class;
+    hdr_class  lcl_class;
+    bit [15:0] trl_sz;
+    int        i;
+    // account for trailer if present
+    start_off   = index;
+    trl_len     = 0;
+    trl_sz      = 0;
+    for (i = 0; i < this.cfg_id; i++)
+        trl_sz += super.all_hdr[i].trl_len;
     // unpack class members
-    if (pkt.size > index)
-        hdr_len   = (pkt.size - index);
+    if (pkt.size  > (index + trl_sz))
+        hdr_len = (pkt.size - index - trl_sz);
     else
-        hdr_len   = 0;
-    start_off = index;
-    data_len  = hdr_len;
+        hdr_len = 0;
+    data_len    = hdr_len;
     harray.copy_array (pkt, data, index, hdr_len);
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
@@ -194,6 +198,7 @@ class data_class extends hdr_class; // {
             endcase // }
         end // }
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "data_len", data.size, lcl.data.size, '{}, '{}, sample_data);
+        hdis.index += hdr_len*8;
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

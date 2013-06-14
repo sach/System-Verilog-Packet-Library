@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  This hdr_class generates the IEEE 802.1BR (E-Tag) 
-//  802.1BR (E-Tag) Format
+//  802.1BR (E-Tag) Format (8B, No trailer)
 //  +---------------------+
 //  | e_pcp[2:0]          | 
 //  +---------------------+
@@ -33,6 +33,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +---------------------+
 //  | etype[15:0]         |
 //  +---------------------+
+//
+// ----------------------------------------------------------------------
+//  Control Variables :
+//  ==================
+//  +-------+---------+------------------+-----------------------------------+
+//  | Width | Default | Variable         | Description                       |
+//  +-------+---------+------------------+-----------------------------------+
+//  | 1     | 1'b0    | null_rsvd        | If 1, all rsvd fields set to 0    |
+//  +-------+---------+------------------+-----------------------------------+
+//
 // ----------------------------------------------------------------------
 
 class etag_hdr_class extends hdr_class; // {
@@ -51,6 +61,7 @@ class etag_hdr_class extends hdr_class; // {
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
+       bit        null_rsvd         = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
@@ -71,6 +82,12 @@ class etag_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == 8;
+    trl_len == 0;
+  }
+
+  constraint legal_rsvd
+  {
+    (null_rsvd) -> rsvd == 2'h0;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -117,6 +134,7 @@ class etag_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 8;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -162,6 +180,9 @@ class etag_hdr_class extends hdr_class; // {
     this.igr_e_cid_ext  = lcl.igr_e_cid_ext;
     this.e_cid_ext      = lcl.e_cid_ext;
     this.etype          = lcl.etype;            
+    // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
+    // ~~~~~~~~~~ Control variables ~~~~~~~~~~
+    this.null_rsvd        = lcl.null_rsvd;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -187,11 +208,13 @@ class etag_hdr_class extends hdr_class; // {
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))

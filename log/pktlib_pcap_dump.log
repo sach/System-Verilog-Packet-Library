@@ -123,6 +123,7 @@ ld -r -o pre_vcsobj_0_1.o --whole-archive pre_vcsobj_0_1.a --no-whole-archive
 if [ -x ../simv ]; then chmod -x ../simv; fi
 g++  -o ../simv -L    -Wl,-whole-archive    -Wl,-no-whole-archive  pcap_dpi.o pcap_dump.o \
 _vcsobj_1_1.o  5NrI_d.o 5NrIB_d.o   pre_vcsobj_0_1.o  rmapats_mop.o rmapats.o    \
+-ldl -lm  -lc -lpthread -ldl 
 ../simv up to date
 make: warning:  Clock skew detected.  Your build may be incomplete.
 Generating Assert Debug shared object

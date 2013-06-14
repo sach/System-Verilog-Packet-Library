@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  This hdr_class generates the IEEE 1588 (PTP) header
 //
-//  PTPv1 header Format
+//  PTPv1 header Format (40B)
 //  +--------------------+
 //  | ptp_ver     [15:0] | -> versionPTP
 //  +--------------------+
@@ -72,6 +72,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
+//  +-------+---------+------------------+-----------------------------------+
+//  | Width | Default | Variable         | Description                       |
+//  +-------+---------+------------------+-----------------------------------+
+//  | 1     | 1'b0    | null_rsvd        | If 1, all rsvd fields set to 0    |
+//  +-------+---------+------------------+-----------------------------------+
 //
 // ----------------------------------------------------------------------
 
@@ -120,6 +125,7 @@ class ptp_hdr_class extends hdr_class; // {
         bit           corrupt_msg_len    = 1'b0;
         bit [15:0]    corrupt_msg_len_by = 16'h1;
         bit           corrupt_syncts     = 1'b0;
+        bit           null_rsvd          = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
@@ -139,6 +145,15 @@ class ptp_hdr_class extends hdr_class; // {
     (ptp_ver     == 1'b1) -> hdr_len == 34 + sync_msg_hdr;
     (v2_msg_type == 4'h0) -> sync_msg_hdr == 10;
     (v2_msg_type != 4'h0) -> sync_msg_hdr == 0;
+    trl_len == 0;
+  }
+
+  constraint legal_rsvd
+  {
+    (null_rsvd) -> v1_rsvd0 ==  8'h0;
+    (null_rsvd) -> v1_rsvd1 == 32'h0;
+    (null_rsvd) -> v2_rsvd0 ==  8'h0;
+    (null_rsvd) -> v2_rsvd1 == 32'h0;
   }
 
   // ~~~~~~~~~~ Constraints for v1 ~~~~~~~~~~
@@ -267,6 +282,7 @@ class ptp_hdr_class extends hdr_class; // {
     // unpack class members
     hdr_len   = (ptp_ver) ? 34 : 40;
     start_off = index;
+    trl_len   = 0;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
     if (ptp_ver == 1'b1)
@@ -357,6 +373,7 @@ class ptp_hdr_class extends hdr_class; // {
     this.corrupt_msg_len    = lcl.corrupt_msg_len;   
     this.corrupt_msg_len_by = lcl.corrupt_msg_len_by;
     this.corrupt_syncts     = lcl.corrupt_syncts;
+    this.null_rsvd          = lcl.null_rsvd;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -415,11 +432,13 @@ class ptp_hdr_class extends hdr_class; // {
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_msg_len", corrupt_msg_len, lcl.corrupt_msg_len);
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 016, "corrupt_msg_len_by", corrupt_msg_len_by, lcl.corrupt_msg_len_by);
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_syncts", corrupt_syncts, lcl.corrupt_syncts);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
         hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  This hdr_class generates Locator/ID Separation Protocol (LISP) header
 //  (draft-ietf)
-//  LISP header Format
+//  LISP header Format (8B, No trailer)
 //  +------+------+------+------+----+------------+ 
 //  |  N   |  L   |  E   |  V   |  I | flags[2:0] |  
 //  +------+------+------+------+----+------------+
@@ -72,6 +72,7 @@ class lisp_hdr_class extends hdr_class; // {
   constraint legal_hdr_len 
   {
     hdr_len == 8; 
+    trl_len == 8; 
   }
 
   // N & V are mutually exclusive
@@ -142,6 +143,7 @@ class lisp_hdr_class extends hdr_class; // {
     
     // unpack class members
     hdr_len   = 8;
+    trl_len   = 8;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -241,6 +243,7 @@ class lisp_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

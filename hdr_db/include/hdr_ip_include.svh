@@ -16,16 +16,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 
 // ~~~~~~~~~~ Nxt_hdr/protocol defines ~~~~~~~~~~
-`define ICMP_HDR_PROT       8'h01
-`define ICMPV6_HDR_PROT     8'd58
-`define IGMP_HDR_PROT       8'h02
-`define IPV4_HDR_PROT       8'h04
-`define IPV6_HDR_PROT       8'h29
-`define IPSEC_HDR_PROT      8'h50
-`define TCP_HDR_PROT        8'h06
-`define UDP_HDR_PROT        8'h11
-`define GRE_HDR_PROT        8'h2F
-`define PTIP_HDR_PROT       8'hFF
+`define ICMP_HDR_PROT       8'h01  // 8'd01
+`define ICMPV6_HDR_PROT     8'h3A  // 8'd58
+`define IGMP_HDR_PROT       8'h02  // 8'd02
+`define IPV4_HDR_PROT       8'h04  // 8'd04
+`define IPV6_HDR_PROT       8'h29  // 8'd41
+`define IPSEC_HDR_PROT      8'h50  // 8'd80  ??
+`define TCP_HDR_PROT        8'h06  // 8'd06
+`define UDP_HDR_PROT        8'h11  // 8'd17
+`define GRE_HDR_PROT        8'h2F  // 8'd47
+`define BTH_HDR_PROT        8'h1B  // 8'd27  ?? - Infiniband Base Transport hdr 
+`define PTIP_HDR_PROT       8'hFF  // 8'd255 ??
 
 // ~~~~~~~~~~ Nxt_hdr/protocol fields ~~~~~~~~~~
   bit [7:0]   icmp_prot     = `ICMP_HDR_PROT;
@@ -37,6 +38,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   bit [7:0]   tcp_prot      = `TCP_HDR_PROT;
   bit [7:0]   udp_prot      = `UDP_HDR_PROT;
   bit [7:0]   gre_prot      = `GRE_HDR_PROT;
+  bit [7:0]   bth_prot      = `BTH_HDR_PROT;
   bit [7:0]   ptip_prot     = `PTIP_HDR_PROT;
 
 // ~~~~~~~~~~ define to copy Nxt_hdr/protocol fields  ~~~~~~~~~~
@@ -50,6 +52,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.tcp_prot      = cpy_cls.tcp_prot;\
     this.udp_prot      = cpy_cls.udp_prot;\
     this.gre_prot      = cpy_cls.gre_prot;\
+    this.bth_prot      = cpy_cls.bth_prot;\
     this.ptip_prot     = cpy_cls.ptip_prot
 
 // ~~~~~~~~~~ Constraints Macro for Next Protocol ~~~~~~~~~~
@@ -63,6 +66,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         (nxt_hdr.hid == TCP_HID)   ->  (protocol == tcp_prot)   ;\
         (nxt_hdr.hid == UDP_HID)   ->  (protocol == udp_prot)   ;\
         (nxt_hdr.hid == GRE_HID)   ->  (protocol == gre_prot)   ;\
+        (nxt_hdr.hid == BTH_HID)   ->  (protocol == bth_prot)   ;\
         (nxt_hdr.hid == PTIP_HID)  ->  (protocol == ptip_prot)  ;\
         (nxt_hdr.hid == DATA_HID)  -> ((protocol != icmp_prot)  &\
                                        (protocol != icmpv6_prot)&\
@@ -70,6 +74,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                        (protocol != ipv6_prot)  &\
                                        (protocol != udp_prot)   &\
                                        (protocol != gre_prot)   &\
+                                       (protocol != bth_prot)   &\
                                        (protocol != ptip_prot))
 
 
@@ -86,6 +91,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
          tcp_prot      : get_protocol_name = "TCP";
          udp_prot      : get_protocol_name = "UDP";
          gre_prot      : get_protocol_name = "GRE";
+         bth_prot      : get_protocol_name = "BTH";
          ptip_prot     : get_protocol_name = "PTIP";
          default       : get_protocol_name = "UNKNOWN";
      endcase // }
@@ -103,6 +109,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         TCP_HID     : get_prot = tcp_prot;
         UDP_HID     : get_prot = udp_prot;
         GRE_HID     : get_prot = gre_prot;
+        BTH_HID     : get_prot = bth_prot;
         PTIP_HID    : get_prot = ptip_prot;
         default     : get_prot = $urandom ();
      endcase // }
@@ -120,6 +127,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
          tcp_prot      : get_hid_from_protocol = TCP_HID;
          udp_prot      : get_hid_from_protocol = UDP_HID;
          gre_prot      : get_hid_from_protocol = GRE_HID;
+         bth_prot      : get_hid_from_protocol = BTH_HID;
          ptip_prot     : get_hid_from_protocol = PTIP_HID;
          default       : get_hid_from_protocol = DATA_HID;
      endcase // }

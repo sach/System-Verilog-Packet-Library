@@ -34,6 +34,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define MPLS_HDR_ETYPE      16'h8847
 `define MMPLS_HDR_ETYPE     16'h8848
 `define PTP_HDR_ETYPE       16'h88F7
+`define ROCE_HDR_ETYPE      16'h8915
+`define FCOE_HDR_ETYPE      16'h8906
 `define LLC_HDR_MAX_LEN     16'd1500
 
 // ~~~~~~~~~~ Ether Type fields ~~~~~~~~~~
@@ -55,6 +57,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   bit [15:0]  mpls_etype    = `MPLS_HDR_ETYPE;
   bit [15:0]  mmpls_etype   = `MMPLS_HDR_ETYPE;
   bit [15:0]  ptp_etype     = `PTP_HDR_ETYPE;
+  bit [15:0]  roce_etype    = `ROCE_HDR_ETYPE;
+  bit [15:0]  fcoe_etype    = `FCOE_HDR_ETYPE;
   bit [15:0]  llc_max_len   = `LLC_HDR_MAX_LEN;
 
 // ~~~~~~~~ define to copy Ether Type fields  ~~~~~~~~~~
@@ -77,6 +81,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     this.mpls_etype    = cpy_cls.mpls_etype;\
     this.mmpls_etype   = cpy_cls.mmpls_etype;\
     this.ptp_etype     = cpy_cls.ptp_etype;\
+    this.roce_etype    = cpy_cls.roce_etype;\
+    this.fcoe_etype    = cpy_cls.fcoe_etype;\
     this.llc_max_len   = cpy_cls.llc_max_len
 
 // ~~~~~~~~~~ Constraints Macro for ethertype ~~~~~~~~~~
@@ -101,6 +107,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         (nxt_hdr.hid == PTP_HID)    -> (etype == ptp_etype)   ;\
         (nxt_hdr.hid == MPLS_HID)   -> (etype == mpls_etype)  ;\
         (nxt_hdr.hid == MMPLS_HID)  -> (etype == mmpls_etype) ;\
+        (nxt_hdr.hid == ROCE_HID)   -> (etype == roce_etype)  ;\
+        (nxt_hdr.hid == FCOE_HID)   -> (etype == fcoe_etype)  ;\
         (nxt_hdr.hid == DATA_HID)   -> (etype != dot1q_etype) &\
                                        (etype != alt1q_etype) &\
                                        (etype != stag_etype)  &\
@@ -115,6 +123,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                                        (etype != ptp_etype)   &\
                                        (etype != mpls_etype)  &\
                                        (etype != mmpls_etype) &\
+                                       (etype != roce_etype)  &\
+                                       (etype != fcoe_etype)  &\
                                        (etype != snap_etype)
 
 // ~~~~~~~~~~ Function to get the name of ethertype ~~~~~~~~~~
@@ -142,6 +152,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
              ptp_etype     : get_etype_name = "PTP";
              mpls_etype    : get_etype_name = "MPLS-UNICAST";
              mmpls_etype   : get_etype_name = "MPLS-MULTICAST";
+             roce_etype    : get_etype_name = "ROCE";
+             fcoe_etype    : get_etype_name = "FCOE";
              default       : get_etype_name = "UNKNOWN";
          endcase // }
      end // }
@@ -169,6 +181,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         PTP_HID     : get_etype = ptp_etype;
         MPLS_HID    : get_etype = mpls_etype;
         MMPLS_HID   : get_etype = mmpls_etype;
+        ROCE_HID    : get_etype = roce_etype;
+        FCOE_HID    : get_etype = fcoe_etype;
         default     : get_etype = $urandom ();
      endcase // }
   endfunction : get_etype // }
@@ -198,6 +212,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
              ptp_etype     : get_hid_from_etype = PTP_HID;
              mpls_etype    : get_hid_from_etype = MPLS_HID;
              mmpls_etype   : get_hid_from_etype = MMPLS_HID;
+             roce_etype    : get_hid_from_etype = ROCE_HID;
+             fcoe_etype    : get_hid_from_etype = FCOE_HID;
              default       : get_hid_from_etype = DATA_HID;
          endcase // }
      end // }

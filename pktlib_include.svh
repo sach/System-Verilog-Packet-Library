@@ -118,28 +118,33 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     TRILL_HID,               // 12
     SNAP_HID,                // 13
     PTL2_HID,                // 14
-    MPLS_HID,                // 15
-    MMPLS_HID,               // 16
-    IPV4_HID,                // 17
-    IPV6_HID,                // 18
-    PTIP_HID,                // 19
-    IPSEC_HID,               // 20
-    ICMP_HID,                // 21
-    ICMPV6_HID,              // 22
-    IGMP_HID,                // 23
-    TCP_HID,                 // 24
-    UDP_HID,                 // 25
-    GRE_HID,                 // 26
-    PTP_HID,                 // 27
-    NTP_HID,                 // 28 
-    LISP_HID,                // 29 
-    OTV_HID,                 // 30 
-    STT_HID,                 // 31 
-    VXLAN_HID,               // 32
-    DATA_HID,                // 33
-    EOH_HID,                 // 34
-//  XXX_HID,                 // 35
-    TOTAL_HID                // 35
+    FCOE_HID,                // 15
+    ROCE_HID,                // 16
+    MPLS_HID,                // 17
+    MMPLS_HID,               // 18
+    IPV4_HID,                // 19
+    IPV6_HID,                // 20
+    PTIP_HID,                // 21
+    IPSEC_HID,               // 22
+    ICMP_HID,                // 23
+    ICMPV6_HID,              // 24
+    IGMP_HID,                // 25
+    TCP_HID,                 // 26
+    UDP_HID,                 // 27
+    GRE_HID,                 // 28
+    PTP_HID,                 // 29
+    NTP_HID,                 // 30 
+    LISP_HID,                // 31 
+    OTV_HID,                 // 32 
+    STT_HID,                 // 33 
+    VXLAN_HID,               // 34
+    GRH_HID,                 // 35
+    BTH_HID,                 // 36
+    FC_HID,                  // 37
+    DATA_HID,                // 38
+    EOH_HID,                 // 39
+//  XXX_HID,                 // 40
+    TOTAL_HID                // 40
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -157,6 +162,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class vntag_hdr_class;
   typedef class trill_hdr_class;
   typedef class ptl2_hdr_class;
+  typedef class fcoe_hdr_class;
+  typedef class roce_hdr_class;
   typedef class mpls_hdr_class;
   typedef class ipv4_hdr_class;
   typedef class ipv6_hdr_class;
@@ -173,6 +180,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class otv_hdr_class;
   typedef class stt_hdr_class;
   typedef class vxlan_hdr_class;
+  typedef class grh_hdr_class;
+  typedef class bth_hdr_class;
+  typedef class fc_hdr_class;
   typedef class data_class;
 //typedef class xxx_class;
   typedef class eoh_class;
@@ -198,6 +208,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "trill_hdr_class.sv"
   `include "snap_hdr_class.sv"
   `include "ptl2_hdr_class.sv"
+  `include "fcoe_hdr_class.sv"
+  `include "roce_hdr_class.sv"
   `include "mpls_hdr_class.sv"
   `include "ipv4_hdr_class.sv"
   `include "ipv6_hdr_class.sv"
@@ -214,6 +226,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "otv_hdr_class.sv"
   `include "stt_hdr_class.sv"
   `include "vxlan_hdr_class.sv"
+  `include "grh_hdr_class.sv"
+  `include "bth_hdr_class.sv"
+  `include "fc_hdr_class.sv"
   `include "data_class.sv"
 //`include "xxx_class.sv"
   `include "eoh_class.sv"
@@ -235,6 +250,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   trill_hdr_class     trill   [`MAX_NUM_INSTS];\
   snap_hdr_class      snap    [`MAX_NUM_INSTS];\
   ptl2_hdr_class      ptl2    [`MAX_NUM_INSTS];\
+  fcoe_hdr_class      fcoe    [`MAX_NUM_INSTS];\
+  roce_hdr_class      roce    [`MAX_NUM_INSTS];\
   mpls_hdr_class      mpls    [`MAX_NUM_INSTS];\
   mpls_hdr_class      mmpls   [`MAX_NUM_INSTS];\
   ipv4_hdr_class      ipv4    [`MAX_NUM_INSTS];\
@@ -253,6 +270,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   otv_hdr_class       otv     [`MAX_NUM_INSTS];\
   stt_hdr_class       stt     [`MAX_NUM_INSTS];\
   vxlan_hdr_class     vxlan   [`MAX_NUM_INSTS];\
+  grh_hdr_class       grh     [`MAX_NUM_INSTS];\
+  bth_hdr_class       bth     [`MAX_NUM_INSTS];\
+  fc_hdr_class        fc      [`MAX_NUM_INSTS];\
   data_class          data    [`MAX_NUM_INSTS];\
   eoh_class           eoh
   
@@ -273,6 +293,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         vntag  [i] = new (this, i);\
         trill  [i] = new (this, i);\
         ptl2   [i] = new (this, i);\
+        fcoe   [i] = new (this, i);\
+        roce   [i] = new (this, i);\
         snap   [i] = new (this, i);\
         mpls   [i] = new (this, i);\
         mmpls  [i] = new (this, i, 1);\
@@ -292,6 +314,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         otv    [i] = new (this, i);\
         stt    [i] = new (this, i);\
         vxlan  [i] = new (this, i);\
+        grh    [i] = new (this, i);\
+        bth    [i] = new (this, i);\
+        fc     [i] = new (this, i);\
         data   [i] = new (this, i);\
     end\
     toh  = new (this);\

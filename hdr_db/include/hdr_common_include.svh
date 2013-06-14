@@ -17,7 +17,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
   // ~~~~~~~~~~ hdr_class variables decelarations ~~~~~~~~~~
   rand   bit [15:0]             total_hdr_len;       // hdr length from this.hdr to end of pkt
-  rand   bit [15:0]             hdr_len;             // length of this.hdr
+  rand   bit [15:0]             hdr_len;             // length of this.hdr 
+  rand   bit [15:0]             trl_len;             // length of trailer, if present
          int                    hid;                 // header Id
          int                    inst_no = 0;         // hdr instance number
          int                    cfg_id  = 0;         // cfg_id number
@@ -36,8 +37,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ~~~~~~~~~~ Constraints Macro for total_hdr_len ~~~~~~~~~~~~~~~
 `define LEGAL_TOTAL_HDR_LEN_CONSTRAINTS \
-        total_hdr_len == hdr_len + super.nxt_hdr.total_hdr_len;\
-        start_off     == all_hdr[0].total_hdr_len - total_hdr_len
+        total_hdr_len == hdr_len + trl_len + super.nxt_hdr.total_hdr_len;\
+        start_off == prv_hdr.start_off + prv_hdr.hdr_len
 
 //  ~~~~~~~~ task to update hdr db ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   task update_hdr_db (int hid, int inst_num); // {
@@ -67,6 +68,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define HDR_INCLUDE_CPY \
     this.total_hdr_len       = cpy_cls.total_hdr_len;\
     this.hdr_len             = cpy_cls.hdr_len;\
+    this.trl_len             = cpy_cls.trl_len;\
     this.hid                 = cpy_cls.hid;\
     this.inst_no             = cpy_cls.inst_no;\
     this.cfg_id              = cpy_cls.cfg_id;\

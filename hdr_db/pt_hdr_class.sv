@@ -51,6 +51,7 @@ class pt_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == pt_len;
+    trl_len == 0;
   }
 
   constraint legal_data_len
@@ -110,6 +111,7 @@ class pt_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = pt_len;
+    trl_len   = 0;
     start_off = index;
     harray.copy_array (pkt, pt_data, index, hdr_len);
     // get next hdr and update common nxt_hdr fields
@@ -163,6 +165,7 @@ class pt_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

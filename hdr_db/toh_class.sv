@@ -84,6 +84,10 @@ class toh_class extends hdr_class; // {
     (plen % plen_multiple_of) == plen_residue;
     plen == nxt_hdr.total_hdr_len + crc_sz + pad_len;
     total_hdr_len == nxt_hdr.total_hdr_len;
+    hdr_len  ==  0; 
+    hdr_len  ==  0; 
+    trl_len  ==  0; 
+    start_off == 0;
   }
 
   constraint legal_rnd_pad
@@ -171,6 +175,7 @@ class toh_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     plen      = pkt.size;
     start_off = index;
+    hdr_len   = 0;
     // If crc is present, extract crc
     if (cal_n_add_crc)
     begin // {
@@ -242,9 +247,9 @@ class toh_class extends hdr_class; // {
     if (cal_n_add_crc)
     begin // {
     if (corrupt_crc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, '{}, '{}, "GOOD");
     end // } 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
@@ -265,6 +270,7 @@ class toh_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "crc_sz", crc_sz, lcl.crc_sz);
     end // }

@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  hdr class to generate IPv4 header (RFC 791)
-//  IPv4 header Format
+//  IPv4 header Format (20B to 64B, No tariler)
 //  +-----------------------+
 //  | version[3:0]          | 
 //  +-----------------------+
@@ -137,6 +137,7 @@ class ipv4_hdr_class extends hdr_class; // {
   {
     (ihl inside {[5:15]}) -> hdr_len == ihl*4;
     (ihl < 4'h5)          -> hdr_len == 20;
+    trl_len == 0;
   }
 
   constraint legal_verison
@@ -278,6 +279,7 @@ class ipv4_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     start_off = index;
+    trl_len   = 0;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, 20);
     {version, ihl, tos, total_length, id, reserved, df, mf,
@@ -399,6 +401,7 @@ class ipv4_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);

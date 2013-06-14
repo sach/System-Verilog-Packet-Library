@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  This hdr_class generates the MACSEC(IEEE802.1AE) header.
-//  MACSEC header format
+//  MACSEC header format (8B or 16B + 16B of ICV)
 //   +-----------------------+
 //   |  tci[5:0]             | (Tag Control Information)
 //   +-----------------------+
@@ -134,8 +134,9 @@ class macsec_hdr_class extends hdr_class; // {
      tci[3]     -> sectag_sz == 16;
      process_ae -> icv_sz    == 16;
     ~process_ae -> icv_sz    == 0;
-    hdr_len  == icv_sz + sectag_sz;
     icv.size == icv_sz;
+    hdr_len  == sectag_sz;
+    trl_len  == icv_sz;
   }
 
   // If SCB is set, SC is 0 
@@ -179,10 +180,6 @@ class macsec_hdr_class extends hdr_class; // {
         process_ae  = 1'b0;
     `endif
   endfunction : new // }
-
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
 
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
@@ -254,16 +251,15 @@ class macsec_hdr_class extends hdr_class; // {
         {>>{tci, an, sl, pn}} = hdr;
         `endif
     end // }
-    icv_sz = 16;
-    // decrypt pkt and remove icv from packet
+    hdr_len = sectag_sz;
+    icv_sz  = 16;
+    trl_len = 0;
+    // decrypt pkt and remove icv from packet - trl_len stays 0 as ICV is removed
     if (process_ae)
     begin // {
-        hdr_len = icv_sz + sectag_sz;
         pkt_ptr = (index + 2);
         post_pack (pkt, pkt_ptr, 0);
     end // }
-    else
-        hdr_len = sectag_sz;
     //unpack etype
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, 2);
@@ -462,6 +458,7 @@ class macsec_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "icv_sz", icv_sz, lcl.icv_sz);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "sectag_sz", sectag_sz, lcl.sectag_sz);

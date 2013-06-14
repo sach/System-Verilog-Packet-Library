@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  hdr class to generate IPv6 header (RFC 2460)
-//  IPv6 header Format
+//  IPv6 header Format (40B, No trailer)
 //  +-------------------+
 //  | version[3:0]      |
 //  +-------------------+
@@ -93,6 +93,7 @@ class ipv6_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == 40;
+    trl_len == 0;
   }
 
   constraint legal_verison
@@ -122,10 +123,6 @@ class ipv6_hdr_class extends hdr_class; // {
     $sformat (hdr_name, "ipv6[%0d]",inst_no);
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
-
-  function void post_randomize (); // {
-    if (super) super.post_randomize();
-  endfunction : post_randomize // }
 
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
@@ -157,6 +154,7 @@ class ipv6_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 40;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -242,6 +240,7 @@ class ipv6_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);

@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  This hdr_class generates Transport Interconnection for Lots of Links (TRILL) header
 //  (RFC 6325)
-//  TRILL header Format
+//  TRILL header Format (6+B, No Trailer)
 //  +--------------------+
 //  | V[1:0]             | -> Version 
 //  +--------------------+
@@ -76,6 +76,7 @@ class trill_hdr_class extends hdr_class; // {
   {
    (op_length == 0) -> hdr_len == 6;
    (op_length != 0) -> hdr_len == (6 + options.size);
+   trl_len == 0;
   }
 
   constraint legal_V
@@ -145,6 +146,7 @@ class trill_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     start_off = index;
+    trl_len   = 0;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, 6);
     {V, R, M, op_length, hop_count, egr_rb_nname, igr_rb_nname} = pack_vec;
@@ -223,6 +225,7 @@ class trill_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  This hdr_class generates MPLS header.
-//  MPLS header format
+//  MPLS header format (4*Num of Lbls)B, No trailer
 // +--------------+
 // | label[19:0]  |
 // +----------+---+
@@ -65,6 +65,7 @@ class mpls_hdr_class extends hdr_class; // {
     (nxt_hdr.hid == ETH_HID) & (label[0] != eth_null_lbl) -> hdr_len == (4 * num_mpls_lbl) + 4;
     (nxt_hdr.hid == ETH_HID) & (label[0] == eth_null_lbl) -> hdr_len == (4 * num_mpls_lbl);
     (nxt_hdr.hid != ETH_HID)                              -> hdr_len == (4 * num_mpls_lbl);
+    trl_len == 0;
   }
 
   constraint legal_num_mpls_lbl
@@ -167,6 +168,7 @@ class mpls_hdr_class extends hdr_class; // {
     bit       unpack_done;
     // unpack class members
     start_off    = index;
+    trl_len      = 0;
     unpack_done  = 0;
     num_mpls_lbl = 0;
     while (~unpack_done)
@@ -311,6 +313,7 @@ class mpls_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

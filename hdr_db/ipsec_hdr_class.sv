@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  This hdr_class generates the IPSEC header.
-//  IPSEC header format
+//  IPSEC header format (16B)
 //   +-----------------------+
 //   |  spi[31:0]            | 
 //   +-----------------------+
@@ -22,7 +22,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //   |  iv[63:0]             | 
 //   +-----------------------+
 //
-//  IPSEC trailer format
+//  IPSEC trailer format (ICV + (Pad Len + 2)B)
 //   +-----------------------+
 //   |  pad [0 to 3 Bytes]   | 
 //   +-----------------------+
@@ -41,6 +41,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  | 1     | 1'b1    | process_ae         | If 1, add ICV and optionally enc  |
 //  +-------+---------+--------------------+-----------------------------------+
 //  | 1     | 1'b1    | enc_en             | If 1, encrypt the data            |
+//  +-------+---------+--------------------+-----------------------------------+
+//  | 1     | 1'b0    | null_rsvd          | If 1, all rsvd fields set to 0    |
 //  +-------+---------+--------------------+-----------------------------------+
 //
 // ----------------------------------------------------------------------
@@ -64,6 +66,7 @@ class ipsec_hdr_class extends hdr_class; // {
        bit        process_ae          = 1'b1;
        bit        ipsec_type          = 1'b0;
        bit        enc_en              = 1'b1;
+       bit        null_rsvd           = 1'b0;
 
   // ~~~~~~~~~~ IPsec Programming variables ~~~~~~~~~~
        bit [7:0]   auth_adjust        = 0; 
@@ -99,9 +102,10 @@ class ipsec_hdr_class extends hdr_class; // {
   {
      process_ae -> icv_sz    == 16;
     ~process_ae -> icv_sz    == 0;
-    hdr_len  == 2 + pad_len + icv_sz + sectag_sz;
     pad_len inside {[0:max_ipsec_pad]};
     icv.size == icv_sz;
+    trl_len  == 2 + pad_len + icv_sz;
+    hdr_len  ==  sectag_sz;
   }
 
   constraint legal_iv
@@ -115,6 +119,10 @@ class ipsec_hdr_class extends hdr_class; // {
     (pad_len > 0 ) -> {foreach (pad[pad_ls]) pad [pad_ls] == 8'h0;} 
   }
 
+  constraint legal_rsvd
+  {
+    (null_rsvd == 1'b1) -> rsvd == 8'h0;
+  }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
@@ -143,7 +151,7 @@ class ipsec_hdr_class extends hdr_class; // {
     pkt_ptr = index;
     `ifdef SVFNYI_0
     pack_vec = {spi, seq_num, iv};
-    harray.pack_bit (pkt, pack_vec, index, sectag_sz*8);
+    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
     hdr = {>>{spi, seq_num, iv}};
     harray.pack_array_8 (hdr, pkt, index);
@@ -190,6 +198,7 @@ class ipsec_hdr_class extends hdr_class; // {
     start_off = index;
     pkt_ptr   = index;
     sectag_sz = 16;
+    hdr_len   = 16;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, sectag_sz);
     {spi, seq_num, iv} = pack_vec;
@@ -198,10 +207,18 @@ class ipsec_hdr_class extends hdr_class; // {
     {>>{spi, seq_num, iv}} = hdr;
     `endif
 
-    // decrypt pkt and remove icv from packet
+    // decrypt pkt and remove icv from packet - trl_len is 0 as icv and trailer is removed
     if (process_ae)
     begin // {
+        trl_len = 0;
         post_pack (pkt, pkt_ptr, 0);
+    end // }
+    else
+    begin // {
+        // Unpack IPSEC trailer from the packet
+        protocol = pkt[pkt.size - 1];
+        pad_len  = pkt[pkt.size - 2];
+        trl_len  = pad_len + 2;
     end // }
 
     // get next hdr and update common nxt_hdr fields
@@ -320,6 +337,7 @@ class ipsec_hdr_class extends hdr_class; // {
     this.process_ae  = lcl.process_ae;
     this.ipsec_type  = lcl.ipsec_type;
     this.enc_en      = lcl.enc_en;
+    this.null_rsvd   = lcl.null_rsvd;
     // ~~~~~~~~~~ IPsec Programming variables ~~~~~~~~~~
     this.auth_adjust = lcl.auth_adjust; 
     this.key         = lcl.key;         
@@ -368,11 +386,13 @@ class ipsec_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "process_ae", process_ae, lcl.process_ae);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd",  null_rsvd,  lcl.null_rsvd);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))

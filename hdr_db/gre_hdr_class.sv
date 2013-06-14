@@ -19,7 +19,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //            - RFC 2784 (Many fields were deprecated from RFC 1701) - Default
 //            - RFC 2890 (Key & Sequence number extension to GRE)    
 //            - NVGRE Draft                                         
-//  GRE header Format
+//  GRE header Format (4B to 20B, No trailer)
 //  +--------------------------------+
 //  |  C   |  R   |  K   |  S   |  s | -> {C, R, s} = 0, K = 1 for version = 1 
 //  +------+------+------+------+----+ |  {R, K, S, s} = 0 for RFC 2784. {C, R, S, s} = 0, K = 1 for NVGRE
@@ -139,6 +139,7 @@ class gre_hdr_class extends hdr_class; // {
     (A)      -> ack_len    == 4;
     (~A)     -> ack_len    == 0;
     hdr_len == 4 + chkoff_len + key_len + seq_len + ack_len;
+    trl_len == 0;
   }
 
 
@@ -328,6 +329,7 @@ class gre_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len    = 4;
+    trl_len    = 0;
     chkoff_len = 0;
     key_len    = 0;
     seq_len    = 0;
@@ -551,6 +553,7 @@ class gre_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chkoff_len", chkoff_len, lcl.chkoff_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "key_len", key_len, lcl.key_len);

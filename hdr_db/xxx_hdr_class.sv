@@ -59,7 +59,7 @@ class xxx_hdr_class extends hdr_class; // {
 
   constraint legal_hdr_len 
   {
-    hdr_len == ?; <Length of this header bytes>
+    hdr_len == ?; <Length of this header+trailer bytes>
   }
 
   // other constarints .. here

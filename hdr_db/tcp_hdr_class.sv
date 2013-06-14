@@ -13,7 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 // ----------------------------------------------------------------------
 //  This hdr_class generates TCP header
-//  TCP header Format
+//  TCP header Format (20+B, No trailer)
 //  +-------------------+
 //  | src_prt    [15:0] | 
 //  +-------------------+
@@ -50,6 +50,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+---------------------------+-------------------------------+
 //  | 1     | 1'b0    | corrupt_offset            | If 1, corrupts offset         |
 //  |       |         |                           | (offset < 4'h5                |
+//  +-------+---------+---------------------------+-------------------------------+
+//  | 1     | 1'b0    | null_rsvd                 | If 1, all rsvd fields set to 0|
 //  +-------+---------+---------------------------+-------------------------------+
 //  | 1     | 1'b1    | cal_tcp_chksm             | If 1, calculates tcp checksum |
 //  |       |         |                           | Otherwise it will be random   |
@@ -88,6 +90,7 @@ class tcp_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
         bit           corrupt_offset        = 1'b0;
+        bit           null_rsvd             = 1'b0;
         bit           cal_tcp_chksm         = 1'b1;
         bit           corrupt_tcp_chksm     = 1'b0;
         bit [15:0]    corrupt_tcp_chksm_msk = 16'hffff;
@@ -112,6 +115,7 @@ class tcp_hdr_class extends hdr_class; // {
   {
     (offset inside {[5:15]}) -> hdr_len == offset*4;
     (offset < 4'h5)          -> hdr_len == 20;
+    trl_len == 0;
   }
 
   constraint legal_offset
@@ -141,6 +145,12 @@ class tcp_hdr_class extends hdr_class; // {
   {
     (offset inside {[5:15]}) -> (options.size == (offset-5)*4);
     (offset < 4'h5)          -> (options.size == 0);
+  }
+
+
+  constraint legal_rsvd
+  {
+    (null_rsvd) -> rsvd == 4'h0;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -210,6 +220,7 @@ class tcp_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 20;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -250,6 +261,7 @@ class tcp_hdr_class extends hdr_class; // {
     int            i, idx;
     ipv4_hdr_class lcl_ip4;
     ipv6_hdr_class lcl_ip6;
+    grh_hdr_class  lcl_grh;
     // Calulate tcp_chksm, corrupt it if asked
     if (cal_tcp_chksm)
     begin // {
@@ -266,6 +278,12 @@ class tcp_hdr_class extends hdr_class; // {
                 lcl_ip6 = new (super.plib, `MAX_NUM_INSTS+1);
                 $cast (lcl_ip6, super.all_hdr[i]);
                 pseudo_chksm = lcl_ip6.pseudo_chksm;
+            end // }
+            if (super.all_hdr[i].hid == GRH_HID)
+            begin // {
+                lcl_grh = new (super.plib, `MAX_NUM_INSTS+1);
+                $cast (lcl_grh, super.all_hdr[i]);
+                pseudo_chksm = lcl_grh.pseudo_chksm;
             end // }
         end // }
         `ifdef SVFNYI_0
@@ -321,6 +339,7 @@ class tcp_hdr_class extends hdr_class; // {
     this.options               = lcl.options;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
     this.corrupt_offset        = lcl.corrupt_offset;        
+    this.null_rsvd             = lcl.null_rsvd;
     this.cal_tcp_chksm         = lcl.cal_tcp_chksm;        
     this.corrupt_tcp_chksm     = lcl.corrupt_tcp_chksm;    
     this.corrupt_tcp_chksm_msk = lcl.corrupt_tcp_chksm_msk;
@@ -357,6 +376,7 @@ class tcp_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_offset", corrupt_offset, lcl.corrupt_offset);       
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_tcp_chksm", cal_tcp_chksm, lcl.cal_tcp_chksm);        
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tcp_chksm", corrupt_tcp_chksm, lcl.corrupt_tcp_chksm);    
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_tcp_chksm_msk", corrupt_tcp_chksm_msk, lcl.corrupt_tcp_chksm_msk);
@@ -365,6 +385,7 @@ class tcp_hdr_class extends hdr_class; // {
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

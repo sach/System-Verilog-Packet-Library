@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  This hdr_class generates Stateless Transport Tunneling Protocol (STT)
 // ietf-draft
-//  STT header Format
+//  STT header Format (18B, No trailer)
 //  +-----------------+
 //  | version[7:0]    | 
 //  +-----------------+
@@ -62,6 +62,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+----------------------+---------------------------------------+
 //  | 1     | 1'b1    | cal_l4_offset        | If 1, calculate l4_offset else random |
 //  +-------+---------+----------------------+---------------------------------------+
+//  | 1     | 1'b0    | null_rsvd        | If 1, all rsvd fields set to 0    |
+//  +-------+---------+------------------+-----------------------------------+
 //
 // ----------------------------------------------------------------------
 
@@ -86,6 +88,7 @@ class stt_hdr_class extends hdr_class; // {
        bit           cal_flag2           = 1'b1;
        bit           cal_flag3           = 1'b1;
        bit           cal_l4_offset       = 1'b1;
+       bit           null_rsvd           = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
@@ -101,6 +104,7 @@ class stt_hdr_class extends hdr_class; // {
   constraint legal_hdr_len 
   {
     hdr_len == 18; 
+    trl_len == 0; 
   }
 
   constraint legal_version
@@ -122,7 +126,7 @@ class stt_hdr_class extends hdr_class; // {
 
   constraint legal_rsvd
   {
-    rsvd == 8'h0;
+    (null_rsvd == 1'b1) -> rsvd == 8'h0;
   }
 
   constraint legal_pad
@@ -194,6 +198,7 @@ class stt_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     // unpack class members
     hdr_len   = 18;
+    trl_len   = 0;
     start_off = index;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
@@ -246,6 +251,7 @@ class stt_hdr_class extends hdr_class; // {
     this.cal_flag2             = lcl.cal_flag2;
     this.cal_flag3             = lcl.cal_flag3;
     this.cal_l4_offset         = lcl.cal_l4_offset;
+    this.null_rsvd             = lcl.null_rsvd;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -277,11 +283,13 @@ class stt_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_flag2", cal_flag2, lcl.cal_flag2);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_flag3", cal_flag3, lcl.cal_flag3);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_l4_offset", cal_l4_offset, lcl.cal_l4_offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

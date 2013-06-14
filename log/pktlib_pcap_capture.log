@@ -119,6 +119,12 @@ recompiling module my_test
 Both modules done.
 make: Warning: File `filelist.hsopt.objs' has modification time 0.047 s in the future \
 
+-c ../hdr_db/include/pcap/pcap_dpi.c
+-c ../hdr_db/include/pcap/pcap_dump.c
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv -L    -Wl,-whole-archive    -Wl,-no-whole-archive  pcap_dpi.o pcap_dump.o \
+-lpthread -ldl 
+../simv up to date
 make: warning:  Clock skew detected.  Your build may be incomplete.
 Generating Assert Debug shared object
 Command: ./simv +vcs+lic+wait +v2k +nospecify +evalorder +define+NO_PROCESS_AE -a log/pktlib_pcap_capture.log
