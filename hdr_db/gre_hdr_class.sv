@@ -328,13 +328,11 @@ class gre_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len    = 4;
-    trl_len    = 0;
-    chkoff_len = 0;
-    key_len    = 0;
-    seq_len    = 0;
-    ack_len    = 0;
-    start_off  = index;
+    update_len(index, pkt.size, 4);
+    chkoff_len    = 0;
+    key_len       = 0;
+    seq_len       = 0;
+    ack_len       = 0;
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, 4);
     {C, R, K, S, s, recur, A, flags, version, etype} = pack_vec;
@@ -551,10 +549,7 @@ class gre_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chkoff_len", chkoff_len, lcl.chkoff_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "key_len", key_len, lcl.key_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "seq_len", seq_len, lcl.seq_len);

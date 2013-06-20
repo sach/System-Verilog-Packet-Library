@@ -103,8 +103,7 @@ class xxx_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = ?;
-    start_off = index;
+    update_len (index, pkt.size, <hdr_len>, <trl_len>);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
     {} = pack_vec;
@@ -166,9 +165,7 @@ class xxx_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))

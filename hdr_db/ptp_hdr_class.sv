@@ -280,9 +280,10 @@ class ptp_hdr_class extends hdr_class; // {
     else
         $sformat (hdr_name, "ptpv1[%0d]",inst_no);
     // unpack class members
-    hdr_len   = (ptp_ver) ? 34 : 40;
-    start_off = index;
-    trl_len   = 0;
+    if (ptp_ver)
+        update_len (index, pkt.size, 34);
+    else
+        update_len (index, pkt.size, 40);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
     if (ptp_ver == 1'b1)
@@ -436,10 +437,7 @@ class ptp_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode); 
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

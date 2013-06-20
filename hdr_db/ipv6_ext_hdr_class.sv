@@ -12,68 +12,79 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  hdr class to generate IPv6 header (RFC 2460, doesn't support extension hdrs)
-//  IPv6 header Format (40B, No trailer)
+//  hdr class to generate IPv6 Extension headers (RFC 2460)
+// No trailer support, if needed
+// Suuports the following header
+// - Hop-by-Hop Options
+// - Routing (Type 0)
+// - Fragment
+// - Destination Options
+
+//  IPv6 Hop-by-Hop and Destination options header Format ((hdr_ext_len+1)*8B)
 //  +-------------------+
-//  | version[3:0]      |
+//  | protocol[7:0]     | -> nxt_hdr protocol 
 //  +-------------------+
-//  | tos[7:0]          |
+//  | hdr_ext_len[7:0]  |
 //  +-------------------+
-//  | flow_label[19:0]  |
+//  | options[7:0][]    | -> options.size = (hdr_ext_len*8) + 6;
 //  +-------------------+
-//  | payload_len[15:0] |
+//
+// Routing header Format  ((hdr_ext_len+1)*8B)
 //  +-------------------+
-//  | protocol[7:0]     | 
+//  | protocol[7:0]     | -> nxt_hdr protocol 
 //  +-------------------+
-//  |      ttl[7:0]     |
+//  | hdr_ext_len[7:0]  |
 //  +-------------------+
-//  | ip6_sa[127:0]     |
+//  | routing_type[7:0] |
 //  +-------------------+
-//  | ip6_da[127:0]     |
+//  | seg_left[7:0]     |
 //  +-------------------+
+//  | options[7:0][]    | -> options.size = (hdr_ext_len*8) + 4;
+//  +-------------------+
+//
+// Fragment header Format  ((hdr_ext_len+1)*8B)
+//  +-------------------+
+//  | protocol[7:0]     | -> nxt_hdr protocol
+//  +-------------------+
+//  | hdr_ext_len[7:0]  | -> == 0;
+//  +-------------------+
+//  | frag_offset[12:0] | 
+//  +-------------------+
+//  | frag_rsvd[1:0]    |
+//  +-------------------+
+//  | M                 | -> 1 = more fragments; 0 = last fragment.
+//  +-------------------+
+//  | options[7:0][]    | -> options.size = (hdr_ext_len*8) + 4;
+//  +-------------------+
+//
 // ----------------------------------------------------------------------
 //  Control Variables :
 //  ==================
 //  +-------+---------+----------------------+---------------------------------+
 //  | Width | Default | Variable             | Description                     |
 //  +-------+---------+----------------------+---------------------------------+
-//  | 1     | 1'b0    | corrupt_ip6_version  | If 1, corrupts ipv6 version     |
-//  |       |         |                      | (Version != 4'h6)               |
-//  +-------+---------+----------------------+---------------------------------+
-//  | 1     | 1'b1    | cal_payload_len      | If 1, calculates payload length |
-//  |       |         |                      | Otherwise it will be random     |
-//  +-------+---------+----------------------+---------------------------------+
-//  | 1     | 1'b0    | corrupt_payload_len  | If 1, corrupts payload length   |
-//  +-------+---------+----------------------+---------------------------------+
-//  | 16    | 16'h1   | corrupt_pyld_len_by  | Corrupts paylaod length by value|
+//  | 1     | 1'b0    | null_rsvd            | If 1, rsvd fields set to 0      |
 //  +-------+---------+----------------------+---------------------------------+
 //
 // ----------------------------------------------------------------------
 
-class ipv6_hdr_class extends hdr_class; // {
+class ipv6_ext_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Class members ~~~~~~~~~~
-  rand bit [3:0]          version;
-  rand bit [7:0]          tos;
-  rand bit [19:0]         flow_label;
-  rand bit [15:0]         payload_len;
   rand bit [7:0]          protocol;
-  rand bit [7:0]          ttl;
-  rand bit [127:0]        ip6_sa;
-  rand bit [127:0]        ip6_da;
+  rand bit [7:0]          hdr_ext_len;
+  rand bit [7:0]          options[];
+  rand bit [7:0]          routing_type;
+  rand bit [7:0]          seg_left;    
+  rand bit [12:0]         frag_offset; 
+  rand bit [1:0]          frag_rsvd;
+  rand bit                M;
+  rand bit [31:0]         identification;
 
   // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
-  local bit [7:0]         chksm_data [];
-  local int               chksm_idx;
-  local bit [7:0]         pseudo_chksm_data [];
-  local int               pseudo_chksm_idx;
-        bit [15:0]        pseudo_chksm;
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-       bit                corrupt_ip6_version = 1'b0;
-       bit                cal_payload_len     = 1'b1;
-       bit                corrupt_payload_len = 1'b0;
-       bit [15:0]         corrupt_pyld_len_by = 16'h1;
+       bit                null_rsvd = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
   constraint ipv6_hdr_user_constraint
@@ -92,35 +103,53 @@ class ipv6_hdr_class extends hdr_class; // {
 
   constraint legal_hdr_len
   {
-    hdr_len == 40;
+    hdr_len == (hdr_ext_len + 1) *8;
     trl_len == 0;
+    (hid    == IPV6_FRAG_HID) -> hdr_ext_len == 0;
   }
 
-  constraint legal_verison
+  constraint legal_options
   {
-    (corrupt_ip6_version == 1'b0) -> (version == 4'h6);
-    (corrupt_ip6_version == 1'b1) -> (version != 4'h6);
+    options.size == (hdr_ext_len*8) + 6;
+    (hid ==  IPV6_FRAG_HID) -> {options[0], options[1], options[2], 
+                                options[3], options[4], options[5]} == {frag_offset, frag_rsvd, M, identification};
+    (hid ==  IPV6_ROUT_HID) -> {options[0], options[1]} == {routing_type, seg_left};
   }
-
-  constraint legal_payload_len
+ 
+  constraint legal_rsvd
   {
-    if (cal_payload_len)
-    {
-        (corrupt_payload_len == 1'b0) -> (payload_len == super.nxt_hdr.total_hdr_len);
-        (corrupt_payload_len == 1'b1) -> (payload_len == super.nxt_hdr.total_hdr_len + corrupt_pyld_len_by);
-    }
-    else
-        (corrupt_payload_len == 1'b1) -> (payload_len == payload_len + corrupt_pyld_len_by);
+    (null_rsvd == 1'b1) -> frag_rsvd == 2'h0;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
-                int               inst_no); // {
+                int               inst_no,
+                int               hid_ctrl = 0); // {
     super.new (plib);
-    hid          = IPV6_HID;
     this.inst_no = inst_no;
-    $sformat (hdr_name, "ipv6[%0d]",inst_no);
+    case (hid_ctrl) // {
+      0 : 
+      begin // {
+          hid    = IPV6_HOPOPT_HID;
+          $sformat (hdr_name, "ipv6_hopopts[%0d]",inst_no);
+      end // }
+      1 : 
+      begin // {
+          hid    = IPV6_ROUT_HID;
+          $sformat (hdr_name, "ipv6_rout[%0d]",inst_no);
+      end // }
+      2 : 
+      begin // {
+          hid    = IPV6_FRAG_HID;
+          $sformat (hdr_name, "ipv6_frag[%0d]",inst_no);
+      end // }
+      3 : 
+      begin // {
+          hid    = IPV6_OPTS_HID;
+          $sformat (hdr_name, "ipv6_opts[%0d]",inst_no);
+      end // }
+    endcase // }
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
@@ -129,13 +158,16 @@ class ipv6_hdr_class extends hdr_class; // {
                  input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da};
-    harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
+    int tmp_idx;
+    pack_vec = {protocol, hdr_ext_len};
+    harray.pack_bit (pkt, pack_vec, index, 16);
+    tmp_idx = index/8;
+    harray.pack_array_8(options, pkt, tmp_idx);
+    index = tmp_idx * 8;
     `else
-    hdr = {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}};
+    hdr = {>>{protocol, hdr_ext_len, options}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
-    cal_pseudo_chksm ();
     // pack next hdr
     if (~last_pack)
     begin // {
@@ -153,14 +185,17 @@ class ipv6_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    update_len (index, pkt.size, 40);
+    update_len (index, pkt.size, (pkt[index+1]+ 1) *8);
     `ifdef SVFNYI_0
-    harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da} = pack_vec;
+    harray.unpack_array (pkt, pack_vec, index, 2);
+    {protocol, hdr_ext_len} = pack_vec;
+    harray.copy_array (pkt, options, index, (hdr_len - 2));
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{version, tos, flow_label, payload_len, protocol, ttl, ip6_sa, ip6_da}} = hdr;
+    {>>{protocol, hdr_ext_len, options}} = hdr;
     `endif
+    {frag_offset, frag_rsvd, M, identification} = {options[0], options[1], options[2], options[3], options[4], options[5]};
+    {routing_type, seg_left} = {options[0], options[1]};
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
     begin // {
@@ -185,27 +220,22 @@ class ipv6_hdr_class extends hdr_class; // {
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
-    ipv6_hdr_class lcl;
+    ipv6_ext_hdr_class lcl;
     super.cpy_hdr (cpy_cls);
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Class members ~~~~~~~~~~
-    this.version             = lcl.version;
-    this.tos                 = lcl.tos;
-    this.flow_label          = lcl.flow_label;
-    this.payload_len         = lcl.payload_len;
     this.protocol            = lcl.protocol;
-    this.ttl                 = lcl.ttl;
-    this.ip6_sa              = lcl.ip6_sa;
-    this.ip6_da              = lcl.ip6_da;
+    this.hdr_ext_len         = lcl.hdr_ext_len;
+    this.options             = lcl.options;
+    this.routing_type        = lcl.routing_type;
+    this.seg_left            = lcl.seg_left;    
+    this.frag_offset         = lcl.frag_offset; 
+    this.frag_rsvd           = lcl.frag_rsvd;
+    this.M                   = lcl.M;
+    this.identification      = lcl.identification;
     // ~~~~~~~~~~ Local Variables ~~~~~~~~~~
-    this.chksm_data          = lcl.chksm_data;
-    this.chksm_idx           = lcl.chksm_idx;
-    this.pseudo_chksm        = lcl.pseudo_chksm;
     // ~~~~~~~~~~ Control variables ~~~~~~~~~~
-    this.corrupt_ip6_version = lcl.corrupt_ip6_version;
-    this.cal_payload_len     = lcl.cal_payload_len;
-    this.corrupt_payload_len = lcl.corrupt_payload_len;
-    this.corrupt_pyld_len_by = lcl.corrupt_pyld_len_by;
+    this.null_rsvd           = lcl.null_rsvd;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -214,51 +244,39 @@ class ipv6_hdr_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
-    ipv6_hdr_class lcl;
+    ipv6_ext_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "version", version, lcl.version);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "tos", tos, lcl.tos);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  20, "flow_label", flow_label, lcl.flow_label);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  16, "payload_len", payload_len, lcl.payload_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "ttl", ttl, lcl.ttl);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "ip6_sa", ip6_sa, lcl.ip6_sa);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "ip6_da", ip6_da, lcl.ip6_da);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "hdr_ext_len", hdr_ext_len, lcl.hdr_ext_len);
+    if (hid == IPV6_FRAG_HID)
+    begin // {
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  13, "frag_offset", frag_offset, lcl.frag_offset);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   2, "frag_rsvd", frag_rsvd, lcl.frag_rsvd);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   1, "M", M, lcl.M);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "identification", identification, lcl.identification);
+    end // }
+    else if (hid == IPV6_ROUT_HID)
+    begin // {
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "routing_type", routing_type, lcl.routing_type);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "seg_left", seg_left, lcl.seg_left);
+    if (options.size() !== 0)
+    hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000, "options", 0, 0, options, lcl.options);
+    end // }
+    else if (options.size() !== 0)
+    hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);          
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    display_common_hdr_flds (hdis, lcl, mode); 
-    hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);
-    hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "pseudo_chksm_data", 0, 0, pseudo_chksm_data, lcl.pseudo_chksm_data);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "pseudo_chksm_idx", pseudo_chksm_idx, lcl.pseudo_chksm_idx);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "pseudo_chksm", pseudo_chksm, lcl.pseudo_chksm);
+    display_common_hdr_flds (hdis, lcl, mode);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
   endtask : display_hdr // }
 
-  // calculate pseudo ipv6 header checksum. It may be required for UDP or TCP
-  task cal_pseudo_chksm (); // {
-    pseudo_chksm_idx  = 0;
-    pseudo_chksm      = 0;
-    `ifdef SVFNYI_0
-    pseudo_chksm_data = new[40];
-    pack_vec          = {32'h0, {8'h0, protocol}, payload_len, ip6_sa, ip6_da};
-    harray.pack_bit(pseudo_chksm_data, pack_vec, pseudo_chksm_idx, 320);
-    `else
-    pseudo_chksm_data = {>>{32'h0, 8'h0, protocol, payload_len, ip6_sa, ip6_da}}; 
-    `endif
-    pseudo_chksm      = crc_chksm.chksm16(pseudo_chksm_data, pseudo_chksm_data.size(), 0, 0, 16'hFFFF);
-  endtask : cal_pseudo_chksm // }
-
-endclass : ipv6_hdr_class // }
+endclass : ipv6_ext_hdr_class // }

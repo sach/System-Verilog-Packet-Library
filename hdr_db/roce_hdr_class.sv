@@ -127,10 +127,8 @@ class roce_hdr_class extends hdr_class; // {
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
-    hdr_len   = 0;
-    start_off = index;
     // get next hdr and update common nxt_hdr fields
-    trl_len   = 4;
+    update_len (index, pkt.size, 0, 4);
     if (mode == SMART_UNPACK)
     begin // {
         $cast (lcl_class, this);
@@ -194,10 +192,7 @@ class roce_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

@@ -12,7 +12,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 // ----------------------------------------------------------------------
-//  This hdr_class generates the IPSEC header.
+//  This hdr_class generates the IPSEC header. (RFC 2406)
 //  IPSEC header format (16B)
 //   +-----------------------+
 //   |  spi[31:0]            | 
@@ -195,10 +195,9 @@ class ipsec_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     int       pkt_ptr;
     // unpack class members
-    start_off = index;
-    pkt_ptr   = index;
-    sectag_sz = 16;
-    hdr_len   = 16;
+    pkt_ptr       = index;
+    sectag_sz     = 16;
+    update_len (index, pkt.size, 16);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, sectag_sz);
     {spi, seq_num, iv} = pack_vec;
@@ -390,10 +389,7 @@ class ipsec_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode); 
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

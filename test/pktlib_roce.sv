@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // This test verifes pack and unpack for ROCE hdr 
 // ----------------------------------------------------------------------
 
-`define NUM_PKTS 200
+`define NUM_PKTS 1000
 
 program my_test (); // {
 

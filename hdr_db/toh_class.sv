@@ -173,9 +173,8 @@ class toh_class extends hdr_class; // {
                    ref   hdr_class hdr_q [$],
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
-    plen      = pkt.size;
-    start_off = index;
-    hdr_len   = 0;
+    update_len (index, plen, 0);
+    plen    = pkt.size;
     // If crc is present, extract crc
     if (cal_n_add_crc)
     begin // {
@@ -268,10 +267,7 @@ class toh_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "crc_sz", crc_sz, lcl.crc_sz);
     end // }
   endtask : display_hdr // }

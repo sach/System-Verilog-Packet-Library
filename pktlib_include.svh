@@ -125,26 +125,30 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     IPV4_HID,                // 19
     IPV6_HID,                // 20
     PTIP_HID,                // 21
-    IPSEC_HID,               // 22
+    IPV6_HOPOPT_HID,         // 22
     ICMP_HID,                // 23
-    ICMPV6_HID,              // 24
-    IGMP_HID,                // 25
-    TCP_HID,                 // 26
-    UDP_HID,                 // 27
-    GRE_HID,                 // 28
-    PTP_HID,                 // 29
-    NTP_HID,                 // 30 
-    LISP_HID,                // 31 
-    OTV_HID,                 // 32 
-    STT_HID,                 // 33 
-    VXLAN_HID,               // 34
-    GRH_HID,                 // 35
-    BTH_HID,                 // 36
-    FC_HID,                  // 37
-    DATA_HID,                // 38
-    EOH_HID,                 // 39
-//  XXX_HID,                 // 40
-    TOTAL_HID                // 40
+    IGMP_HID,                // 24
+    TCP_HID,                 // 25
+    UDP_HID,                 // 26
+    BTH_HID,                 // 27
+    IPV6_ROUT_HID,           // 28 
+    IPV6_FRAG_HID,           // 29  
+    GRE_HID,                 // 30
+    ICMPV6_HID,              // 31 
+    IPV6_OPTS_HID,           // 32      
+    IPSEC_HID,               // 33
+    PTP_HID,                 // 24
+    NTP_HID,                 // 35 
+    LISP_HID,                // 36 
+    OTV_HID,                 // 37 
+    STT_HID,                 // 38 
+    VXLAN_HID,               // 39
+    FC_HID,                  // 40
+    GRH_HID,                 // 41
+    DATA_HID,                // 42
+    EOH_HID,                 // 43
+//  XXX_HID,                 // 44
+    TOTAL_HID                // 44
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -167,6 +171,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class mpls_hdr_class;
   typedef class ipv4_hdr_class;
   typedef class ipv6_hdr_class;
+  typedef class ipv6_ext_hdr_class;
   typedef class ptip_hdr_class;
   typedef class ipsec_hdr_class;
   typedef class icmp_hdr_class;
@@ -213,6 +218,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "mpls_hdr_class.sv"
   `include "ipv4_hdr_class.sv"
   `include "ipv6_hdr_class.sv"
+  `include "ipv6_ext_hdr_class.sv"
   `include "ptip_hdr_class.sv"
   `include "ipsec_hdr_class.sv"
   `include "icmp_hdr_class.sv"
@@ -236,88 +242,96 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   // ~~~~~~~~~~ Declare All headers~~~~~~~~~~
 `define HDR_DECLARATION \
   toh_class           toh;\
-  pt_hdr_class        pth     [`MAX_NUM_INSTS];\
-  eth_hdr_class       eth     [`MAX_NUM_INSTS];\
-  macsec_hdr_class    macsec  [`MAX_NUM_INSTS];\
-  arp_hdr_class       arp     [`MAX_NUM_INSTS];\
-  arp_hdr_class       rarp    [`MAX_NUM_INSTS];\
-  dot1q_hdr_class     dot1q   [`MAX_NUM_INSTS];\
-  dot1q_hdr_class     alt1q   [`MAX_NUM_INSTS];\
-  dot1q_hdr_class     stag    [`MAX_NUM_INSTS];\
-  itag_hdr_class      itag    [`MAX_NUM_INSTS];\
-  etag_hdr_class      etag    [`MAX_NUM_INSTS];\
-  vntag_hdr_class     vntag   [`MAX_NUM_INSTS];\
-  trill_hdr_class     trill   [`MAX_NUM_INSTS];\
-  snap_hdr_class      snap    [`MAX_NUM_INSTS];\
-  ptl2_hdr_class      ptl2    [`MAX_NUM_INSTS];\
-  fcoe_hdr_class      fcoe    [`MAX_NUM_INSTS];\
-  roce_hdr_class      roce    [`MAX_NUM_INSTS];\
-  mpls_hdr_class      mpls    [`MAX_NUM_INSTS];\
-  mpls_hdr_class      mmpls   [`MAX_NUM_INSTS];\
-  ipv4_hdr_class      ipv4    [`MAX_NUM_INSTS];\
-  ipv6_hdr_class      ipv6    [`MAX_NUM_INSTS];\
-  ptip_hdr_class      ptip    [`MAX_NUM_INSTS];\
-  ipsec_hdr_class     ipsec   [`MAX_NUM_INSTS];\
-  icmp_hdr_class      icmp    [`MAX_NUM_INSTS];\
-  icmp_hdr_class      icmpv6  [`MAX_NUM_INSTS];\
-  igmp_hdr_class      igmp    [`MAX_NUM_INSTS];\
-  tcp_hdr_class       tcp     [`MAX_NUM_INSTS];\
-  udp_hdr_class       udp     [`MAX_NUM_INSTS];\
-  gre_hdr_class       gre     [`MAX_NUM_INSTS];\
-  ptp_hdr_class       ptp     [`MAX_NUM_INSTS];\
-  ntp_hdr_class       ntp     [`MAX_NUM_INSTS];\
-  lisp_hdr_class      lisp    [`MAX_NUM_INSTS];\
-  otv_hdr_class       otv     [`MAX_NUM_INSTS];\
-  stt_hdr_class       stt     [`MAX_NUM_INSTS];\
-  vxlan_hdr_class     vxlan   [`MAX_NUM_INSTS];\
-  grh_hdr_class       grh     [`MAX_NUM_INSTS];\
-  bth_hdr_class       bth     [`MAX_NUM_INSTS];\
-  fc_hdr_class        fc      [`MAX_NUM_INSTS];\
-  data_class          data    [`MAX_NUM_INSTS];\
+  pt_hdr_class        pth        [`MAX_NUM_INSTS];\
+  eth_hdr_class       eth        [`MAX_NUM_INSTS];\
+  macsec_hdr_class    macsec     [`MAX_NUM_INSTS];\
+  arp_hdr_class       arp        [`MAX_NUM_INSTS];\
+  arp_hdr_class       rarp       [`MAX_NUM_INSTS];\
+  dot1q_hdr_class     dot1q      [`MAX_NUM_INSTS];\
+  dot1q_hdr_class     alt1q      [`MAX_NUM_INSTS];\
+  dot1q_hdr_class     stag       [`MAX_NUM_INSTS];\
+  itag_hdr_class      itag       [`MAX_NUM_INSTS];\
+  etag_hdr_class      etag       [`MAX_NUM_INSTS];\
+  vntag_hdr_class     vntag      [`MAX_NUM_INSTS];\
+  trill_hdr_class     trill      [`MAX_NUM_INSTS];\
+  snap_hdr_class      snap       [`MAX_NUM_INSTS];\
+  ptl2_hdr_class      ptl2       [`MAX_NUM_INSTS];\
+  fcoe_hdr_class      fcoe       [`MAX_NUM_INSTS];\
+  roce_hdr_class      roce       [`MAX_NUM_INSTS];\
+  mpls_hdr_class      mpls       [`MAX_NUM_INSTS];\
+  mpls_hdr_class      mmpls      [`MAX_NUM_INSTS];\
+  ipv4_hdr_class      ipv4       [`MAX_NUM_INSTS];\
+  ipv6_hdr_class      ipv6       [`MAX_NUM_INSTS];\
+  ipv6_ext_hdr_class  ipv6_hopopt[`MAX_NUM_INSTS];\
+  ipv6_ext_hdr_class  ipv6_rout  [`MAX_NUM_INSTS];\
+  ipv6_ext_hdr_class  ipv6_frag  [`MAX_NUM_INSTS];\
+  ipv6_ext_hdr_class  ipv6_opts  [`MAX_NUM_INSTS];\
+  ptip_hdr_class      ptip       [`MAX_NUM_INSTS];\
+  ipsec_hdr_class     ipsec      [`MAX_NUM_INSTS];\
+  icmp_hdr_class      icmp       [`MAX_NUM_INSTS];\
+  icmp_hdr_class      icmpv6     [`MAX_NUM_INSTS];\
+  igmp_hdr_class      igmp       [`MAX_NUM_INSTS];\
+  tcp_hdr_class       tcp        [`MAX_NUM_INSTS];\
+  udp_hdr_class       udp        [`MAX_NUM_INSTS];\
+  gre_hdr_class       gre        [`MAX_NUM_INSTS];\
+  ptp_hdr_class       ptp        [`MAX_NUM_INSTS];\
+  ntp_hdr_class       ntp        [`MAX_NUM_INSTS];\
+  lisp_hdr_class      lisp       [`MAX_NUM_INSTS];\
+  otv_hdr_class       otv        [`MAX_NUM_INSTS];\
+  stt_hdr_class       stt        [`MAX_NUM_INSTS];\
+  vxlan_hdr_class     vxlan      [`MAX_NUM_INSTS];\
+  grh_hdr_class       grh        [`MAX_NUM_INSTS];\
+  bth_hdr_class       bth        [`MAX_NUM_INSTS];\
+  fc_hdr_class        fc         [`MAX_NUM_INSTS];\
+  data_class          data       [`MAX_NUM_INSTS];\
   eoh_class           eoh
   
   // ~~~~~~~~~~ New All headers~~~~~~~~~
 `define NEW_HDR\
     for (i = 0; i < `MAX_NUM_INSTS; i++)\
     begin\
-        pth    [i] = new (this, i);\
-        eth    [i] = new (this, i);\
-        macsec [i] = new (this, i);\
-        arp    [i] = new (this, i);\
-        rarp   [i] = new (this, i, 1);\
-        dot1q  [i] = new (this, i);\
-        alt1q  [i] = new (this, i, 1);\
-        stag   [i] = new (this, i, 2);\
-        itag   [i] = new (this, i);\
-        etag   [i] = new (this, i);\
-        vntag  [i] = new (this, i);\
-        trill  [i] = new (this, i);\
-        ptl2   [i] = new (this, i);\
-        fcoe   [i] = new (this, i);\
-        roce   [i] = new (this, i);\
-        snap   [i] = new (this, i);\
-        mpls   [i] = new (this, i);\
-        mmpls  [i] = new (this, i, 1);\
-        ipv4   [i] = new (this, i);\
-        ipv6   [i] = new (this, i);\
-        ptip   [i] = new (this, i);\
-        ipsec  [i] = new (this, i);\
-        icmp   [i] = new (this, i);\
-        icmpv6 [i] = new (this, i, 1);\
-        igmp   [i] = new (this, i);\
-        tcp    [i] = new (this, i);\
-        udp    [i] = new (this, i);\
-        gre    [i] = new (this, i);\
-        ptp    [i] = new (this, i);\
-        ntp    [i] = new (this, i);\
-        lisp   [i] = new (this, i);\
-        otv    [i] = new (this, i);\
-        stt    [i] = new (this, i);\
-        vxlan  [i] = new (this, i);\
-        grh    [i] = new (this, i);\
-        bth    [i] = new (this, i);\
-        fc     [i] = new (this, i);\
-        data   [i] = new (this, i);\
+        pth         [i] = new (this, i);\
+        eth         [i] = new (this, i);\
+        macsec      [i] = new (this, i);\
+        arp         [i] = new (this, i);\
+        rarp        [i] = new (this, i, 1);\
+        dot1q       [i] = new (this, i);\
+        alt1q       [i] = new (this, i, 1);\
+        stag        [i] = new (this, i, 2);\
+        itag        [i] = new (this, i);\
+        etag        [i] = new (this, i);\
+        vntag       [i] = new (this, i);\
+        trill       [i] = new (this, i);\
+        ptl2        [i] = new (this, i);\
+        fcoe        [i] = new (this, i);\
+        roce        [i] = new (this, i);\
+        snap        [i] = new (this, i);\
+        mpls        [i] = new (this, i);\
+        mmpls       [i] = new (this, i, 1);\
+        ipv4        [i] = new (this, i);\
+        ipv6        [i] = new (this, i);\
+        ipv6_hopopt [i] = new (this, i, 0);\
+        ipv6_rout   [i] = new (this, i, 1);\
+        ipv6_frag   [i] = new (this, i, 2);\
+        ipv6_opts   [i] = new (this, i, 3);\
+        ptip        [i] = new (this, i);\
+        ipsec       [i] = new (this, i);\
+        icmp        [i] = new (this, i);\
+        icmpv6      [i] = new (this, i, 1);\
+        igmp        [i] = new (this, i);\
+        tcp         [i] = new (this, i);\
+        udp         [i] = new (this, i);\
+        gre         [i] = new (this, i);\
+        ptp         [i] = new (this, i);\
+        ntp         [i] = new (this, i);\
+        lisp        [i] = new (this, i);\
+        otv         [i] = new (this, i);\
+        stt         [i] = new (this, i);\
+        vxlan       [i] = new (this, i);\
+        grh         [i] = new (this, i);\
+        bth         [i] = new (this, i);\
+        fc          [i] = new (this, i);\
+        data        [i] = new (this, i);\
     end\
     toh  = new (this);\
     eoh  = new (this)

@@ -162,9 +162,7 @@ class grh_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    hdr_len   = 40;
-    trl_len   = 0;
-    start_off = index;
+    update_len (index, pkt.size, 40);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
     {ipver, tclass, flow_label, payload_len, protocol, hoplmt, sgid, dgid} = pack_vec;
@@ -248,10 +246,7 @@ class grh_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode); 
     hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "chksm_data", 0, 0, chksm_data, lcl.chksm_data);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "chksm_idx", chksm_idx, lcl.chksm_idx);
     hdis.display_fld (mode, hdr_name, ARRAY_NH,   DEF, 000, "pseudo_chksm_data", 0, 0, pseudo_chksm_data, lcl.pseudo_chksm_data);

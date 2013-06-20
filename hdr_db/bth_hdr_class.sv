@@ -437,9 +437,8 @@ class bth_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     bit [7:0]  op_code;
-    start_off = index;
-    trl_len   = 0;
-    op_code   = pkt[index];
+    update_len (index, pkt.size, bth_hdr_len);
+    op_code = pkt[index];
     // commpute hdr_len
     case (op_code) // {
       8'b00000011 : hdr_len = bth_hdr_len + immdt_hdr_len;
@@ -880,10 +879,7 @@ class bth_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 096, "bth_hdr", bth_hdr, lcl.bth_hdr);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 032, "rdeth_hdr", rdeth_hdr, lcl.rdeth_hdr);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 064, "deth_hdr", deth_hdr, lcl.deth_hdr);

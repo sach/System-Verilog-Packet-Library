@@ -125,20 +125,16 @@ class data_class extends hdr_class; // {
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
     hdr_class  lcl_class;
-    bit [15:0] trl_sz;
     int        i;
-    // account for trailer if present
-    start_off   = index;
-    trl_len     = 0;
-    trl_sz      = 0;
-    for (i = 0; i < this.cfg_id; i++)
-        trl_sz += super.all_hdr[i].trl_len;
     // unpack class members
-    if (pkt.size  > (index + trl_sz))
-        hdr_len = (pkt.size - index - trl_sz);
+    start_off     = index;
+    trl_len       = 0;
+    if (pkt.size  > (index + total_trl_len(cfg_id)))
+        hdr_len   = (pkt.size - index - total_trl_len(cfg_id));
     else
-        hdr_len = 0;
-    data_len    = hdr_len;
+        hdr_len   = 0;
+    data_len      = hdr_len;
+    total_hdr_len = hdr_len;
     harray.copy_array (pkt, data, index, hdr_len);
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
@@ -207,9 +203,7 @@ class data_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode);
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

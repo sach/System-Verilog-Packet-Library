@@ -30,7 +30,7 @@ class pktlib_display_class; // {
 
   // This task displays the feild of individual hdr
   task display_fld (int               mode        = DISPLAY, // display or compare
-                    bit [10:0] [7:0]  hname,                 // string literals
+                    bit [15:0] [7:0]  hname,                 // string literals
                     int               fltype,                // Field type - BIT_VEC, ARRAY or STRING(for comments)
                     int               flval,                 // Field value - DEC, BIN, HEX, etc..
                     int               flsz,                  // Field size
@@ -110,7 +110,7 @@ class pktlib_display_class; // {
 
   // This task displays each byte of array entire pkt
   task display_array8 (bit [7:0]        data [],
-                       bit [10:0] [7:0] hname       = "pkt_lib", // string literals
+                       bit [15:0] [7:0] hname       = "pkt_lib", // string literals
                        string           usr_comment = "NO",
                        int              mode        = 0,
                        int              n_atend     = 1); // {
@@ -151,7 +151,7 @@ class pktlib_display_class; // {
                              bit [7:0]        exp [],
                        ref   int              cmp_err,
                        input int              mode           = COMPARE,
-                       input bit [10:0] [7:0] hname          = "pkt_lib", // string literals
+                       input bit [15:0] [7:0] hname          = "pkt_lib", // string literals
                        input bit [31:0] [7:0] flname         = "",        // string literals
                        input string           cmp_type       = "Pkt",
                        input string           err_type       = "ERROR",   // string literals

@@ -228,7 +228,6 @@ class macsec_hdr_class extends hdr_class; // {
     hdr_class lcl_class;
     int       pkt_ptr;
     // unpack class members
-    start_off = index;
     if (pkt[index] & 8'h20) // tci[3] = 1'b1
     begin // {
         sectag_sz = 16;
@@ -251,9 +250,8 @@ class macsec_hdr_class extends hdr_class; // {
         {>>{tci, an, sl, pn}} = hdr;
         `endif
     end // }
-    hdr_len = sectag_sz;
     icv_sz  = 16;
-    trl_len = 0;
+    update_len (index, pkt.size, sectag_sz);
     // decrypt pkt and remove icv from packet - trl_len stays 0 as ICV is removed
     if (process_ae)
     begin // {
@@ -456,10 +454,7 @@ class macsec_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode); 
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "icv_sz", icv_sz, lcl.icv_sz);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "sectag_sz", sectag_sz, lcl.sectag_sz);
     end // }

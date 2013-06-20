@@ -38,7 +38,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ~~~~~~~~~~ Constraints Macro for total_hdr_len ~~~~~~~~~~~~~~~
 `define LEGAL_TOTAL_HDR_LEN_CONSTRAINTS \
         total_hdr_len == hdr_len + trl_len + super.nxt_hdr.total_hdr_len;\
-        start_off == prv_hdr.start_off + prv_hdr.hdr_len
+        start_off     == prv_hdr.start_off + prv_hdr.hdr_len
 
 //  ~~~~~~~~ task to update hdr db ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   task update_hdr_db (int hid, int inst_num); // {
@@ -63,6 +63,36 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
        my_hdr.nxt_hdr.psnt    = 1'b1;
        my_hdr.nxt_hdr.cfg_id  = hdr_q.size-1;
   endtask : update_nxt_hdr_info // }
+
+//  ~~~~~~~~ task to set some of the length(used by unpack task) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  task update_len (int        idx,
+                   int        pkt_sz,
+                   bit [15:0] hlen,
+                   bit [15:0] tlen = 0); // {
+    this.total_hdr_len = pkt_sz - idx - total_trl_len (this.cfg_id);
+    this.start_off     = idx;
+    this.hdr_len       = hlen;
+    this.trl_len       = tlen; 
+  endtask : update_len // }
+
+//  ~~~~~~~~ function to get total_trl_len (used by unpack task) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  function bit[15:0] total_trl_len (int c_id); // {
+    int i;
+    for (i = 0; i < c_id; i++)
+      total_trl_len += all_hdr[i].trl_len;
+  endfunction : total_trl_len // } 
+
+// ~~~~~~~~~~ task to display common hdr fields ~~~~~~~~~~~~~
+ task display_common_hdr_flds (pktlib_display_class hdis, 
+                               hdr_class            lcl,
+                               int                  mode = DISPLAY); // {
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len",       hdr_len,       lcl.hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len",       trl_len,       lcl.trl_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "start_off",     start_off,     lcl.start_off);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "cfg_id",        cfg_id,        lcl.cfg_id);
+  endtask : display_common_hdr_flds // }
 
 // ~~~~~~~~~~ define to copy all the fields of include files ~~~~~~~~~~~~~
 `define HDR_INCLUDE_CPY \

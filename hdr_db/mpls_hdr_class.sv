@@ -167,8 +167,7 @@ class mpls_hdr_class extends hdr_class; // {
     bit [7:0] nxtB;
     bit       unpack_done;
     // unpack class members
-    start_off    = index;
-    trl_len      = 0;
+    update_len (index, pkt.size, 4);
     unpack_done  = 0;
     num_mpls_lbl = 0;
     while (~unpack_done)
@@ -311,10 +310,7 @@ class mpls_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len", hdr_len, lcl.hdr_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len", trl_len, lcl.trl_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);
+    display_common_hdr_flds (hdis, lcl, mode); 
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid === nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);

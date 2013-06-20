@@ -45,21 +45,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    11. roce            (RDMA over Converged Ethernet)
    12. mpls, mmpls     (MPLS and Multicast MPLS)
    13. ipv4, ipv6      (IPV4 and IPV6 IP Headers)
-   14. ipsec           (Not fully verified :-))
-   15. icmp, icmpv6    (RFC 792, 4443)
-   16. igmp            (RFC 1112, 2236, 3376)
-   17. ptp             (IEEE 1588 PTP header - Version 1 and 2)
-   18. ntp             (RFC 4330 - NTP version 4 Header) 
-   19. gre             (RFC 1701, 2637, 2784, 2890, NVGRE(Draft) - GRE headers)
-   20. udp, tcp        (UDP and TCP protocols Headers)
-   21. lisp            (Locator/ID Separation Protocol (LISP) Header - draft-ietf)
-   22. otv             (Overlay Transport Virtulization (OTV) Header - draft-ietf)
-   23. vxlan           (Virtual Extensible Local Area Network (VxLAN) Header - draft-ietf)
-   24. fc              (fiber Channel)
-   25  grh             (Infiniband global routing header)
-   26  bth             (Infiniband base transport header and all the transport extension header)
-   27. data            (Pkt Payload)
-   28. pth, ptl2, ptip (Proprietary headers :
+   14. ipv6_hopopt,    (RFC 2460, IPV6 Extension headers : Hop-By-Hop Option header,
+       ipv6_rout,                                          Routing header,
+       ipv6_frag,                                          Fragmentation header,
+       ipv6_opts                                           Destination Option header,
+       ipv6_nonxt                                          No Extension header)
+   15. ipsec           (ESP header, RFC 2406, Not fully verified :-))
+   16. icmp, icmpv6    (RFC 792, 4443)
+   17. igmp            (RFC 1112, 2236, 3376)
+   18. ptp             (IEEE 1588 PTP header - Version 1 and 2)
+   19. ntp             (RFC 4330 - NTP version 4 Header) 
+   20. gre             (RFC 1701, 2637, 2784, 2890, NVGRE(Draft) - GRE headers)
+   21. udp, tcp        (UDP and TCP protocols Headers)
+   22. lisp            (Locator/ID Separation Protocol (LISP) Header - draft-ietf)
+   23. otv             (Overlay Transport Virtulization (OTV) Header - draft-ietf)
+   24. vxlan           (Virtual Extensible Local Area Network (VxLAN) Header - draft-ietf)
+   25. fc              (fiber Channel)
+   26  grh             (Infiniband global routing header)
+   27  bth             (Infiniband base transport header and all the transport extension header)
+   28. data            (Pkt Payload)
+   29. pth, ptl2, ptip (Proprietary headers :
                           a. pth -> Slapped in front of pkt
                           b. ptl2 -> Any proprietary L2 Headers
                           c. ptip -> Any proprietary L3/IP Headers)
@@ -216,13 +221,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #. Disclaimers :
    ===========
    1. The documentation is minimum and may be incomplete at places.
-   2. Only tested on VCS Version D-2009.12. The verification is on going.
+   2. Only tested on VCS Version G-2012.09-3. The verification is on going.
    
 #. Future Releases :
    ===============
-   1. Adding more headers. For Example : Pause Frames, IPV6 extension etc..
+   1. Adding more headers. For Example : Pause Frames, IPV6 authntication header etc..
    2. Scripts to add new headers.
    3. Convert it to UVM, OVM and VMM.
    And many more ... Please contribute :-)
    
-
