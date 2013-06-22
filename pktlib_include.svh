@@ -115,40 +115,42 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     ITAG_HID,                // 9
     ETAG_HID,                // 10
     VNTAG_HID,               // 11
-    TRILL_HID,               // 12
-    SNAP_HID,                // 13
-    PTL2_HID,                // 14
-    FCOE_HID,                // 15
-    ROCE_HID,                // 16
-    MPLS_HID,                // 17
-    MMPLS_HID,               // 18
-    IPV4_HID,                // 19
-    IPV6_HID,                // 20
-    PTIP_HID,                // 21
-    IPV6_HOPOPT_HID,         // 22
-    ICMP_HID,                // 23
-    IGMP_HID,                // 24
-    TCP_HID,                 // 25
-    UDP_HID,                 // 26
-    BTH_HID,                 // 27
-    IPV6_ROUT_HID,           // 28 
-    IPV6_FRAG_HID,           // 29  
-    GRE_HID,                 // 30
-    ICMPV6_HID,              // 31 
-    IPV6_OPTS_HID,           // 32      
-    IPSEC_HID,               // 33
-    PTP_HID,                 // 24
-    NTP_HID,                 // 35 
-    LISP_HID,                // 36 
-    OTV_HID,                 // 37 
-    STT_HID,                 // 38 
-    VXLAN_HID,               // 39
-    FC_HID,                  // 40
-    GRH_HID,                 // 41
-    DATA_HID,                // 42
-    EOH_HID,                 // 43
-//  XXX_HID,                 // 44
-    TOTAL_HID                // 44
+    CNTAG_HID,               // 12
+    CNM_HID,                 // 13
+    TRILL_HID,               // 14
+    SNAP_HID,                // 15
+    PTL2_HID,                // 16
+    FCOE_HID,                // 17
+    ROCE_HID,                // 18
+    MPLS_HID,                // 19
+    MMPLS_HID,               // 20
+    IPV4_HID,                // 21
+    IPV6_HID,                // 22
+    PTIP_HID,                // 23
+    IPV6_HOPOPT_HID,         // 24
+    ICMP_HID,                // 25
+    IGMP_HID,                // 26
+    TCP_HID,                 // 27
+    UDP_HID,                 // 28
+    BTH_HID,                 // 29
+    IPV6_ROUT_HID,           // 30 
+    IPV6_FRAG_HID,           // 31  
+    GRE_HID,                 // 32
+    ICMPV6_HID,              // 33 
+    IPV6_OPTS_HID,           // 34      
+    IPSEC_HID,               // 35
+    PTP_HID,                 // 26
+    NTP_HID,                 // 37 
+    LISP_HID,                // 38 
+    OTV_HID,                 // 39 
+    STT_HID,                 // 40 
+    VXLAN_HID,               // 41
+    FC_HID,                  // 42
+    GRH_HID,                 // 43
+    DATA_HID,                // 44
+    EOH_HID,                 // 45
+//  XXX_HID,                 // 46
+    TOTAL_HID                // 46
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -164,6 +166,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class itag_hdr_class;
   typedef class etag_hdr_class;
   typedef class vntag_hdr_class;
+  typedef class cntag_hdr_class;
+  typedef class cnm_hdr_class;
   typedef class trill_hdr_class;
   typedef class ptl2_hdr_class;
   typedef class fcoe_hdr_class;
@@ -210,6 +214,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "itag_hdr_class.sv"
   `include "etag_hdr_class.sv"
   `include "vntag_hdr_class.sv"
+  `include "cntag_hdr_class.sv"
+  `include "cnm_hdr_class.sv"
   `include "trill_hdr_class.sv"
   `include "snap_hdr_class.sv"
   `include "ptl2_hdr_class.sv"
@@ -253,6 +259,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   itag_hdr_class      itag       [`MAX_NUM_INSTS];\
   etag_hdr_class      etag       [`MAX_NUM_INSTS];\
   vntag_hdr_class     vntag      [`MAX_NUM_INSTS];\
+  cntag_hdr_class     cntag      [`MAX_NUM_INSTS];\
+  cnm_hdr_class       cnm        [`MAX_NUM_INSTS];\
   trill_hdr_class     trill      [`MAX_NUM_INSTS];\
   snap_hdr_class      snap       [`MAX_NUM_INSTS];\
   ptl2_hdr_class      ptl2       [`MAX_NUM_INSTS];\
@@ -301,6 +309,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         itag        [i] = new (this, i);\
         etag        [i] = new (this, i);\
         vntag       [i] = new (this, i);\
+        cntag       [i] = new (this, i);\
+        cnm         [i] = new (this, i);\
         trill       [i] = new (this, i);\
         ptl2        [i] = new (this, i);\
         fcoe        [i] = new (this, i);\

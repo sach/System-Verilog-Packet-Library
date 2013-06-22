@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //
 // ----------------------------------------------------------------------
 
-`define NUM_PKTS 16
+`define NUM_PKTS 17
 
 program my_test (); // {
 
@@ -59,7 +59,8 @@ program my_test (); // {
             12 : p.cfg_hdr ({p.eth[0], p.roce[0],  p.grh[0],   p.bth[0], p.data[0]});
             13 : p.cfg_hdr ({p.eth[0], p.ipv4[0],  p.gre[0],   p.eth[1],  p.itag[0],  p.eth[2],   p.roce[0], p.grh[0],    p.bth[0],  p.data[0]});
             14 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.fcoe[0],  p.fc[0], p.data[0]});
-            15 : p.cfg_hdr ({p.eth[0], p.ipv6[0],  p.ipv6_hopopt[0], p.ipv6_opts[0], p.ipv6_rout[0], p.ipv6_frag[0], p.ipv6_opts[1], p.igmp[0], p.data[0]});
+            15 : p.cfg_hdr ({p.eth[0], p.dot1q[0], p.cntag[0], p.cnm[0], p.data[0]});
+            16 : p.cfg_hdr ({p.eth[0], p.ipv6[0],  p.ipv6_hopopt[0], p.ipv6_opts[0], p.ipv6_rout[0], p.ipv6_frag[0], p.ipv6_opts[1], p.igmp[0], p.data[0]});
         endcase // }
         
         // set max/min packet length

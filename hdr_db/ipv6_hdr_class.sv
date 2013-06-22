@@ -229,10 +229,10 @@ class ipv6_hdr_class extends hdr_class; // {
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ip6_version", corrupt_ip6_version, lcl.corrupt_ip6_version);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_payload_len", cal_payload_len, lcl.cal_payload_len);          
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "corrupt_pyld_len_by", corrupt_pyld_len_by, lcl.corrupt_pyld_len_by);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

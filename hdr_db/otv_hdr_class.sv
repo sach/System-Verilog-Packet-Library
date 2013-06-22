@@ -64,6 +64,7 @@ class otv_hdr_class extends hdr_class; // {
   constraint legal_hdr_len 
   {
     hdr_len == 8; 
+    trl_len == 0;
   }
 
 
