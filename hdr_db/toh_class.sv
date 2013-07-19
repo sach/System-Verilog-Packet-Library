@@ -116,7 +116,7 @@ class toh_class extends hdr_class; // {
   endfunction : new // }
 
   function void pre_randomize (); // {
-    if (super) super.pre_randomize();
+    super.pre_randomize();
     crc_sz = (cal_n_add_crc) ? 4 : 0;
   endfunction : pre_randomize // }
 

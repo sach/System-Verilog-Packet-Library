@@ -101,10 +101,6 @@ class etag_hdr_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
-
   task pack_hdr(ref   bit [7:0] pkt [],
                 ref   int       index,
                 input bit       last_pack = 1'b0); // {

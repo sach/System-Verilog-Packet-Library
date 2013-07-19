@@ -136,7 +136,7 @@ class ipsec_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void pre_randomize (); // {
-    if (super) super.pre_randomize();
+    super.pre_randomize();
     `ifdef NO_PROCESS_AE
         process_ae  = 1'b0;
     `endif

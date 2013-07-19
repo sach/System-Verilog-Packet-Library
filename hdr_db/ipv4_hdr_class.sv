@@ -59,6 +59,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+---------------------------+-------------------------------+
 //  | 16    | 16'h1   | corrupt_total_len_by      | corrupts total length by value|
 //  +-------+---------+---------------------------+-------------------------------+
+//  | 1     | 1'b0    | null_rsvd                 | If 1, all rsvd fields set to 0|
+//  +-------+---------+---------------------------+-------------------------------+
 //  | 1     | 1'b0    | corrupt_mf_df             | If 1, corrupts mf-df mutually |
 //  |       |         |                           | exclusive property            |
 //  +-------+---------+---------------------------+-------------------------------+
@@ -110,6 +112,7 @@ class ipv4_hdr_class extends hdr_class; // {
        bit           cal_total_length           = 1'b1;
        bit           corrupt_total_length       = 1'b0;
        bit [15:0]    corrupt_total_len_by       = 16'h1;
+       bit           null_rsvd                  = 1'b0;
        bit           corrupt_mf_df              = 1'b0;
        bit           corrupt_frag_offset        = 1'b0;
        bit           corrupt_frag_offset_range  = 1'b0;
@@ -163,6 +166,11 @@ class ipv4_hdr_class extends hdr_class; // {
         (corrupt_total_length == 1'b1) -> (total_length == total_length + corrupt_total_len_by);
   }
 
+  constraint legal_reserved
+  {
+    (null_rsvd) -> reserved == 1'h0;
+  }
+
   constraint legal_mf_df
   {
     (corrupt_mf_df == 1'b0) -> ((mf & df) == 1'b0);
@@ -208,7 +216,7 @@ class ipv4_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void post_randomize (); // {
-    if (super) super.post_randomize();
+    super.post_randomize();
     // Calculate options
     if (ihl > 5)
     begin // {
@@ -344,6 +352,7 @@ class ipv4_hdr_class extends hdr_class; // {
     this.cal_total_length          = lcl.cal_total_length;         
     this.corrupt_total_length      = lcl.corrupt_total_length;     
     this.corrupt_total_len_by      = lcl.corrupt_total_len_by;     
+    this.null_rsvd                 = lcl.null_rsvd;            
     this.corrupt_mf_df             = lcl.corrupt_mf_df;            
     this.corrupt_frag_offset       = lcl.corrupt_frag_offset;      
     this.corrupt_frag_offset_range = lcl.corrupt_frag_offset_range;
@@ -389,6 +398,7 @@ class ipv4_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_total_length", cal_total_length, lcl.cal_total_length);          
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_total_length", corrupt_total_length, lcl.corrupt_total_length);      
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "corrupt_total_len_by", corrupt_total_len_by, lcl.corrupt_total_len_by);      
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);             
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_mf_df", corrupt_mf_df, lcl.corrupt_mf_df);             
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_frag_offset", corrupt_frag_offset, lcl.corrupt_frag_offset);       
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_frag_offset_range", corrupt_frag_offset_range, lcl.corrupt_frag_offset_range); 

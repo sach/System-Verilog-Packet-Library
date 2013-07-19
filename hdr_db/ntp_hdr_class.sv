@@ -113,7 +113,7 @@ class ntp_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void pre_randomize (); // {
-    if (super) super.pre_randomize();
+    super.pre_randomize();
   endfunction : pre_randomize // }
 
   task pack_hdr (ref   bit [7:0] pkt [],

@@ -80,7 +80,7 @@ class ptl2_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void post_randomize (); // {
-    if (super) super.post_randomize();
+    super.post_randomize();
     if (harray.data_pattern != "RND")
         harray.fill_array (pt_data);
   endfunction : post_randomize // }

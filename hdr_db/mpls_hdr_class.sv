@@ -45,9 +45,9 @@ class mpls_hdr_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Control variables ~~~~~~~~~~
   rand int        num_mpls_lbl;
-       bit        use_eth_null_lbl  = 1'b1;
-       bit        use_ipv4_null_lbl = 1'b1;
-       bit        use_ipv6_null_lbl = 1'b1;
+       bit        use_eth_null_lbl  = 1'b0;
+       bit        use_ipv4_null_lbl = 1'b0;
+       bit        use_ipv6_null_lbl = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
@@ -81,12 +81,15 @@ class mpls_hdr_class extends hdr_class; // {
       nxt_hdr.hid != IPV6_HID -> label [num_lbl] != ipv6_null_lbl;
       nxt_hdr.hid != IPV4_HID -> label [num_lbl] != ipv4_null_lbl;
       // MPLS over Ethernet label
-      (use_eth_null_lbl & (nxt_hdr.hid == ETH_HID)  & (num_lbl == 0)) -> label [num_lbl] == eth_null_lbl;
+      (use_eth_null_lbl   & (nxt_hdr.hid == ETH_HID)  & (num_lbl == 0)) -> label [num_lbl] == eth_null_lbl;
+      (~use_eth_null_lbl  & (nxt_hdr.hid == ETH_HID)  & (num_lbl == 0)) -> label [num_lbl] != eth_null_lbl;
       // IPV4 Explicit Null Label
-      (use_ipv4_null_lbl & (nxt_hdr.hid == IPV4_HID) & (num_lbl == (num_mpls_lbl - 1)))  -> label [num_lbl] == ipv4_null_lbl;
+      (use_ipv4_null_lbl  & (nxt_hdr.hid == IPV4_HID) & (num_lbl == (num_mpls_lbl - 1))) -> label [num_lbl] == ipv4_null_lbl;
+      (~use_ipv4_null_lbl & (nxt_hdr.hid == IPV4_HID) & (num_lbl == (num_mpls_lbl - 1))) -> label [num_lbl] != ipv4_null_lbl;
       ((nxt_hdr.hid == IPV4_HID) & (num_lbl != (num_mpls_lbl - 1)) & (num_mpls_lbl > 1)) -> label [num_lbl] != ipv4_null_lbl;
       // IPV6 Explicit Null Label
-      (use_ipv6_null_lbl & (nxt_hdr.hid == IPV6_HID) & (num_lbl == (num_mpls_lbl - 1)))  -> label [num_lbl] == ipv6_null_lbl;
+      (use_ipv6_null_lbl  & (nxt_hdr.hid == IPV6_HID) & (num_lbl == (num_mpls_lbl - 1))) -> label [num_lbl] == ipv6_null_lbl;
+      (~use_ipv6_null_lbl & (nxt_hdr.hid == IPV6_HID) & (num_lbl == (num_mpls_lbl - 1))) -> label [num_lbl] != ipv6_null_lbl;
       ((nxt_hdr.hid == IPV6_HID) & (num_lbl != (num_mpls_lbl - 1)) & (num_mpls_lbl > 1)) -> label [num_lbl] != ipv6_null_lbl;
       // Router Alert Label -> Not valid at the bottom stack
       num_lbl == (num_mpls_lbl - 1) -> label [num_lbl] != router_alert_lbl;
@@ -102,6 +105,11 @@ class mpls_hdr_class extends hdr_class; // {
     }
   }
 
+  constraint legal_eth_ctrl
+  {
+      eth_ctrl[31:27] == 4'h0;
+  }
+
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
 
   function new (pktlib_main_class plib,
@@ -109,7 +117,7 @@ class mpls_hdr_class extends hdr_class; // {
                 int               hid_ctrl = 0); // {
     super.new (plib);
     this.inst_no = inst_no;
-    if (hid_ctrl == 1)
+    if (hid_ctrl === 1)
     begin // {
         hid      = MMPLS_HID;
         $sformat (hdr_name, "mmpls[%0d]",inst_no);

@@ -79,12 +79,8 @@ class ptip_hdr_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    if (super) super.pre_randomize();
-  endfunction : pre_randomize // }
-
   function void post_randomize (); // {
-    if (super) super.post_randomize();
+    super.post_randomize();
     if (harray.data_pattern != "RND")
         harray.fill_array (pt_data);
   endfunction : post_randomize // }

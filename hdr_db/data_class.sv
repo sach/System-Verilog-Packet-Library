@@ -75,7 +75,7 @@ class data_class extends hdr_class; // {
 
   function void post_randomize (); // {
     bit [7:0] tmp_data;
-    if (super) super.post_randomize();
+    super.post_randomize();
     if (harray.data_pattern != "RND")
         harray.fill_array (data);
     if (mpls_chk_en)

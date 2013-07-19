@@ -148,7 +148,7 @@ class stt_hdr_class extends hdr_class; // {
   function void post_randomize (); // {
     bit ip_found;
     int i;
-    if (super) super.post_randomize();
+    super.post_randomize();
     ip_found  = 1'b0;
     for (i = this.cfg_id+1; i < super.all_hdr.size; i++)
     begin // {

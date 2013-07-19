@@ -220,7 +220,7 @@ class ptp_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void pre_randomize (); // {
-    if (super) super.pre_randomize();
+    super.pre_randomize();
     if (ptp_ver == 1'b1)
         $sformat (hdr_name, "ptpv2[%0d]",inst_no);
     else

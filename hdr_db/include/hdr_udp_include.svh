@@ -19,8 +19,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 `define PTP_UDP_DST_PRT    16'h13F
 `define NTP_UDP_DST_PRT    16'h07b
 `define LISP_UDP_DST_PRT   16'd4341
-`define OTV_UDP_DST_PRT    16'd8472
-`define VXLAN_UDP_DST_PRT  16'd9029
+`define OTV_UDP_DST_PRT    16'd9029
+`define VXLAN_UDP_DST_PRT  16'd8472
 
 // ~~~~~~~~~~ UDP destination ports fields ~~~~~~~~~~
   bit [15:0]  ptp_udp_dst_prt   = `PTP_UDP_DST_PRT;

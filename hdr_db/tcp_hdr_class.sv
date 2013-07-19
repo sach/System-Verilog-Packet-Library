@@ -165,7 +165,7 @@ class tcp_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void post_randomize (); // {
-    if (super) super.post_randomize();
+    super.post_randomize();
     // Calculate options
     if (offset > 5)
     begin // {

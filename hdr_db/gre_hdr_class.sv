@@ -131,7 +131,7 @@ class gre_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     (C | R ) -> chkoff_len == 4;
-    ~(C ^ R) -> chkoff_len == 0;
+    ~(C | R) -> chkoff_len == 0;
     (K)      -> key_len    == 4;
     (~K)     -> key_len    == 0;
     (S)      -> seq_len    == 4;
@@ -215,7 +215,7 @@ class gre_hdr_class extends hdr_class; // {
   endfunction : new // }
 
   function void pre_randomize (); // {
-    if (super) super.pre_randomize();
+    super.pre_randomize();
     if (implement_rfc2637)
     begin // {
         implement_rfc2784 = 1'b0;
