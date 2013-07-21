@@ -223,18 +223,18 @@ class grh_hdr_class extends hdr_class; // {
     grh_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "ipver", ipver, lcl.ipver);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "tclass", tclass, lcl.tclass);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  20, "flow_label", flow_label, lcl.flow_label);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  16, "payload_len", payload_len, lcl.payload_len);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, null_a, null_a, get_protocol_name(protocol));
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "hoplmt", hoplmt, lcl.hoplmt);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "sgid", sgid, lcl.sgid);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 128, "dgid", dgid, lcl.dgid);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_ipver",       corrupt_ipver,       lcl.corrupt_ipver);        
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "cal_payload_len",     cal_payload_len,     lcl.cal_payload_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_payload_len", corrupt_payload_len, lcl.corrupt_payload_len);

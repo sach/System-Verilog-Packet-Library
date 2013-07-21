@@ -20,26 +20,30 @@ class pktlib_display_class; // {
   // ~~~~~~~~~~ Class variables ~~~~~~~~~~
         string       cls_name;
         int          err;
-        int index;
+        int          index;
+        bit [7:0]    null_a [];
 
   function new (string cls_name = ""); // {
     this.cls_name = cls_name;
     this.err      = 0;
     this.index    = 0;
+    this.null_a   = new [0];
   endfunction : new // }
 
   // This task displays the feild of individual hdr
   task display_fld (int               mode        = DISPLAY, // display or compare
-                    bit [15:0] [7:0]  hname,                 // string literals
+                    string            hname,                 // string literals
                     int               fltype,                // Field type - BIT_VEC, ARRAY or STRING(for comments)
                     int               flval,                 // Field value - DEC, BIN, HEX, etc..
                     int               flsz,                  // Field size
-                    bit [31:0] [7:0]  flname,                // Field name - string literals
+                    string            flname,                // Field name - string literals
                     bit [`VEC_SZ-1:0] flvec,
                     bit [`VEC_SZ-1:0] flvec2      = `VEC_SZ'h0,
-                    bit [7:0]         flarray  [] = '{},
-                    bit [7:0]         flarray2 [] = '{},
+                    bit [7:0]         flarray  [] = null_a,
+                    bit [7:0]         flarray2 [] = null_a,
                     string            flcomment   = "NO");   // comments if field type is STRING {
+    $sformat (hname, "%16s", hname);
+    $sformat (flname,"%32s",flname);
     if ((mode == NO_DISPLAY) |(mode == COMPARE_NO_DISPLAY))
     begin // {
         if ((fltype == BIT_VEC) | (fltype == BIT_VEC_NH))
@@ -110,10 +114,11 @@ class pktlib_display_class; // {
 
   // This task displays each byte of array entire pkt
   task display_array8 (bit [7:0]        data [],
-                       bit [15:0] [7:0] hname       = "pkt_lib", // string literals
+                       string           hname       = "pkt_lib", // string literals
                        string           usr_comment = "NO",
                        int              mode        = 0,
                        int              n_atend     = 1); // {
+    $sformat (hname, "%16s", hname);
     if (usr_comment != "NO")
         $write ("%0s%s : %s\n",cls_name, hname, usr_comment);  
     for (int i = 0; i < 16 ; i++)
@@ -151,8 +156,8 @@ class pktlib_display_class; // {
                              bit [7:0]        exp [],
                        ref   int              cmp_err,
                        input int              mode           = COMPARE,
-                       input bit [15:0] [7:0] hname          = "pkt_lib", // string literals
-                       input bit [31:0] [7:0] flname         = "",        // string literals
+                       input string           hname          = "pkt_lib", // string literals
+                       input string           flname         = "",        // string literals
                        input string           cmp_type       = "Pkt",
                        input string           err_type       = "ERROR",   // string literals
                        input string           info_type      = "INFO",
@@ -161,6 +166,8 @@ class pktlib_display_class; // {
     int i, off, err;
     bit always_display;
     bit [7:0] tmp;
+    $sformat (hname, "%16s", hname);
+    $sformat (flname,"%32s",flname);
     err = 0;
     rcv_len = rcv.size;
     exp_len = exp.size;
@@ -264,10 +271,11 @@ class pktlib_display_class; // {
 
   // This task displays each byte of array entire pkt
   task display_array16 (bit [15:0]        data [],
-                        bit [10:0] [7:0] hname       = "pkt_lib", // string literals
+                        string           hname       = "pkt_lib", // string literals
                         string           usr_comment = "NO",
                         int              mode        = 0,
                         int              n_atend     = 1); // {
+    $sformat (hname, "%16s", hname);
     if (usr_comment != "NO")
         $write ("%0s%s : %s\n",cls_name, hname, usr_comment);
     for (int i = 0; i < 8 ; i++)

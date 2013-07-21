@@ -263,9 +263,9 @@ class stt_hdr_class extends hdr_class; // {
     $cast (lcl, cmp_cls);
     $sformat(flags_brk, "=> RSVD %b TCPP %b IPPR %b CHKP %b CHKV %b", flags[7:4],flags[3],flags[2],flags[1],flags[0]); 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "version",     version,    lcl.version);     
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "flags",       flags,      lcl.flags,'{},'{}, flags_brk);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "flags",       flags,      lcl.flags,null_a,null_a, flags_brk);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "l4_offset",   l4_offset,  lcl.l4_offset);   
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "rsvd",        rsvd,       lcl.rsvd);        
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "max_seg_sz",  max_seg_sz, lcl.max_seg_sz);  
@@ -276,7 +276,7 @@ class stt_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "pad",         pad,        lcl.pad);         
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_stt_version", corrupt_stt_version, lcl.corrupt_stt_version);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_flag2", cal_flag2, lcl.cal_flag2);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_flag3", cal_flag3, lcl.cal_flag3);

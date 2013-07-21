@@ -30,6 +30,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   rand   hdr_class              all_hdr [$];         // all the hdr of list;
          bit                    psnt         = 1'b0; // this hdr_class is psnt
   rand   int                    start_off;           // starting offset of hdr
+         bit [7:0]              null_a [];           // null array used in tasks as initial value
          bit [TOTAL_HID-1:0]    unpack_en    = {TOTAL_HID{1'b1}};
          pktlib_main_class      plib;
          pktlib_crc_chksm_class crc_chksm    = new ();
@@ -41,9 +42,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         start_off     == prv_hdr.start_off + prv_hdr.hdr_len
 
 //  ~~~~~~~~ task to update hdr db ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  task update_hdr_db (int hid, int inst_num); // {
+  function void update_hdr_db (int hid, int inst_num); // {
       plib.hdr_db[hid][inst_num] = this;
-  endtask : update_hdr_db // }
+  endfunction : update_hdr_db // }
 
 //  ~~~~~~~~ task to update nxt_hdr info (used by unpack task) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   task update_nxt_hdr_info (ref   hdr_class my_hdr,
@@ -86,7 +87,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  task display_common_hdr_flds (pktlib_display_class hdis, 
                                hdr_class            lcl,
                                int                  mode = DISPLAY); // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Local variables ~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Local variables ~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "hdr_len",       hdr_len,       lcl.hdr_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "trl_len",       trl_len,       lcl.trl_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "total_hdr_len", total_hdr_len, lcl.total_hdr_len);

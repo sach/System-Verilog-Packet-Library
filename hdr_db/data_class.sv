@@ -176,7 +176,7 @@ class data_class extends hdr_class; // {
     $cast (lcl, cmp_cls);
     if ((mode == COMPARE_FULL) | (mode == DISPLAY_FULL))
     begin // {
-        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+        hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
         hdis.display_fld (mode, hdr_name, ARRAY,   DEF, 000, "data", 0, 0, data, lcl.data);
     end // }
     else
@@ -193,12 +193,12 @@ class data_class extends hdr_class; // {
               0 : $sformat(sample_data, "data => EMPTY");
             endcase // }
         end // }
-        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "data_len", data.size, lcl.data.size, '{}, '{}, sample_data);
+        hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "data_len", data.size, lcl.data.size, null_a, null_a, sample_data);
         hdis.index += hdr_len*8;
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "mpls_chk_en", mpls_chk_en, lcl.mpls_chk_en);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

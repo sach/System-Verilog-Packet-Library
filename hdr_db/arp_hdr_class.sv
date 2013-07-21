@@ -259,7 +259,7 @@ class arp_hdr_class extends hdr_class; // {
     harray.unpack_array (dpa,     dpa_fld,     fld_idx, plen,     1'b1);
     harray.unpack_array (lcl.dpa, lcl_dpa_fld, fld_idx, lcl.plen, 1'b1);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000,    "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000,    "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016,    "htype",  htype,   lcl.htype);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016,    "ptype",  ptype,   lcl.ptype);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008,    "hlen",   hlen,    lcl.hlen);
@@ -271,7 +271,7 @@ class arp_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, plen*8, "dpa",    dpa_fld, lcl_dpa_fld);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "arp_htype_eth", arp_htype_eth,  lcl.arp_htype_eth);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "arp_ptype_ipv4",arp_ptype_ipv4, lcl.arp_ptype_ipv4);
     end // }

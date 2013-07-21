@@ -169,7 +169,7 @@ class udp_hdr_class extends hdr_class; // {
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
-  function post_pack (ref bit [7:0] pkt [],
+  task post_pack (ref bit [7:0] pkt [],
                           int       udp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
@@ -223,7 +223,7 @@ class udp_hdr_class extends hdr_class; // {
             pack_hdr (pkt, udp_idx, 1'b1);
         end // }
     end // }
-  endfunction : post_pack // }
+  endtask : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
@@ -251,17 +251,17 @@ class udp_hdr_class extends hdr_class; // {
     udp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "src_prt", src_prt, lcl.src_prt);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,'{},'{}, get_udp_dst_prt_name(dst_prt));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "dst_prt", dst_prt, lcl.dst_prt,null_a,null_a, get_udp_dst_prt_name(dst_prt));
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "length", length, lcl.length);
     if (corrupt_udp_chksm)
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "BAD");
     else                                                   
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "GOOD");
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_udp_chksm", cal_udp_chksm, lcl.cal_udp_chksm);        
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_udp_chksm", corrupt_udp_chksm, lcl.corrupt_udp_chksm);    
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_udp_chksm_msk", corrupt_udp_chksm_msk, lcl.corrupt_udp_chksm_msk);

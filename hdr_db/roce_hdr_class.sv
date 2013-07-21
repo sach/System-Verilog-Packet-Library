@@ -183,10 +183,10 @@ class roce_hdr_class extends hdr_class; // {
     roce_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_n_add_icrc", cal_n_add_icrc, lcl.cal_n_add_icrc);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_icrc", corrupt_icrc, lcl.corrupt_icrc);     
     end // }
@@ -199,9 +199,9 @@ class roce_hdr_class extends hdr_class; // {
     if (cal_n_add_icrc)
     begin // {
     if (corrupt_icrc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "icrc", icrc, lcl.icrc, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "icrc", icrc, lcl.icrc, null_a, null_a, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "icrc", icrc, lcl.icrc, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "icrc", icrc, lcl.icrc, null_a, null_a, "GOOD");
     end // } 
   endtask : display_hdr // }
 

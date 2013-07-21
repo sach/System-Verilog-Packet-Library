@@ -35,7 +35,7 @@ program my_test (); // {
         p = new();
         
         // configure different hdrs for this packet
-        p.cfg_hdr ({p.eth[0], p.roce[0], p.grh[0], p.bth[0], p.data[0]});
+        p.cfg_hdr ('{p.eth[0], p.roce[0], p.grh[0], p.bth[0], p.data[0]});
         
         // set max/min packet length
         p.toh.max_plen = 300;

@@ -167,12 +167,12 @@ class ptl2_hdr_class extends hdr_class; // {
     ptl2_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000, "pt_data", 0, 0, pt_data, lcl.pt_data);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 016, "pt_len", pt_len, lcl.pt_len);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

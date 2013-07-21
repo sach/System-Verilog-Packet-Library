@@ -166,14 +166,14 @@ class dot1q_hdr_class extends hdr_class; // {
     dot1q_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "cos", cos, lcl.cos);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "cfi", cfi, lcl.cfi);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "vlan", vlan, lcl.vlan);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ control variables ~~~~~~");
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

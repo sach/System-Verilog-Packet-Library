@@ -192,15 +192,15 @@ class snap_hdr_class extends hdr_class; // {
     snap_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "dsap", dsap, lcl.dsap);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "ssap", ssap, lcl.ssap);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "ctrl", ctrl, lcl.ctrl);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 024, "oui", oui, lcl.oui);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_dsap", corrupt_dsap, lcl.corrupt_dsap);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ssap", corrupt_ssap, lcl.corrupt_ssap);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ctrl", corrupt_ctrl, lcl.corrupt_ctrl);

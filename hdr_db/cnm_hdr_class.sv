@@ -214,7 +214,7 @@ class cnm_hdr_class extends hdr_class; // {
     cnm_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "cnm_ver",        cnm_ver,        lcl.cnm_ver);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "rsvd",           rsvd,           lcl.rsvd);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "qfeedback",      qfeedback,      lcl.qfeedback);
@@ -226,7 +226,7 @@ class cnm_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "encap_len",      encap_len,      lcl.encap_len);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_cnm_ver", corrupt_cnm_ver, lcl.corrupt_cnm_ver);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_encap_len", cal_encap_len, lcl.cal_encap_len);

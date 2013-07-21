@@ -696,7 +696,7 @@ class bth_hdr_class extends hdr_class; // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN,   8, "opcode", opcode, lcl.opcode);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN,   1, "S", S, lcl.S);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN,   1, "M", M, lcl.M);
@@ -869,11 +869,11 @@ class bth_hdr_class extends hdr_class; // {
                     display_immdt_hdr       (hdis, cmp_cls, mode, last_display);
       end // }
       8'b00010111 : display_ieth_hdr        (hdis, cmp_cls, mode, last_display);
-      default     : hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ No Extension Transport Header ~~~~~");
+      default     : hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ No Extension Transport Header ~~~~~");
     endcase // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "corrupt_tver", corrupt_tver, lcl.corrupt_tver);        
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);        
     end // }
@@ -906,7 +906,7 @@ class bth_hdr_class extends hdr_class; // {
                           bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ RDETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ RDETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "rsvd_rdeth", rsvd_rdeth, lcl.rsvd_rdeth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  24, "EEcnxt", EEcnxt, lcl.EEcnxt);
   endtask : display_rdeth_hdr // }
@@ -917,7 +917,7 @@ class bth_hdr_class extends hdr_class; // {
                          bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ DETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ DETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "q_key", q_key, lcl.q_key);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "rsvd_deth", rsvd_deth, lcl.rsvd_deth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  24, "srcQP", srcQP, lcl.srcQP);
@@ -929,7 +929,7 @@ class bth_hdr_class extends hdr_class; // {
                          bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ RETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ RETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "va_reth", va_reth, lcl.va_reth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "r_key_reth", r_key_reth, lcl.r_key_reth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "dmalen", dmalen, lcl.dmalen);
@@ -941,7 +941,7 @@ class bth_hdr_class extends hdr_class; // {
                              bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ ATOMICETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ ATOMICETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "va_aeth", va_aeth, lcl.va_aeth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "r_key_aeth", r_key_aeth, lcl.r_key_aeth);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "swapdt", swapdt, lcl.swapdt);
@@ -954,7 +954,7 @@ class bth_hdr_class extends hdr_class; // {
                         bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ AETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ AETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "syndrom", syndrom, lcl.syndrom);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  24, "msn", msn, lcl.msn);
   endtask : display_aeth_hdr // }
@@ -965,7 +965,7 @@ class bth_hdr_class extends hdr_class; // {
                                 bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ ATOMICACKETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ ATOMICACKETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "atomicacketh_hdr", atomicacketh_hdr, lcl.atomicacketh_hdr);
   endtask : display_atomicacketh_hdr // }
 
@@ -975,7 +975,7 @@ class bth_hdr_class extends hdr_class; // {
                          bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IMMDT hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ IMMDT hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "immdt_hdr", immdt_hdr, lcl.immdt_hdr);
   endtask : display_immdt_hdr // }
 
@@ -985,7 +985,7 @@ class bth_hdr_class extends hdr_class; // {
                         bit                  last_display = 1'b0); // {
     bth_hdr_class lcl;
     $cast (lcl, cmp_cls);
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IETH hdr ~~~~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ IETH hdr ~~~~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "ieth_hdr", ieth_hdr, lcl.ieth_hdr);
   endtask : display_ieth_hdr // }
 

@@ -77,8 +77,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #. Using the Pktlib :
    ===============
    Once entire library is downloaded, use following command
-   scripts/pktlib_run <test_name>
-      - currently script uses VCS. Make changes as per the license available
+   scripts/pktlib_run <test_name> 
+      - default script is VCS. Make changes as per the license available
       - Run any of the below two tests from test directory
                - pktlib_test : Will give an idea about the capability of the pktlib
                - pktlib_dump_unpack : just covers two functionality of the pktlib
@@ -117,7 +117,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    p = new ();
 
    // config the headers needed.
-   p.cfg_hdr ({p.eth[0], p.dot1q[0], p.itag[0]. p.eth[1], p.ipv4[0], p.ipv4[1], p.gre[0], 
+   p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.itag[0]. p.eth[1], p.ipv4[0], p.ipv4[1], p.gre[0], 
                p.mpls[0], p.ipv6[0], p.tcp[0], p.data[0]}); 
 
    // set max/min packet length
@@ -223,6 +223,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
    ===========
    1. The documentation is minimum and may be incomplete at places.
    2. Only tested on VCS Version G-2012.09-3. The verification is on going.
+   3. Support for Quests Version 10.2b
    
 #. Future Releases :
    ===============

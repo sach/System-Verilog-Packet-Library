@@ -247,8 +247,8 @@ class ipv6_ext_hdr_class extends hdr_class; // {
     ipv6_ext_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol, null_a, null_a, get_protocol_name(protocol));
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "hdr_ext_len", hdr_ext_len, lcl.hdr_ext_len);
     if (hid == IPV6_FRAG_HID)
     begin // {
@@ -268,7 +268,7 @@ class ipv6_ext_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);          
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

@@ -187,8 +187,8 @@ class icmp_hdr_class extends hdr_class; // {
         super.all_hdr = hdr_q;
   endtask : unpack_hdr // }
 
-  function post_pack (ref bit [7:0] pkt [],
-                          int       icmp_idx); // {
+  task post_pack (ref bit [7:0] pkt [],
+                      int       icmp_idx); // {
     bit [7:0]      chksm_data [];
     bit [15:0]     pseudo_chksm;
     int            i, idx;
@@ -234,7 +234,7 @@ class icmp_hdr_class extends hdr_class; // {
             pack_hdr (pkt, icmp_idx, 1'b1);
         end // }
     end // }
-  endfunction : post_pack // }
+  endtask : post_pack // }
 
   task cpy_hdr (hdr_class cpy_cls,
                 bit       last_cpy = 1'b0); // {
@@ -261,17 +261,17 @@ class icmp_hdr_class extends hdr_class; // {
     icmp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "icmp_type", icmp_type, lcl.icmp_type);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "code", code, lcl.code);
     if (corrupt_icmp_chksm)                              
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "BAD");
     else                                                
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,'{},'{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "GOOD");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "msg_body", msg_body, lcl.msg_body);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_icmp_chksm", cal_icmp_chksm, lcl.cal_icmp_chksm);        
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_icmp_chksm", corrupt_icmp_chksm, lcl.corrupt_icmp_chksm);    
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "corrupt_icmp_chksm_msk", corrupt_icmp_chksm_msk, lcl.corrupt_icmp_chksm_msk);

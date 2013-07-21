@@ -151,12 +151,12 @@ class cntag_hdr_class extends hdr_class; // {
     cntag_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "flow_id", flow_id, lcl.flow_id);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

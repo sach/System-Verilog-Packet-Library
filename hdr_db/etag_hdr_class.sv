@@ -189,7 +189,7 @@ class etag_hdr_class extends hdr_class; // {
     etag_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, "e_pcp",         e_pcp,         lcl.e_pcp);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 001, "e_dei",         e_dei,         lcl.e_dei);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "igr_e_cid_base",igr_e_cid_base,lcl.igr_e_cid_base);
@@ -198,10 +198,10 @@ class etag_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 012, "e_cid_base",    e_cid_base,    lcl.e_cid_base);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "igr_e_cid_ext", igr_e_cid_ext, lcl.igr_e_cid_ext);
     hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 008, "e_cid_ext",     e_cid_ext,     lcl.e_cid_ext);
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype",         etype,         lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "etype",         etype,         lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

@@ -359,18 +359,18 @@ class ipsec_hdr_class extends hdr_class; // {
     ipsec_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Header ~~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ IPSEC Header ~~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "spi", spi, lcl.spi);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "seq_num", seq_num, lcl.seq_num);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    DEC,  64, "iv", iv, lcl.iv);
-    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ IPSEC Trailer ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ IPSEC Trailer ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, ARRAY,      DEF,   0, "pad", 0, 0, pad, lcl.pad);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "pad_len", pad_len, lcl.pad_len);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "protocol", protocol, lcl.protocol);
     if (process_ae)
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Encryption Related ~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     HEX,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Encryption Related ~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "auth_st", auth_st, lcl.auth_st);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF,  32, "auth_sz", auth_sz, lcl.auth_sz);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEC,   8, "auth_adjust", auth_adjust, lcl.auth_adjust);
@@ -383,7 +383,7 @@ class ipsec_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "process_ae", process_ae, lcl.process_ae);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd",  null_rsvd,  lcl.null_rsvd);
     end // }

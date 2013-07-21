@@ -155,12 +155,12 @@ class xxx_hdr_class extends hdr_class; // {
     xxx_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     hdis.display_fld (mode, hdr_name, ARRAY,      DEF, 000, "xxx_ary", 0, 0, xxx_ary, lcl.xxx_ary);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, HEX, 016, "xxx_fld", xxx_fld, lcl.xxx_fld);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

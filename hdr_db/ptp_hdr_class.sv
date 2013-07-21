@@ -386,7 +386,7 @@ class ptp_hdr_class extends hdr_class; // {
     ptp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     if (ptp_ver == 1'b1)
     begin // {
         hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 004, "v2_trans_spec", v2_trans_spec, lcl.v2_trans_spec); 
@@ -422,7 +422,7 @@ class ptp_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+        hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "sync_msg_hdr", sync_msg_hdr, lcl.sync_msg_hdr);
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "ptp_ver", ptp_ver, lcl.ptp_ver);
         hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "is_ptp", is_ptp, lcl.is_ptp);

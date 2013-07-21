@@ -37,20 +37,20 @@ program my_test (); // {
         
         // configure different hdrs for this packet
         case (i) // {
-            0 : p.cfg_hdr ({p.pth[0], p.eth[0],  p.data[0]});
-            1 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.ipv4[0],  p.udp[0],  p.data[0]});
-            2 : p.cfg_hdr ({p.eth[0], p.ptl2[0], p.dot1q[0], p.ipv6[0], p.udp[0],  p.data[0]});
-            3 : p.cfg_hdr ({p.eth[0], p.snap[0], p.ipv4[0], p.ptip[0],  p.udp[0],  p.data[0]});
-            4 : p.cfg_hdr ({p.eth[0], p.mpls[0], p.ipv4[0],  p.udp[0],  p.data[0]});
-            5 : p.cfg_hdr ({p.eth[0], p.alt1q[0],p.mmpls[0], p.ipv6[0], p.udp[0],  p.data[0]});
-            6 : p.cfg_hdr ({p.pth[0], p.eth[0],  p.ptl2[0],  p.ptip[0], p.data[0]});
-            7 : p.cfg_hdr ({p.eth[0], p.ipv4[0], p.gre[0],   p.ipv4[1], p.udp[0], p.ptp[0], p.data[0]});
-            8 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.mpls[0],  p.ipv4[0], p.udp[0],  p.data[0]});
-            9 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.ptp[0],   p.data[0]});
-            10: p.cfg_hdr ({p.eth[0], p.ptp[0],  p.data[0]});
-            11: p.cfg_hdr ({p.eth[0], p.snap[0], p.ipv6[0],  p.udp[0], p.ptp[0], p.data[0]});
-            12: p.cfg_hdr ({p.eth[0], p.ipv4[0], p.udp[0],   p.ptp[0], p.data[0]});
-            13: p.cfg_hdr ({p.eth[0], p.ipv6[0], p.tcp[0],   p.data[0]});
+            0 : p.cfg_hdr ('{p.pth[0], p.eth[0],  p.data[0]});
+            1 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.ipv4[0],  p.udp[0],  p.data[0]});
+            2 : p.cfg_hdr ('{p.eth[0], p.ptl2[0], p.dot1q[0], p.ipv6[0], p.udp[0],  p.data[0]});
+            3 : p.cfg_hdr ('{p.eth[0], p.snap[0], p.ipv4[0], p.ptip[0],  p.udp[0],  p.data[0]});
+            4 : p.cfg_hdr ('{p.eth[0], p.mpls[0], p.ipv4[0],  p.udp[0],  p.data[0]});
+            5 : p.cfg_hdr ('{p.eth[0], p.alt1q[0],p.mmpls[0], p.ipv6[0], p.udp[0],  p.data[0]});
+            6 : p.cfg_hdr ('{p.pth[0], p.eth[0],  p.ptl2[0],  p.ptip[0], p.data[0]});
+            7 : p.cfg_hdr ('{p.eth[0], p.ipv4[0], p.gre[0],   p.ipv4[1], p.udp[0], p.ptp[0], p.data[0]});
+            8 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.mpls[0],  p.ipv4[0], p.udp[0],  p.data[0]});
+            9 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.ptp[0],   p.data[0]});
+            10: p.cfg_hdr ('{p.eth[0], p.ptp[0],  p.data[0]});
+            11: p.cfg_hdr ('{p.eth[0], p.snap[0], p.ipv6[0],  p.udp[0], p.ptp[0], p.data[0]});
+            12: p.cfg_hdr ('{p.eth[0], p.ipv4[0], p.udp[0],   p.ptp[0], p.data[0]});
+            13: p.cfg_hdr ('{p.eth[0], p.ipv6[0], p.tcp[0],   p.data[0]});
         endcase // }
         
         // set max/min packet length
@@ -91,20 +91,20 @@ program my_test (); // {
         
         // configure different hdrs for this packet
         case (i) // {
-            0 : p.cfg_hdr ({p.pth[0], p.eth[0],  p.data[0]});
-            1 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.ipv4[0],  p.udp[0],  p.data[0]});
-            2 : p.cfg_hdr ({p.eth[0], p.ptl2[0], p.dot1q[0], p.ipv6[0], p.udp[0],  p.data[0]});
-            3 : p.cfg_hdr ({p.eth[0], p.snap[0], p.ipv4[0], p.ptip[0],  p.udp[0],  p.data[0]});
-            4 : p.cfg_hdr ({p.eth[0], p.mpls[0], p.ipv4[0],  p.udp[0],  p.data[0]});
-            5 : p.cfg_hdr ({p.eth[0], p.alt1q[0],p.mmpls[0], p.ipv6[0], p.udp[0],  p.data[0]});
-            6 : p.cfg_hdr ({p.pth[0], p.eth[0],  p.ptl2[0],  p.ptip[0], p.data[0]});
-            7 : p.cfg_hdr ({p.eth[0], p.ipv4[0], p.gre[0],   p.ipv4[1], p.udp[0], p.ptp[0], p.data[0]});
-            8 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.mpls[0],  p.ipv4[0], p.udp[0],  p.data[0]});
-            9 : p.cfg_hdr ({p.eth[0], p.dot1q[0],p.ptp[0],   p.data[0]});
-            10: p.cfg_hdr ({p.eth[0], p.ptp[0],  p.data[0]});
-            11: p.cfg_hdr ({p.eth[0], p.snap[0], p.ipv6[0],  p.udp[0], p.ptp[0], p.data[0]});
-            12: p.cfg_hdr ({p.eth[0], p.ipv4[0], p.udp[0],   p.ptp[0], p.data[0]});
-            13: p.cfg_hdr ({p.eth[0], p.ipv6[0], p.tcp[0],   p.data[0]});
+            0 : p.cfg_hdr ('{p.pth[0], p.eth[0],  p.data[0]});
+            1 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.ipv4[0],  p.udp[0],  p.data[0]});
+            2 : p.cfg_hdr ('{p.eth[0], p.ptl2[0], p.dot1q[0], p.ipv6[0], p.udp[0],  p.data[0]});
+            3 : p.cfg_hdr ('{p.eth[0], p.snap[0], p.ipv4[0], p.ptip[0],  p.udp[0],  p.data[0]});
+            4 : p.cfg_hdr ('{p.eth[0], p.mpls[0], p.ipv4[0],  p.udp[0],  p.data[0]});
+            5 : p.cfg_hdr ('{p.eth[0], p.alt1q[0],p.mmpls[0], p.ipv6[0], p.udp[0],  p.data[0]});
+            6 : p.cfg_hdr ('{p.pth[0], p.eth[0],  p.ptl2[0],  p.ptip[0], p.data[0]});
+            7 : p.cfg_hdr ('{p.eth[0], p.ipv4[0], p.gre[0],   p.ipv4[1], p.udp[0], p.ptp[0], p.data[0]});
+            8 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.mpls[0],  p.ipv4[0], p.udp[0],  p.data[0]});
+            9 : p.cfg_hdr ('{p.eth[0], p.dot1q[0],p.ptp[0],   p.data[0]});
+            10: p.cfg_hdr ('{p.eth[0], p.ptp[0],  p.data[0]});
+            11: p.cfg_hdr ('{p.eth[0], p.snap[0], p.ipv6[0],  p.udp[0], p.ptp[0], p.data[0]});
+            12: p.cfg_hdr ('{p.eth[0], p.ipv4[0], p.udp[0],   p.ptp[0], p.data[0]});
+            13: p.cfg_hdr ('{p.eth[0], p.ipv6[0], p.tcp[0],   p.data[0]});
         endcase // }
         
         // set few parameters 

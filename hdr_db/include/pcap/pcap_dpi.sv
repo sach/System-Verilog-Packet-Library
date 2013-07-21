@@ -1,5 +1,5 @@
 /*! \file pcap_dpi.sv
- * Contains the DPI routines used to allocate pcap dumpers, dump individual
+ * Contains the DPI-C routines used to allocate pcap dumpers, dump individual
  * packets to a dumpfile, and shutdown afterwards.  Default has a maximum
  * of 32 open dumpfiles for a simulation.
  */
@@ -15,29 +15,29 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-  // Regitser DPI routines
-  import "DPI" function void pv_register ();
+  // Regitser DPI-C routines
+  import "DPI-C" function void pv_register ();
 
   //  Create a new dumper (port)
-  import "DPI" function void pv_open (
+  import "DPI-C" function void pv_open (
                output int         phandle,   // handler or port number of new dumper
                input  string      pcap_file, // filename  
                input  int         pcap_type = 0);// 0 -> writting, 1 -> reading
 
   //  Dump a packet to an active dumper
-  import "DPI" function void pv_dump_pkt (
+  import "DPI-C" function void pv_dump_pkt (
                input  int         phandle,   // active handler (port) to dump pkt
                input  int         pkt_len,   // length of packet
                input  bit [7:0]   in_pkt[],  // Packet array
                input  bit [63:0]  nstime);   // simulation time in ns
 
   //  Dump a packet to an active dumper
-  import "DPI" function void pv_get_pkt (
+  import "DPI-C" function void pv_get_pkt (
                input  int         phandle,   // active handler (port) to dump pkt
                output int         pkt_len,   // length of packet
                output bit [7:0]   in_pkt[],  // Packet array
                output bit [63:0]  nstime);   // simulation time in ns
 
   //  Shutdown a dumper after use
-  import "DPI" function void pv_shutdown (
+  import "DPI-C" function void pv_shutdown (
                input  int         phandle);  // active handler (port) to shutdown 

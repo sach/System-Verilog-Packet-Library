@@ -221,7 +221,7 @@ class fc_hdr_class extends hdr_class; // {
     fc_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF,   0, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "r_ctl",        r_ctl       ,lcl.r_ctl);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  24, "d_id",         d_id        ,lcl.d_id);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "cs_ctl_pri",   cs_ctl_pri  ,lcl.cs_ctl_pri);
@@ -236,7 +236,7 @@ class fc_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  32, "fc_parameter", fc_parameter,lcl.fc_parameter);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_n_add_fcrc", cal_n_add_fcrc, lcl.cal_n_add_fcrc);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_fcrc", corrupt_fcrc, lcl.corrupt_fcrc);     
     end // }
@@ -249,9 +249,9 @@ class fc_hdr_class extends hdr_class; // {
     if (cal_n_add_fcrc)
     begin // {
     if (corrupt_fcrc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, '{}, '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "GOOD");
     end // } 
   endtask : display_hdr // }
 

@@ -419,17 +419,17 @@ class macsec_hdr_class extends hdr_class; // {
     $cast (lcl, cmp_cls);
     $sformat(tci_brk, "=> V %b ES %b SC %b SCB %b E %b C %b", tci[5],tci[4],tci[3],tci[2],tci[1],tci[0]);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "tci", tci, lcl.tci, '{}, '{}, tci_brk);
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 006, "tci", tci, lcl.tci, null_a, null_a, tci_brk);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "an", an, lcl.an);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    DEC, 008, "sl", sl, lcl.sl);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "pn", pn, lcl.pn);
     if (tci[3] == 1'b1)
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 064, "sci", sci, lcl.sci);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if (process_ae)
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     HEX, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Encryption Related ~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     HEX, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Encryption Related ~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "auth_st", auth_st, lcl.auth_st);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "auth_sz", auth_sz, lcl.auth_sz);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEC, 008, "auth_adjust", auth_adjust, lcl.auth_adjust);
@@ -444,7 +444,7 @@ class macsec_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "process_ae", process_ae, lcl.process_ae);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tci_ver", corrupt_tci_ver, lcl.corrupt_tci_ver);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tci_es_sc", corrupt_tci_es_sc, lcl.corrupt_tci_es_sc); 

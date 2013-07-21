@@ -1,3 +1,5 @@
 #/bin/bash
 
 vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder -debug_all -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c -f pktlib.vf test/$1.sv +define+NO_PROCESS_AE -l log/$1.log 
+
+#qverilog -64 -sv -permissive -timescale "1ns/1ps"  -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv -l log/$1.questa.log -R -do "run -a; quit -f" -printsimstats

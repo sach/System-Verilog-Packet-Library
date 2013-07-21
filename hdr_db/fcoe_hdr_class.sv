@@ -246,7 +246,7 @@ class fcoe_hdr_class extends hdr_class; // {
     fcoe_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "fcoe_ver", fcoe_ver, lcl.fcoe_ver);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "fcoe_type", fcoe_type, lcl.fcoe_type);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "sof", sof, lcl.sof);
@@ -255,7 +255,7 @@ class fcoe_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "timestamp", timestamp, lcl.timestamp);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_fcoe_ver", corrupt_fcoe_ver, lcl.corrupt_fcoe_ver);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_fcoe_type", corrupt_fcoe_type, lcl.corrupt_fcoe_type);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_sof", corrupt_sof, lcl.corrupt_sof);     

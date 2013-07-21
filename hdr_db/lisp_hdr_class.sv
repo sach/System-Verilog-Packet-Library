@@ -213,7 +213,7 @@ class lisp_hdr_class extends hdr_class; // {
     lisp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "N", N, lcl.N); 
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "L", L, lcl.L); 
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "E", E, lcl.E); 
@@ -234,7 +234,7 @@ class lisp_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "lsb", lsb, lcl.lsb); 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_N_V", corrupt_N_V, lcl.corrupt_N_V);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

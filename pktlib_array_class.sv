@@ -103,12 +103,12 @@ class pktlib_array_class;
         start_offset += length; 
   endtask : unpack_array // }
 
-  // this task copies m to n bytes of an array into new array
-  task copy_array (input bit [7:0] copy_from [],
-                   ref   bit [7:0] copy_to   [],
-                   ref   int       start_offset,
-                   input int       length,    
-                   input bit       no_icr = 1'b0); // {
+  // this function copies m to n bytes of an array into new array
+  function void copy_array (input bit [7:0] copy_from [],
+                            ref   bit [7:0] copy_to   [],
+                            ref   int       start_offset,
+                            input int       length,    
+                            input bit       no_icr = 1'b0); // {
     if (length > 0)
     begin // {
         copy_to = new [length];
@@ -120,10 +120,10 @@ class pktlib_array_class;
     end // }
     if (~no_icr)
         start_offset += length; 
-  endtask : copy_array // }
+  endfunction : copy_array // }
 
-  // task to fill data array
-  task fill_array (ref   bit [7:0]  data []); // {
+  // function to fill data array
+  function  void fill_array (ref   bit [7:0]  data []); // {
     bit [7:0] fill_byte;
     int       cnt;
     fill_byte  = start_byte;
@@ -149,6 +149,6 @@ class pktlib_array_class;
               default : data[cnt] = $urandom();
          endcase // }
     end // }
-  endtask : fill_array // }
+  endfunction : fill_array // }
 
 endclass : pktlib_array_class // }

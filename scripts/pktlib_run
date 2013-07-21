@@ -1,7 +1,10 @@
 #/bin/bash
-vcs -sverilog -full64 -f pktlib.vf -R test/$1.sv +define+NO_PROCESS_AE -l log/$1.log 
+vcs -sverilog -full64 +warn=all -f pktlib.vf -R test/$1.sv +define+NO_PROCESS_AE -l log/$1.log 
 
-#vlib work
-##vlog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv
-##vsim -64  -do "run  -a; quit
+# questa 1-step process
+# qverilog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv -l log/$1.questa.log -R -do "run -a; quit -f" -printsimstats
 
+# questa 3-step process
+# vlib work
+# vlog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv
+# vsim -64 my_test -c -do "run  -a; quit -f" -printsimstats

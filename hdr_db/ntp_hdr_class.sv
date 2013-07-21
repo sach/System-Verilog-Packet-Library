@@ -223,7 +223,7 @@ class ntp_hdr_class extends hdr_class; // {
     ntp_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "li", li, lcl.li);           
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "vn", vn, lcl.vn);           
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 003, "ntp_mode", ntp_mode, lcl.ntp_mode);         
@@ -244,7 +244,7 @@ class ntp_hdr_class extends hdr_class; // {
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "auth_en", auth_en, lcl.auth_en);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

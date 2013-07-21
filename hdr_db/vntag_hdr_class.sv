@@ -194,7 +194,7 @@ class vntag_hdr_class extends hdr_class; // {
     vntag_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "d", d, lcl.d);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "p", p, lcl.p);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 014, "dst_vif", dst_vif, lcl.dst_vif);
@@ -202,10 +202,10 @@ class vntag_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "rsvd", rsvd, lcl.rsvd);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "ver", ver, lcl.ver);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 012, "src_vif", src_vif, lcl.src_vif);
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, '{}, '{}, get_etype_name(etype));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "etype", etype, lcl.etype, null_a, null_a, get_etype_name(etype));
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_vntag_ver", corrupt_vntag_ver, lcl.corrupt_vntag_ver);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }

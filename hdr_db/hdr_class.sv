@@ -23,6 +23,7 @@ virtual class hdr_class extends pktlib_object_class; // {
 
   function new (pktlib_main_class plib); // {
     super.new ();
+    null_a = new [0];
     this.plib = plib;
   endfunction : new // }
 

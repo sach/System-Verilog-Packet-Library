@@ -370,7 +370,7 @@ class ipv4_hdr_class extends hdr_class; // {
     ipv4_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,    DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,    DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 004, "version", version, lcl.version);
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 004, "ihl", ihl, lcl.ihl);
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 008, "tos", tos, lcl.tos);
@@ -381,18 +381,18 @@ class ipv4_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 001, "mf", mf, lcl.mf);
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 013, "frag_offset", frag_offset, lcl.frag_offset);
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 008, "ttl", ttl, lcl.ttl);            
-    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 008, "protocol", protocol, lcl.protocol, '{}, '{}, get_protocol_name(protocol));
+    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 008, "protocol", protocol, lcl.protocol, null_a, null_a, get_protocol_name(protocol));
     if (corrupt_ip_chksm)
-    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 016, "checksum", checksum, lcl.checksum, '{}, '{}, "BAD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 016, "checksum", checksum, lcl.checksum, null_a, null_a, "BAD");
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 016, "checksum", checksum, lcl.checksum, '{},  '{}, "GOOD");
+    hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 016, "checksum", checksum, lcl.checksum, null_a,  null_a, "GOOD");
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 032, "ip_sa", ip_sa, lcl.ip_sa);
     hdis.display_fld (mode, hdr_name, BIT_VEC,   HEX, 032, "ip_da", ip_da, lcl.ip_da);
     if (options.size() !== 0)
     hdis.display_fld (mode, hdr_name, ARRAY,     DEF, 000, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {                                 
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ip_version", corrupt_ip_version, lcl.corrupt_ip_version);        
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_ihl", corrupt_ihl, lcl.corrupt_ihl);               
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "cal_total_length", cal_total_length, lcl.cal_total_length);          

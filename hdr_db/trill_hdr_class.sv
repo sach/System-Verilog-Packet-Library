@@ -205,7 +205,7 @@ class trill_hdr_class extends hdr_class; // {
     trill_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "V", V, lcl.V);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 002, "R", R, lcl.R);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 001, "M", M, lcl.M);
@@ -217,7 +217,7 @@ class trill_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, ARRAY,      DEF,  0, "options", 0, 0, options, lcl.options);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_trill_version", corrupt_trill_version, lcl.corrupt_trill_version);
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))

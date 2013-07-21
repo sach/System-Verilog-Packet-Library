@@ -292,13 +292,13 @@ class mpls_hdr_class extends hdr_class; // {
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin
-       hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+       hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
        hdis.display_fld (mode, hdr_name, BIT_VEC, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
     end
     for (i = 0; i < num_mpls_lbl; i++)
     begin // {
         $sformat(fld_name, "label[%0d]", i);
-        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 020, fld_name, label[i], lcl.label[i], '{}, '{}, get_mpls_lbl_name(label[i]));
+        hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 020, fld_name, label[i], lcl.label[i], null_a, null_a, get_mpls_lbl_name(label[i]));
         $sformat(fld_name, "exp[%0d]",   i);
         hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 003, fld_name, exp[i], lcl.exp[i]);
         $sformat(fld_name, "s[%0d]",     i);
@@ -310,7 +310,7 @@ class mpls_hdr_class extends hdr_class; // {
         hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "eth_ctrl", eth_ctrl, lcl.eth_ctrl);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{},"~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a,"~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, DEF, 032, "num_mpls_lbl", num_mpls_lbl, lcl.num_mpls_lbl);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "use_eth_null_lbl", use_eth_null_lbl, lcl.use_eth_null_lbl);
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "use_ipv4_null_lbl", use_ipv4_null_lbl, lcl.use_ipv4_null_lbl);

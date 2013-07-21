@@ -170,7 +170,7 @@ class otv_hdr_class extends hdr_class; // {
     otv_hdr_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Class members ~~~~~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 004, "R1", R1, lcl.R1); 
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 001, "I", I, lcl.I); 
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN, 003, "R2", R2, lcl.R2); 
@@ -179,7 +179,7 @@ class otv_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 008, "rsvd", rsvd, lcl.rsvd); 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
-    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, '{}, '{}, "~~~~~~~~~~ Control variables ~~~~~~");
+    hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
