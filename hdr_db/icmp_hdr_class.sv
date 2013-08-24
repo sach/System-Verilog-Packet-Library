@@ -268,7 +268,7 @@ class icmp_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "BAD");
     else                                                
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "checksum", checksum, lcl.checksum,null_a,null_a, "GOOD");
-    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 016, "msg_body", msg_body, lcl.msg_body);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 032, "msg_body", msg_body, lcl.msg_body);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,     DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");

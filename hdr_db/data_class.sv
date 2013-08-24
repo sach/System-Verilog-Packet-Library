@@ -83,14 +83,14 @@ class data_class extends hdr_class; // {
         if ((super.prv_hdr.hid === MPLS_HID) & (data_len > 0))
         begin // {
             tmp_data = data[0];
-            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
+            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h1) | (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
                 tmp_data[7:4] = $urandom_range(7, 15);
             data[0] = tmp_data;
         end // }
         if ((super.prv_hdr.hid === MMPLS_HID) & (data_len > 0))
         begin // {
             tmp_data = data[0];
-            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
+            if ((tmp_data[7:4] === 4'h0) | (tmp_data[7:4] === 4'h1)| (tmp_data[7:4] === 4'h4) | (tmp_data[7:4] === 4'h6))
                 tmp_data[7:4] = $urandom_range(7, 15);
             data[0] = tmp_data;
         end // }

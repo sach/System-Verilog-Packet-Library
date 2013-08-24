@@ -1,5 +1,10 @@
 #/bin/bash
 
-vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder -debug_all -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c -f pktlib.vf test/$1.sv +define+NO_PROCESS_AE -l log/$1.log 
+test_name=$1;shift;
+trl=$*;
 
-#qverilog -64 -sv -permissive -timescale "1ns/1ps"  -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv -l log/$1.questa.log -R -do "run -a; quit -f" -printsimstats
+# VCS command
+vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder -debug_all -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c -f pktlib.vf test/$test_name.sv +define+NO_PROCESS_AE -l log/$test_name$trl.log $trl 
+
+# Questa 1-step command
+#qverilog -64 -sv -permissive -timescale "1ns/1ps"  -CFLAGS -g -CC "-Ihdr_db/include/pcap" -L -lpcap hdr_db/include/pcap/pcap_dpi.c hdr_db/include/pcap/pcap_dump.c +define+NO_PROCESS_AE $trl -f pktlib.vf test/$test_name.sv -l log/$test_name.questa.log -R -do "run -a; quit -f" -printsimstats

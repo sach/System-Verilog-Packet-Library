@@ -1,10 +1,15 @@
 #/bin/bash
-vcs -sverilog -full64 +warn=all -f pktlib.vf -R test/$1.sv +define+NO_PROCESS_AE -l log/$1.log 
+
+test_name=$1;shift;
+trl=$*;
+
+# VCS command line
+vcs -sverilog -full64 +warn=all -f pktlib.vf -R test/$test_name.sv +define+NO_PROCESS_AE -l log/$test_name$trl.log $trl
 
 # questa 1-step process
-# qverilog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv -l log/$1.questa.log -R -do "run -a; quit -f" -printsimstats
+# qverilog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE $trl -f pktlib.vf test/$test_name.sv -l log/$test_name.questa.log -R -do "run -a; quit -f" -printsimstats
 
 # questa 3-step process
 # vlib work
-# vlog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE -f pktlib.vf test/$1.sv
+# vlog -64 -sv -permissive -timescale "1ns/1ps" +define+NO_PROCESS_AE $trl -f pktlib.vf test/$test_name.sv
 # vsim -64 my_test -c -do "run  -a; quit -f" -printsimstats

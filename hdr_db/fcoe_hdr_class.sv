@@ -14,7 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 // ----------------------------------------------------------------------
 //  This hdr_class generates FCOE header.
 //  FCOE header & trailer format (18B = 14B hdr + 4B trl)
-//  FCOE header : (14B)
+//  FCOE header : (14B) (Timestamp format)
 //  +-------------------+
 //  | fcoe_ver[3:0]     | -> must be 0
 //  +-------------------+
@@ -27,6 +27,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  | rsvd0[30:0]       | 
 //  +-------------------+
 //  | timestamp[63:0]   | 
+//  +-------------------+
+//  FCOE header : (14B) (one more format)
+//  +-------------------+
+//  | fcoe_ver[3:0]     | -> must be 0
+//  +-------------------+
+//  | rsvd_0[99:0]      | 
+//  +-------------------+
+//  | sof [7:0]         | 
 //  +-------------------+
 //  FCOE trailer: (4B)
 //  +-------------------+
@@ -53,6 +61,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+------------------+-----------------------------------+
 //  | 1     | 1'b0    | null_rsvd        | If 1, all rsvd fields set to 0    |
 //  +-------+---------+------------------+-----------------------------------+
+//  | 1     | 1'b0    | timestamp_format | If 1, using timestamp_format      |
+//  +-------+---------+------------------+-----------------------------------+
 //
 // ----------------------------------------------------------------------
 
@@ -64,6 +74,7 @@ class fcoe_hdr_class extends hdr_class; // {
   rand bit [7:0]         sof;      
   rand bit               tv;       
   rand bit [30:0]        rsvd0;    
+  rand bit [99:0]        rsvd_0;
   rand bit [63:0]        timestamp;
   rand bit [7:0]         eof;      
   rand bit [23:0]        rsvd1;            
@@ -76,6 +87,7 @@ class fcoe_hdr_class extends hdr_class; // {
        bit               corrupt_sof       = 1'b0;
        bit               corrupt_eof       = 1'b0;
        bit               null_rsvd         = 1'b0;
+       bit               timestamp_format  = 1'b0;
 
   // ~~~~~~~~~~ Constraints begins ~~~~~~~~~~
 
@@ -120,8 +132,9 @@ class fcoe_hdr_class extends hdr_class; // {
 
   constraint legal_rsvd
   {
-    (null_rsvd) -> rsvd0 == 31'h0;
-    (null_rsvd) -> rsvd1 == 24'h0;
+    (null_rsvd) -> rsvd0  == 31'h0;
+    (null_rsvd) -> rsvd1  == 24'h0;
+    (null_rsvd) -> rsvd_0 == 100'h0;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -140,10 +153,16 @@ class fcoe_hdr_class extends hdr_class; // {
                  input bit       last_pack = 1'b0); // {
     // pack class members
     `ifdef SVFNYI_0
-    pack_vec = {fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp};
+    if (timestamp_format)
+        pack_vec = {fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp};
+    else
+        pack_vec = {fcoe_ver, rsvd_0, sof};
     harray.pack_bit (pkt, pack_vec, index, hdr_len*8);
     `else
-    hdr = {>>{fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp}};
+    if (timestamp_format)
+        hdr = {>>{fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp}};
+    else
+        hdr = {>>{fcoe_ver, rsvd_0, sof}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
     // pack next hdr
@@ -175,10 +194,16 @@ class fcoe_hdr_class extends hdr_class; // {
     update_len(index, pkt.size, 14, 4);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
-    {ipver, tclass, flow_label, payload_len, protocol, hoplmt, sgid, dgid} = pack_vec;
+    if (timestamp_format)
+        {fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp} = pack_vec;
+    else
+        {fcoe_ver, rsvd_0, sof} = pack_vec;
     `else
     harray.copy_array (pkt, hdr, index, hdr_len);
-    {>>{fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp}} = hdr;
+    if (timestamp_format)
+        {>>{fcoe_ver, fcoe_type, sof, tv, rsvd0, timestamp}} = hdr;
+    else
+        {>>{fcoe_ver, rsvd_0, sof}} = hdr;
     `endif
     // get next hdr and update common nxt_hdr fields
     if (mode == SMART_UNPACK)
@@ -225,6 +250,7 @@ class fcoe_hdr_class extends hdr_class; // {
     this.sof              = lcl.sof;      
     this.tv               = lcl.tv;       
     this.rsvd0            = lcl.rsvd0;    
+    this.rsvd_0           = lcl.rsvd_0;    
     this.timestamp        = lcl.timestamp;
     this.eof              = lcl.eof;      
     this.rsvd1            = lcl.rsvd1;            
@@ -235,6 +261,7 @@ class fcoe_hdr_class extends hdr_class; // {
     this.corrupt_sof      = lcl.corrupt_sof;
     this.corrupt_eof      = lcl.corrupt_eof;
     this.null_rsvd        = lcl.null_rsvd;
+    this.timestamp_format = lcl.timestamp_format;
     if (~last_cpy)
         this.nxt_hdr.cpy_hdr (cpy_cls.nxt_hdr, last_cpy);
   endtask : cpy_hdr // }
@@ -248,11 +275,19 @@ class fcoe_hdr_class extends hdr_class; // {
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Class members ~~~~~~~~~~");
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "fcoe_ver", fcoe_ver, lcl.fcoe_ver);
+    if (timestamp_format)
+    begin // {
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   4, "fcoe_type", fcoe_type, lcl.fcoe_type);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "sof", sof, lcl.sof);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    BIN,   1, "tv", tv, lcl.tv);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  31, "rsvd0", rsvd0, lcl.rsvd0);
     hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,  64, "timestamp", timestamp, lcl.timestamp);
+    end // }
+    else
+    begin // {
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX, 100, "rsvd_0", rsvd_0, lcl.rsvd_0);
+    hdis.display_fld (mode, hdr_name, BIT_VEC,    HEX,   8, "sof", sof, lcl.sof);
+    end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {
     hdis.display_fld (mode, hdr_name, STRING,  DEF, 000, "", 0, 0, null_a, null_a, "~~~~~~~~~~ Control variables ~~~~~~");
@@ -261,6 +296,7 @@ class fcoe_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_sof", corrupt_sof, lcl.corrupt_sof);     
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_eof", corrupt_eof, lcl.corrupt_eof);     
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "null_rsvd", null_rsvd, lcl.null_rsvd);     
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "timestamp_format", timestamp_format, lcl.timestamp_format);     
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

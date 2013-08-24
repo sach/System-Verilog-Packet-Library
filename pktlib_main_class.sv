@@ -59,7 +59,7 @@ class pktlib_main_class extends pktlib_object_class; // {
 
   // This task configures and links all the hdrs used for the particular pkt
   // For E.g. -> cfg_hdr ({eth[0], dot1q[0], data[0]});
-  task cfg_hdr (hdr_class hdr [$]  = {},
+  function void cfg_hdr (hdr_class hdr [$]  = {},
                 bit       push_top = 1'b1,
                 bit       push_eoh = 1'b1,
                 bit       clr_hdrq = 1'b1); // {
@@ -80,7 +80,7 @@ class pktlib_main_class extends pktlib_object_class; // {
     first_hdr = hdr_q[0];
     if (clr_hdrq)
         hdr_q = {};
-  endtask : cfg_hdr // }
+  endfunction : cfg_hdr // }
 
   //  This task adds hdr/hdrs to hdr_q statically until last_hdr = 1
   task add_hdr (hdr_class hdr [$]  = {},

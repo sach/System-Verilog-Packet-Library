@@ -107,7 +107,7 @@ class mpls_hdr_class extends hdr_class; // {
 
   constraint legal_eth_ctrl
   {
-      eth_ctrl[31:27] == 4'h0;
+      eth_ctrl[31:28] == 3'h0;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -212,7 +212,7 @@ class mpls_hdr_class extends hdr_class; // {
     end // }
     else
         nxtB = 8'hAA;
-    if ((label[0] != eth_null_lbl) & (nxtB[7:4] == 4'h0))
+    if ((label[0] != eth_null_lbl) & (nxtB[7:5] == 3'h0))
     begin // {
         `ifdef SVFNYI_0
         harray.unpack_array (pkt, pack_vec, index, 4);
@@ -237,7 +237,7 @@ class mpls_hdr_class extends hdr_class; // {
                 nxt_hid = IPV6_HID;
             if (label[0] == eth_null_lbl)
                 nxt_hid = ETH_HID;
-            if ((label[0] != eth_null_lbl) & (nxtB[7:4] == 4'h0))
+            if ((label[0] != eth_null_lbl) & (nxtB[7:5] == 3'h0))
                 nxt_hid = ETH_HID;
             if ((label[num_mpls_lbl-1] != ipv4_null_lbl) & (nxtB[7:4] == 4'h4)) 
                 nxt_hid = IPV4_HID;
