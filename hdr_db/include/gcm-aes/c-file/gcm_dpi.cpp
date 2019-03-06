@@ -20,7 +20,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "gcm.h"
 #include "gcm_dpi.h"
 
-// define for print message
 #define NO_TYPE       0
 #define NULL_TYPE     1
 #define INFO          2
@@ -29,12 +28,17 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define ERROR         5
 
   char c_msg[5000];
+  svScope g_scope;
+
 
   void print_msg (int   msg_type, char* msg, int msg_len)
   {
     if (msg_len > 0)
     {
-        ::print_c_msg (msg_type, msg);
+      // Commenting out as xrun gives error
+//    g_scope = svGetScopeFromName("$unit");
+//    svSetScope(g_scope);
+//    ::print_c_msg (msg_type, msg);
     }
   }
 

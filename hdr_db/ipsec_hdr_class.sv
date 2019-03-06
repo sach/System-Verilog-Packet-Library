@@ -250,6 +250,7 @@ class ipsec_hdr_class extends hdr_class; // {
     bit [31:0]    iv2;
     int           out_plen;
     int           avl_len;
+    toh_class     lcl_toh;
 
     // copying original pkt
     if (enc_dcr == 1)
@@ -269,7 +270,14 @@ class ipsec_hdr_class extends hdr_class; // {
     else
     begin // {
         avl_len = pkt.size - icv_sz;
+        lcl_toh = new (super.plib);
+        $cast (lcl_toh, super.all_hdr[i]);
+        if (lcl_toh.cal_n_add_crc)
+            avl_len = pkt.size - icv_sz - 4;
+        else
+            avl_len = pkt.size - icv_sz;
         enc_sz  = avl_len - index;
+
     end // }
     if ((auth_sz + auth_adjust) > (avl_len - auth_st))
         auth_sz = avl_len - auth_st;

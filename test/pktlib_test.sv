@@ -23,8 +23,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //
 // ----------------------------------------------------------------------
 
-`define NUM_PKTS 17
+`define NUM_PKTS 20
 
+`include "../hdr_db/include/gcm-aes/sv-file/gcm_dpi.sv"
 program my_test (); // {
 
   // include files
@@ -57,15 +58,18 @@ program my_test (); // {
             10 : p.cfg_hdr ('{p.eth[0], p.itag[0],  p.eth[1],   p.ipv4[0], p.tcp[0],   p.stt[0],   p.eth[2],  p.ipv4[1],   p.tcp[1],  p.data[0]});
             11 : p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.dot1q[1], p.ipv4[0], p.tcp[0],   p.stt[0],   p.eth[1],  p.ipv6[0],   p.ipv4[1], p.igmp[0], p.data[0]});
             12 : p.cfg_hdr ('{p.eth[0], p.roce[0],  p.grh[0],   p.bth[0], p.data[0]});
-            13 : p.cfg_hdr ('{p.eth[0], p.ipv4[0],  p.gre[0],   p.eth[1],  p.itag[0],  p.eth[2],   p.roce[0], p.grh[0],    p.bth[0],  p.data[0]});
-            14 : p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.fcoe[0],  p.fc[0], p.data[0]});
-            15 : p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.cntag[0], p.cnm[0], p.data[0]});
-            16 : p.cfg_hdr ('{p.eth[0], p.ipv6[0],  p.ipv6_hopopt[0], p.ipv6_opts[0], p.ipv6_rout[0], p.ipv6_frag[0], p.ipv6_opts[1], p.igmp[0], p.data[0]});
+            13 : p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.fcoe[0],  p.fc[0], p.data[0]});
+            14 : p.cfg_hdr ('{p.eth[0], p.dot1q[0], p.cntag[0], p.cnm[0], p.data[0]});
+            15 : p.cfg_hdr ('{p.eth[0], p.ipv6[0],  p.ipv6_hopopt[0], p.ipv6_opts[0], p.ipv6_rout[0], p.ipv6_frag[0], p.ipv6_opts[1], p.igmp[0], p.data[0]});
+            16 : p.cfg_hdr ('{p.eth[0], p.macsec[0], p.ipv6[0],  p.ipv6_hopopt[0], p.ipv6_opts[0], p.ipv6_rout[0], p.ipv6_frag[0], p.ipv6_opts[1], p.igmp[0], p.data[0]});
+            17 : p.cfg_hdr ('{p.fc[0], p.data[0]});
+            18 : p.cfg_hdr ('{p.dphy[0], p.data[0]});
+            19 : p.cfg_hdr ('{p.dphy[0]});
         endcase // }
         
         // set max/min packet length
         p.toh.max_plen = 300;
-        p.toh.min_plen = 32;
+        p.toh.min_plen = 4;
 
         // randomize pktlib
         p.randomize with  
@@ -78,13 +82,19 @@ program my_test (); // {
         
         // display hdr and pkt content
         $display("%0t : INFO    : TEST      : Pack Pkt %0d", $time, i+1);
+        //p.display_hdr_pkt (p_pkt, , , , DISPLAY_FULL);
         p.display_hdr_pkt (p_pkt);
 
 	// new pktlib for unpack
         p = new();
         
         // unpack 
-        p.unpack_hdr (p_pkt, SMART_UNPACK);
+       if (i == 17)
+            p.unpack_hdr (p_pkt, SMART_UNPACK,, FC);
+       else if (i > 17)
+            p.unpack_hdr (p_pkt, SMART_UNPACK,, MIPI_CSI2_DPHY);
+       else
+            p.unpack_hdr (p_pkt, SMART_UNPACK);
 
         // display hdr and pkt content
         $display("%0t : INFO    : TEST      : Unpack Pkt %0d", $time, i+1);
@@ -108,14 +118,19 @@ program my_test (); // {
         if (i == 3)
         begin // {
             u_pkt[13] = $random;
-        end // 
+        end // } 
         if (i == 5)
         begin // {
             u_pkt[22] = $random;
-        end // 
+        end // } 
 
         $display("%0t : INFO    : TEST      : Compare Pkt %0d", $time, i+1);
-        p.compare_pkt (p_pkt, u_pkt, err);
+        if (i == 17)
+            p.compare_pkt (p_pkt, u_pkt, err,, FC);
+        else if (i > 17)
+            p.compare_pkt (p_pkt, u_pkt, err,, MIPI_CSI2_DPHY);
+        else
+            p.compare_pkt (p_pkt, u_pkt, err);
     end // }
     // end simulation
     $finish ();

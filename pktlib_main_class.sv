@@ -30,6 +30,7 @@ class pktlib_main_class extends pktlib_object_class; // {
          bit [7:0]            pkt     [];            // pkt after build was done
          bit                  pkt_modified  = 1'b0;  // indicates wether pkt got modified in post_pack
          string               cfg_hdr_list;
+         int                  pkt_format    = IEEE802;
 
   // ~~~~~~~~~~ Contol variables for pkt driver ~~~~~~~~~~
          int                  pid          = 0;           // Packet Id
@@ -41,6 +42,7 @@ class pktlib_main_class extends pktlib_object_class; // {
          int                  pkt_end_time = 0;
          bit [31:0]           pkt_crc      = 0;
          bit [15:0]           drv_ctrl     = NO_ERR;      
+         bit                  dsc_1        = 1'b0;
          bit [7:0]            dsc_8        = 8'h0;
          bit [15:0]           dsc_16       = 16'h0;
          bit [31:0]           dsc_32       = 32'h0;
@@ -63,19 +65,31 @@ class pktlib_main_class extends pktlib_object_class; // {
                 bit       push_top = 1'b1,
                 bit       push_eoh = 1'b1,
                 bit       clr_hdrq = 1'b1); // {
+    int pkt_format_hid;
     foreach (hdr[hdr_ls])
         hdr_q.push_back (hdr[hdr_ls]);
     if (push_eoh)
         hdr_q.push_back  (hdr_db[EOH_HID][0]);
     if (push_top)
         hdr_q.push_front (hdr_db[TOP_HID][0]);
+    if (hdr_q[1].hid == PTH_HID)
+        pkt_format_hid = 2;
+    else
+        pkt_format_hid = 1;
+    case (hdr_q[pkt_format_hid].hid) // {
+       ETH_HID  : pkt_format = IEEE802;  
+       FC_HID   : pkt_format = FC;  
+       DPHY_HID : pkt_format = MIPI_CSI2_DPHY;  
+       default  : pkt_format = IEEE802;  
+    endcase // }
     foreach (hdr_q[cfg_ls])
     begin // {
-        hdr_q[cfg_ls].prv_hdr = hdr_q[cfg_ls-1];
-        hdr_q[cfg_ls].nxt_hdr = hdr_q[cfg_ls+1];
-        hdr_q[cfg_ls].all_hdr = hdr_q;
-        hdr_q[cfg_ls].psnt    = 1'b1;
-        hdr_q[cfg_ls].cfg_id  = cfg_ls;
+        hdr_q[cfg_ls].prv_hdr     = hdr_q[cfg_ls-1];
+        hdr_q[cfg_ls].nxt_hdr     = hdr_q[cfg_ls+1];
+        hdr_q[cfg_ls].all_hdr     = hdr_q;
+        hdr_q[cfg_ls].psnt        = 1'b1;
+        hdr_q[cfg_ls].cfg_id      = cfg_ls;
+        hdr_q[cfg_ls].pkt_format  = pkt_format;
     end // }
     first_hdr = hdr_q[0];
     if (clr_hdrq)
@@ -138,7 +152,8 @@ class pktlib_main_class extends pktlib_object_class; // {
   // This task unpacks packs all the fields of each configured hdr
   task unpack_hdr (ref   bit [7:0] ppkt [],
                    input int       mode     = DUMB_UNPACK,
-                   input hdr_class hdr [$]  = {}); // {
+                   input hdr_class hdr [$]  = {},
+                   input int       p_format = IEEE802); // {
     bit [7:0] copy_pkt [];
     int       index;
     index    = 0;
@@ -150,7 +165,15 @@ class pktlib_main_class extends pktlib_object_class; // {
     begin // {
         hdr_q = {};
         if (hdr.size == 0)
-            hdr_q.push_back (hdr_db[ETH_HID][0]);
+        begin // {
+            pkt_format = p_format;
+            case (p_format) // { 
+                IEEE802        : hdr_q.push_back (hdr_db[ETH_HID][0]);
+                FC             : hdr_q.push_back (hdr_db[FC_HID][0]);
+                MIPI_CSI2_DPHY : hdr_q.push_back (hdr_db[DPHY_HID][0]);
+                default        : hdr_q.push_back (hdr_db[ETH_HID][0]);
+            endcase // }
+        end // }
         else
             hdr_q = hdr;
         cfg_hdr ({}, 1'b1, 1'b0, 1'b0); 
@@ -177,6 +200,7 @@ class pktlib_main_class extends pktlib_object_class; // {
     this.pkt          = cpy_frm.pkt;
     this.pkt_modified = cpy_frm.pkt_modified;
     this.cfg_hdr_list = cpy_frm.cfg_hdr_list;
+    this.pkt_format   = cpy_frm.pkt_format;
     this.pid          = cpy_frm.pid;        
     this.path         = cpy_frm.path;        
     this.pnum         = cpy_frm.pnum;        
@@ -206,19 +230,17 @@ class pktlib_main_class extends pktlib_object_class; // {
   // This task displays cfg_hdr
   task display_cfg_hdr (int mode        =  DISPLAY,
                         int min_hdrq_sz = 2); // {
-    int       i;
-    $sformat (cfg_hdr_list, "{");
-    if (first_hdr.all_hdr.size > min_hdrq_sz)
+    foreach (first_hdr.all_hdr[ls])
     begin // {
-        $sformat (cfg_hdr_list,"%0s%0s,", cfg_hdr_list, first_hdr.all_hdr[1].hdr_name);
-        for (i = min_hdrq_sz; i < (first_hdr.all_hdr.size()-min_hdrq_sz) ; i++)
-        begin // {
-            $sformat (cfg_hdr_list,"%0s %0s,", cfg_hdr_list,first_hdr.all_hdr[i].hdr_name);
-        end // }
-        if (min_hdrq_sz > 1)
-            $sformat (cfg_hdr_list,"%0s %0s", cfg_hdr_list, first_hdr.all_hdr[i].hdr_name);
+        if (ls == (first_hdr.all_hdr.size - 1))
+            $sformat (cfg_hdr_list, "%0s} (%0s)", cfg_hdr_list, first_hdr.get_pkt_format_name(pkt_format));
+        else if (ls == 0)
+           $sformat (cfg_hdr_list,"{");
+        else if (ls <  (first_hdr.all_hdr.size- 2)) 
+            $sformat (cfg_hdr_list,"%0s%0s, ", cfg_hdr_list,first_hdr.all_hdr[ls].hdr_name);
+         else
+            $sformat (cfg_hdr_list,"%0s%0s", cfg_hdr_list,first_hdr.all_hdr[ls].hdr_name);
     end // }
-    $sformat (cfg_hdr_list, "%0s}", cfg_hdr_list);
     if (mode != NO_DISPLAY)
         $display ("    cfg_hdr : %0s", cfg_hdr_list);
   endtask : display_cfg_hdr // }
@@ -301,6 +323,7 @@ class pktlib_main_class extends pktlib_object_class; // {
                           bit [7:0] p2 [],
                     ref   int       err,
                     input hdr_class hdr [$]   = {},
+                    input int       p_format  = IEEE802,
                     input int       mode      = COMPARE,
                     input string    path_name = "",
                     input string    hname     = "pkt_lib",
@@ -308,22 +331,18 @@ class pktlib_main_class extends pktlib_object_class; // {
                     input bit       crc_psnt  = 1'b1); // {
     pktlib_class p_cls;
     int          cfg_err;
-    if (mode != COMPARE);
-    begin // {
-        if (mode == COMPARE_HDR)
-            mode = COMPARE;
-        p_cls = new ();
-        p_cls.toh.cal_n_add_crc = crc_psnt;
-        unpack_hdr       (p1, SMART_UNPACK, hdr);
-        p_cls.unpack_hdr (p2, SMART_UNPACK, hdr);
-        compare_hdr      (p_cls, cfg_err, mode, path_name);
-    end // }
-    if (mode == COMPARE_HDR)
-        mode = COMPARE;
+    cfg_err = 0;
     hdis = new (path_name);
     hdis.compare_array8 (p1, p2, cfg_err, mode, hname,, cmp_type);
     if (cfg_err > 0)
+    begin // {
         err++;
+        p_cls = new ();
+        p_cls.toh.cal_n_add_crc = crc_psnt;
+        unpack_hdr       (p1, SMART_UNPACK, hdr, p_format);
+        p_cls.unpack_hdr (p2, SMART_UNPACK, hdr, p_format);
+        compare_hdr      (p_cls, cfg_err, mode, path_name);
+    end // }
     $display("");
   endtask : compare_pkt // }
 

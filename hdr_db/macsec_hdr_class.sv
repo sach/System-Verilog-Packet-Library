@@ -55,6 +55,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  +-------+---------+--------------------+-----------------------------------+
 //  | 1     | 1'b1    | enc_en             | If 1, encrypt the data            |
 //  +-------+---------+--------------------+-----------------------------------+
+//  | 1     | 1'b0    | ignore_ES_0        | If 1, ignore ES=0 for SCI cal     |
+//  +-------+---------+--------------------+-----------------------------------+
 //
 // ----------------------------------------------------------------------
 
@@ -79,14 +81,16 @@ class macsec_hdr_class extends hdr_class; // {
        bit        corrupt_tci_scb     = 1'b0;
        bit        corrupt_tci_e_c     = 1'b0;
        bit        corrupt_sl          = 1'b0;
+       bit        corrupt_icv         = 1'b0;
        bit        enc_en              = 1'b1;
+       bit        ignore_ES_0         = 1'b0;
 
   // ~~~~~~~~~~ MACsec Programming variables ~~~~~~~~~~
        bit [7:0]   auth_adjust        = 0; 
        bit [127:0] key                = 0;
        bit [63:0]  implicit_sci       = 0;
        bit [15:0]  scb_port           = 0;
-       bit [15:0]  default_port       = 0;
+       bit [15:0]  default_port       = 16'h1;
 
   // ~~~~~~~~~~ Local MACsec related variables ~~~~~~~~~~
        bit [63:0]  final_sci          = 0;
@@ -294,6 +298,7 @@ class macsec_hdr_class extends hdr_class; // {
     bit [7:0]     out_pkt [];
     int           out_plen;
     int           avl_len;
+    toh_class     lcl_toh;
 
     // copying original pkt
     if (enc_dcr == 1)
@@ -312,7 +317,12 @@ class macsec_hdr_class extends hdr_class; // {
     end // }
     else
     begin // {
-        avl_len = pkt.size - icv_sz;
+        lcl_toh = new (super.plib);
+        $cast (lcl_toh, super.all_hdr[i]);
+        if (lcl_toh.cal_n_add_crc)
+            avl_len = pkt.size - icv_sz - 4;
+        else
+            avl_len = pkt.size - icv_sz;
         enc_sz  = 2 + avl_len - index;
     end // }
     if ((auth_sz + auth_adjust) > (avl_len - auth_st))
@@ -346,7 +356,11 @@ class macsec_hdr_class extends hdr_class; // {
     `endif
     index = out_pkt.size - 16;
     if (enc_dcr == 1)
+    begin // {
+        if (corrupt_icv)
+            harray.pack_array_8 (icv, out_pkt, index, 1'b1);
         pkt = new[super.plib.org_pkt.size] (out_pkt);
+    end // }
     else
         // Removing ICV from the packet 
         pkt = new[index] (out_pkt);
@@ -358,15 +372,28 @@ class macsec_hdr_class extends hdr_class; // {
     eth_hdr_class lcl_eth;
     lcl_eth = new (super.plib, `MAX_NUM_INSTS+1);
     $cast (lcl_eth, super.prv_hdr);
-    // final sci calculation 
-    casex ({tci[3], tci[4], tci[2]})        // SC-ES-SCB {
-        3'b1xx  : final_sci = sci;
-        3'b011  : final_sci = {lcl_eth.sa, scb_port};
-        3'b010  : final_sci = {lcl_eth.sa, default_port};   
-        3'b001  : final_sci = {implicit_sci[63:16], scb_port};
-        3'b00x  : final_sci = implicit_sci;
-        default : final_sci = implicit_sci; // Not possible.. Error case
-    endcase // }
+    if (ignore_ES_0) 
+    begin // {
+        // final sci calculation 
+        casex ({tci[3], tci[4], tci[2]})        // SC-ES-SCB {
+            3'b1xx  : final_sci = sci;
+            3'b0x1  : final_sci = {lcl_eth.sa, scb_port};
+            3'b0x0  : final_sci = {lcl_eth.sa, default_port};   
+            default : final_sci = implicit_sci; // Not possible.. Error case
+        endcase // }
+    end // }
+    else
+    begin // {
+        // final sci calculation 
+        casex ({tci[3], tci[4], tci[2]})        // SC-ES-SCB {
+            3'b1xx  : final_sci = sci;
+            3'b011  : final_sci = {lcl_eth.sa, scb_port};
+            3'b010  : final_sci = {lcl_eth.sa, default_port};   
+            3'b001  : final_sci = {implicit_sci[63:16], scb_port};
+            3'b00x  : final_sci = implicit_sci;
+            default : final_sci = implicit_sci; // Not possible.. Error case
+        endcase // }
+    end // }
   endtask : cal_final_sci // }
 
   task cpy_hdr (hdr_class cpy_cls,
@@ -391,7 +418,9 @@ class macsec_hdr_class extends hdr_class; // {
     this.corrupt_tci_scb   = lcl.corrupt_tci_scb;
     this.corrupt_tci_e_c   = lcl.corrupt_tci_e_c;
     this.corrupt_sl        = lcl.corrupt_sl;
+    this.corrupt_icv       = lcl.corrupt_icv;
     this.enc_en            = lcl.enc_en;
+    this.ignore_ES_0       = lcl.ignore_ES_0;
     // ~~~~~~~~~~ MACsec Programming variables ~~~~~~~~~~
     this.auth_adjust       = lcl.auth_adjust;
     this.key               = lcl.key;
@@ -451,6 +480,8 @@ class macsec_hdr_class extends hdr_class; // {
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tci_scb", corrupt_tci_scb, lcl.corrupt_tci_scb);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_tci_e_c", corrupt_tci_e_c, lcl.corrupt_tci_e_c);   
     hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_sl", corrupt_sl, lcl.corrupt_sl);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "corrupt_icv", corrupt_icv, lcl.corrupt_icv);        
+    hdis.display_fld (mode, hdr_name, BIT_VEC_NH, BIN, 001, "ignore_ES_0", ignore_ES_0, lcl.ignore_ES_0);        
     end // }
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

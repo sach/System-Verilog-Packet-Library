@@ -93,7 +93,8 @@ class fc_hdr_class extends hdr_class; // {
   constraint legal_hdr_len
   {
     hdr_len == 24;
-    trl_len == 4;
+    (pkt_format == FC) -> trl_len == 0;
+    (pkt_format != FC) -> trl_len == 4;
   }
 
   // ~~~~~~~~~~ Task begins ~~~~~~~~~~
@@ -127,16 +128,24 @@ class fc_hdr_class extends hdr_class; // {
         this.nxt_hdr.pack_hdr (pkt, index);
     end // }
     // calculate fcrc
-    if (cal_n_add_fcrc)
-        fcrc = crc_chksm.crc32 (pkt, (total_hdr_len-trl_len), start_off, corrupt_fcrc); 
-    // pack class members
-    `ifdef SVFNYI_0
-    pack_vec = fcrc;
-    harray.pack_bit (pkt, pack_vec, index, trl_len*8);
-    `else
-    hdr = {>>{fcrc}};
-    harray.pack_array_8 (hdr, pkt, index);
-    `endif
+   if (trl_len != 0)
+   begin // [
+        if (cal_n_add_fcrc)
+        begin // {
+            fcrc = crc_chksm.crc32 (pkt, (total_hdr_len-trl_len), start_off, corrupt_fcrc); 
+            // pack class members
+            `ifdef SVFNYI_0
+            pack_vec = fcrc;
+            harray.pack_bit (pkt, pack_vec, index, trl_len*8);
+            `else
+            hdr = {>>{fcrc}};
+            harray.pack_array_8 (hdr, pkt, index);
+            `endif
+            `ifdef DEBUG_PKTLIB
+            $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+            `endif
+       end // }
+   end // }
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -146,7 +155,10 @@ class fc_hdr_class extends hdr_class; // {
                    input bit       last_unpack = 1'b0); // {
     hdr_class lcl_class;
     // unpack class members
-    update_len(index, pkt.size, 24, 4);
+    if (pkt_format == FC) // trl_len = 0, as toh_class will take care of CRC
+        update_len(index, pkt.size, 24);
+    else
+        update_len(index, pkt.size, 24, 4);
     `ifdef SVFNYI_0
     harray.unpack_array (pkt, pack_vec, index, hdr_len);
     {r_ctl, d_id, cs_ctl_pri, s_id, fc_type, f_ctl, seq_id, df_ctl, seq_cnt, ox_id, rx_id, fc_parameter} = pack_vec;
@@ -175,16 +187,19 @@ class fc_hdr_class extends hdr_class; // {
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
     // unpack class members - trailer
-    `ifdef SVFNYI_0
-    harray.unpack_array (pkt, pack_vec, index, trl_len);
-    fcrc = pack_vec;
-    `else
-    harray.copy_array (pkt, hdr, index, trl_len);
-    {>>{fcrc}} = hdr;
-    `endif
-    `ifdef DEBUG_PKTLIB
-    $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index); 
-    `endif
+    if (trl_len != 0)
+    begin // {
+        `ifdef SVFNYI_0
+        harray.unpack_array (pkt, pack_vec, index, trl_len);
+        fcrc = pack_vec;
+        `else
+        harray.copy_array (pkt, hdr, index, trl_len);
+        {>>{fcrc}} = hdr;
+        `endif
+        `ifdef DEBUG_PKTLIB
+        $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index); 
+        `endif
+    end // }
   endtask : unpack_hdr // }
 
   task cpy_hdr (hdr_class cpy_cls,
@@ -246,12 +261,15 @@ class fc_hdr_class extends hdr_class; // {
     end // }
     if (~last_display & (cmp_cls.nxt_hdr.hid == nxt_hdr.hid))
         this.nxt_hdr.display_hdr (hdis, cmp_cls.nxt_hdr, mode);
-    if (cal_n_add_fcrc)
+    if (pkt_format != FC)
     begin // {
-    if (corrupt_fcrc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "BAD");
-    else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "GOOD");
+        if (cal_n_add_fcrc)
+        begin // {
+            if (corrupt_fcrc)
+                hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "BAD");
+            else
+                hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "fcrc", fcrc, lcl.fcrc, null_a, null_a, "GOOD");
+        end // } 
     end // } 
   endtask : display_hdr // }
 

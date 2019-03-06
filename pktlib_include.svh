@@ -100,6 +100,14 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     RND 
   } data_types;
 
+// ~~~~~~~~~~ enum defination for packet format  ~~~~~~~~~~~~~
+  enum
+  {
+    IEEE802,
+    FC,
+    MIPI_CSI2_DPHY 
+  } pkt_formats;
+
 // ~~~~~~~~~~ enum defination for all the headers ~~~~~~~~~~~~~
   enum
   {
@@ -147,10 +155,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     VXLAN_HID,               // 41
     FC_HID,                  // 42
     GRH_HID,                 // 43
-    DATA_HID,                // 44
-    EOH_HID,                 // 45
-//  XXX_HID,                 // 46
-    TOTAL_HID                // 46
+    DPHY_HID,                // 44
+    DSEC_HID,                // 45
+    DATA_HID,                // 46
+    EOH_HID,                 // 47
+//  XXX_HID,                 // 48
+    TOTAL_HID                // 49
   } hdr_id;
 
   // ~~~~~~~~~~ typedef all the classes ~~~~~~~~~~
@@ -192,6 +202,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   typedef class grh_hdr_class;
   typedef class bth_hdr_class;
   typedef class fc_hdr_class;
+  typedef class dphy_hdr_class;
   typedef class data_class;
 //typedef class xxx_class;
   typedef class eoh_class;
@@ -241,6 +252,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   `include "grh_hdr_class.sv"
   `include "bth_hdr_class.sv"
   `include "fc_hdr_class.sv"
+  `include "dphy_hdr_class.sv"
   `include "data_class.sv"
 //`include "xxx_class.sv"
   `include "eoh_class.sv"
@@ -291,6 +303,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   grh_hdr_class       grh        [`MAX_NUM_INSTS];\
   bth_hdr_class       bth        [`MAX_NUM_INSTS];\
   fc_hdr_class        fc         [`MAX_NUM_INSTS];\
+  dphy_hdr_class      dphy       [`MAX_NUM_INSTS];\
   data_class          data       [`MAX_NUM_INSTS];\
   eoh_class           eoh
   
@@ -341,6 +354,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         grh         [i] = new (this, i);\
         bth         [i] = new (this, i);\
         fc          [i] = new (this, i);\
+        dphy        [i] = new (this, i);\
         data        [i] = new (this, i);\
     end\
     toh  = new (this);\

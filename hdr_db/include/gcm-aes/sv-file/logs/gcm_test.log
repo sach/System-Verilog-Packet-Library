@@ -1,10 +1,14 @@
-Command: vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder \
--debug_all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c ../c-file/aeskey.c \
-../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp gcm_test.sv \
--l logs/gcm_test.log
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.9.112-32.el7.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+Command: vcs -full64 -sverilog +warn=all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c \
+../c-file/aeskey.c ../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp \
+-R gcm_test.sv -l logs/gcm_test.log
                          Chronologic VCS (TM)
-         Version D-2009.12_Full64 -- Thu Apr 28 16:02:30 2011
-               Copyright (c) 1991-2009 by Synopsys Inc.
+      Version N-2017.12-SP2-1_Full64 -- Fri Nov  9 02:05:00 2018
+               Copyright (c) 1991-2017 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
 This program is proprietary and confidential information of Synopsys Inc.
@@ -18,33 +22,39 @@ Top Level Modules:
        gcm_test
 No TimeScale specified
 Starting vcs inline pass...
+
 2 modules and 0 UDP read.
+recompiling package _vcs_DPI_package
 recompiling module gcm_test
 Both modules done.
-gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aescrypt.c \
-
-gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aeskey.c \
-
-gcc -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/aestab.c \
-
-g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gcm.cpp \
-
-g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gfvec.cpp \
-
-g++ -w  -pipe -g -I../c-file -I/opt/SYNOPSYS/VCS/2009.12/include    -c ../../c-file/gcm_dpi.cpp \
-
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+gcc -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/aescrypt.c
+gcc -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/aeskey.c
+gcc -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/aestab.c
+g++ -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/gcm.cpp
+g++ -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/gfvec.cpp
+g++ -w  -pipe -fPIC -g -I../c-file -I/tools/synopsys/vcs-mx/N-2017.12-SP2-1/include \
+-c ../../c-file/gcm_dpi.cpp
 if [ -x ../simv ]; then chmod -x ../simv; fi
-g++  -o ../simv   aescrypt.o aeskey.o aestab.o gcm.o gfvec.o gcm_dpi.o  5NrI_d.o \
-5NrIB_d.o Yrj5_1_d.o sd3I_1_d.o rmapats_mop.o rmapats.o       /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvirsim64.a \
-/opt/SYNOPSYS/VCS/2009.12/amd64/lib/liberrorinf.so /opt/SYNOPSYS/VCS/2009.12/amd64/lib/libsnpsmalloc.so \
-/opt/SYNOPSYS/VCS/2009.12/amd64/lib/libvcsnew.so     /opt/SYNOPSYS/VCS/2009.12/amd64/lib/vcs_save_restore_new.o \
--ldl -lm  -lc -lpthread -ldl    
+g++  -o ../simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ \
+-Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/tools/synopsys/vcs-mx/N-2017.12-SP2-1/linux64/lib \
+-L/tools/synopsys/vcs-mx/N-2017.12-SP2-1/linux64/lib -lcmsg  aescrypt.o aeskey.o \
+aestab.o gcm.o gfvec.o gcm_dpi.o   objs/amcQw_d.o   _6402_archive_1.so  SIM_l.o  \
+rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o        \
+-lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile \
+-luclinative /tools/synopsys/vcs-mx/N-2017.12-SP2-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive \
+-lvcsucli -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o    /tools/synopsys/vcs-mx/N-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o \
+-ldl  -lc -lm -lpthread -ldl 
 ../simv up to date
-Command: ./simv +vcs+lic+wait +v2k +nospecify +evalorder -a logs/gcm_test.log -oldui
-Chronologic VCS simulator copyright 1991-2009
+Command: /users/sachin/System-Verilog-Packet-Library/hdr_db/include/gcm-aes/sv-file/./simv +warn=all -a logs/gcm_test.log
+Chronologic VCS simulator copyright 1991-2017
 Contains Synopsys proprietary information.
-Compiler version D-2009.12_Full64; Runtime version D-2009.12_Full64;  Apr 28 16:02 2011
-
+Compiler version N-2017.12-SP2-1_Full64; Runtime version N-2017.12-SP2-1_Full64;  Nov  9 02:05 2018
 gcm_test:        ~~~~~~~~~~~~~ Pkt before Encryption ~~~~~~~~~~~~~~
 gcm_test:        0   1  2  3  4  5  6  7 |  8  9 10 11 12 13 14 15
 gcm_test:        ~~~~~~~~~~~~~~~~~~~~~~~~|~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,7 +85,9 @@ gcm_test:   64 : 39 2d 88 46 22 a7 97 de | ec fd 26 0d 18 16 82 71
 
 
 0 : ~~~~~~~  Test PASS :)- ~~~~~~~
+$finish at simulation time                    0
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 0
-CPU Time:      0.020 seconds;       Data structure size:   0.0Mb
-Thu Apr 28 16:02:32 2011
+CPU Time:      0.210 seconds;       Data structure size:   0.0Mb
+Fri Nov  9 02:05:05 2018
+CPU time: .161 seconds to compile + .160 seconds to elab + .592 seconds to link + .241 seconds in simulation

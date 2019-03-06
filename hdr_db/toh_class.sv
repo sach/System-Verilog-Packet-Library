@@ -51,7 +51,8 @@ class toh_class extends hdr_class; // {
 
   // ~~~~~~~~~~ Random variables ~~~~~~~~~~
   rand   bit [15:0]        plen;                         
-  rand   bit [31:0]        crc;
+  rand   bit [31:0]        crc32;       
+  rand   bit [15:0]        crc16;
   rand   bit [15:0]        pad_len;
   rand   bit [7:0]         pad_data [];
 
@@ -82,7 +83,7 @@ class toh_class extends hdr_class; // {
     plen >= min_plen;
     plen <= max_plen;
     (plen % plen_multiple_of) == plen_residue;
-    plen == nxt_hdr.total_hdr_len + crc_sz + pad_len;
+    plen == nxt_hdr.total_hdr_len + pad_len;
     total_hdr_len == nxt_hdr.total_hdr_len;
     hdr_len  ==  0; 
     hdr_len  ==  0; 
@@ -115,20 +116,20 @@ class toh_class extends hdr_class; // {
     super.update_hdr_db (hid, inst_no);
   endfunction : new // }
 
-  function void pre_randomize (); // {
-    super.pre_randomize();
-    crc_sz = (cal_n_add_crc) ? 4 : 0;
-  endfunction : pre_randomize // }
-
   task pack_hdr (ref   bit [7:0] pkt [],
                  ref   int       index,
                  input bit       last_pack = 1'b0); // {
+    int i; 
     `ifdef SVFNYI_0
     bit [`VEC_SZ-1:0] tmp_vec;
     `endif
+
     // pack all the hdrs to pkt
     pkt      = new[this.plen];
     index    = 0;
+    `ifdef DEBUG_PKTLIB
+    $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+    `endif
     this.nxt_hdr.pack_hdr (pkt, index);
 
     // pad pkt
@@ -138,6 +139,11 @@ class toh_class extends hdr_class; // {
             harray.fill_array(pad_data);
         harray.pack_array_8 (pad_data, pkt, index);
     end // }
+
+    // CRC will get appended here. Get crc_sz if CRC need to be appended
+    crc_sz = get_crc_sz;
+    plen += crc_sz;
+    pkt   = new [this.plen] (pkt);
 
     // chop pkt
     if ((chop_plen_to != 0) & (chop_plen_to < (plen - crc_sz)))
@@ -151,21 +157,37 @@ class toh_class extends hdr_class; // {
     end // }
 
     // calculate and append crc
-    if (cal_n_add_crc)
+    if (cal_n_add_crc & (crc_sz != 0))
     begin // {
-        pkt[pkt.size() - 1] = 0;
-        pkt[pkt.size() - 2] = 0;
-        pkt[pkt.size() - 3] = 0;
-        pkt[pkt.size() - 4] = 0;
-        crc                 = crc_chksm.crc32(pkt, pkt.size()-4, 0, corrupt_crc);
-        `ifdef SVFNYI_0
-        tmp_vec             = crc;
-        this.nxt_hdr.harray.pack_bit(pkt, tmp_vec, index, 32);
-        `else
-        hdr                 = {>>{crc}};
-        this.nxt_hdr.harray.pack_array_8 (hdr, pkt, index);
-        `endif
+        for (i = crc_sz; i > 0; i--)
+            pkt[pkt.size() - crc_sz] = 0;
+        if (crc_sz == 4)
+        begin // {
+            crc32   = crc_chksm.crc32(pkt, pkt.size()-crc_sz, 0, corrupt_crc);
+            `ifdef SVFNYI_0
+            tmp_vec = crc32;
+            this.nxt_hdr.harray.pack_bit(pkt, tmp_vec, index, crc_sz*8);
+            `else
+            hdr     = {>>{crc32}};
+            this.nxt_hdr.harray.pack_array_8 (hdr, pkt, index);
+            `endif
+        end // }
+        else
+        begin // {
+            crc16   = crc_chksm.crc32(pkt, pkt.size()-crc_sz, 0, corrupt_crc);
+            `ifdef SVFNYI_0
+            tmp_vec = crc16;
+            this.nxt_hdr.harray.pack_bit(pkt, tmp_vec, index, crc_sz*8);
+            `else
+            hdr     = {>>{crc16}};
+            this.nxt_hdr.harray.pack_array_8 (hdr, pkt, index);
+            `endif
+        end // }
     end // }
+    `ifdef DEBUG_PKTLIB
+    $display ("    pkt_lib : Done Packing %s index %0d", hdr_name, index);
+    `endif
+
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],
@@ -173,16 +195,30 @@ class toh_class extends hdr_class; // {
                    ref   hdr_class hdr_q [$],
                    input int       mode        = DUMB_UNPACK,
                    input bit       last_unpack = 1'b0); // {
+    int        idx_eoh = 0;
+    data_class lcl_data;
+
     update_len (index, plen, 0);
     plen    = pkt.size;
+
+    // unpack all class members
+    `ifdef DEBUG_PKTLIB
+    $display ("    pkt_lib : Unpacking %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index);
+    `endif
+    this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    idx_eoh = index;
+
     // If crc is present, extract crc
     if (cal_n_add_crc)
     begin // {
-        crc = {pkt[pkt.size() - 4],
-               pkt[pkt.size() - 3],
-               pkt[pkt.size() - 2],
-               pkt[pkt.size() - 1]};
-        pkt = new [pkt.size - 4] (pkt);
+        crc_sz = get_crc_sz;
+        crc32  = {pkt[pkt.size() - 4],
+                  pkt[pkt.size() - 3],
+                  pkt[pkt.size() - 2],
+                  pkt[pkt.size() - 1]};
+        crc16  = {pkt[pkt.size() - 2],
+                  pkt[pkt.size() - 1]};
+        index  = pkt.size - crc_sz;
     end // }
 
     // if pad_present, extract pad_data
@@ -191,11 +227,33 @@ class toh_class extends hdr_class; // {
         index = (pkt.size-pad_len);
         this.nxt_hdr.harray.copy_array (pkt, pad_data, index, pad_len);
         pkt   = new [pkt.size - pad_len] (pkt);
-        index = 0;
+        index  = pkt.size;
     end // }
 
-    // unpack all class members
-    this.nxt_hdr.unpack_hdr (pkt, index, hdr_q, mode);
+    // adjusting data[0].data_len due to CRC and pad
+    if (idx_eoh > index)
+    begin // {
+        foreach (hdr_q[hdr_ls])
+        begin // {
+            if ((hdr_q[hdr_ls].hid == DATA_HID) & (hdr_q[hdr_ls].hdr_len > 0))
+            begin // {
+                lcl_data= new (plib, `MAX_NUM_INSTS+1);
+                $cast (lcl_data, hdr_q[hdr_ls]);
+                if (lcl_data.data_len > (idx_eoh - index))
+                begin // {
+                    lcl_data.data_len     -= (idx_eoh - index);
+                    lcl_data.hdr_len       = lcl_data.data_len; 
+                    lcl_data.total_hdr_len = lcl_data.data_len; 
+                    lcl_data.data          = new [lcl_data.data_len] (lcl_data.data);
+                end // }
+            end // }
+        end // }  
+    end // }
+    
+    `ifdef DEBUG_PKTLIB
+    $display ("    pkt_lib : Done Unpacking %s  index %0d", hdr_name, index);
+    `endif
+
     // update all hdr
     if (mode == SMART_UNPACK)
         super.all_hdr = hdr_q;
@@ -208,7 +266,8 @@ class toh_class extends hdr_class; // {
     $cast (lcl, cpy_cls);
     // ~~~~~~~~~~ Random variables ~~~~~~~~~~
     this.plen             = lcl.plen;
-    this.crc              = lcl.crc;
+    this.crc32            = lcl.crc32;
+    this.crc16            = lcl.crc16;
     this.pad_len          = lcl.pad_len;
     this.pad_data         = lcl.pad_data;
     // ~~~~~~~~~~ Contol variables ~~~~~~~~~~
@@ -232,6 +291,7 @@ class toh_class extends hdr_class; // {
                     hdr_class            cmp_cls,
                     int                  mode         = DISPLAY,
                     bit                  last_display = 1'b0); // {
+    string crc_string;
     toh_class lcl;
     $cast (lcl, cmp_cls);
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
@@ -246,9 +306,13 @@ class toh_class extends hdr_class; // {
     if (cal_n_add_crc)
     begin // {
     if (corrupt_crc)
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, null_a, null_a, "BAD");
+        crc_string = "BAD"; 
     else
-    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc", crc, lcl.crc, null_a, null_a, "GOOD");
+        crc_string = "GOOD"; 
+    if (crc_sz == 4)
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 032, "crc32", crc32, lcl.crc32, null_a, null_a, crc_string);
+    else if (crc_sz == 2)
+    hdis.display_fld (mode, hdr_name, BIT_VEC, HEX, 016, "crc16", crc16, lcl.crc16, null_a, null_a, crc_string);
     end // } 
     if ((mode == DISPLAY_FULL) | (mode == COMPARE_FULL))
     begin // {

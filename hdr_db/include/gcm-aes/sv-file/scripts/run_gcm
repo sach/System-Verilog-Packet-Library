@@ -1,3 +1,4 @@
 #/bin/bash
 
-vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder -debug_all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c ../c-file/aeskey.c ../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp gcm_test.sv -l logs/gcm_test.log 
+#vcs -R -full64 +vcs+lic+wait +v2k -assert dve -sverilog +nospecify +evalorder -debug_all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c ../c-file/aeskey.c ../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp gcm_test.sv -l logs/gcm_test.log 
+vcs -full64 -sverilog +warn=all -CFLAGS -g -CC -I../c-file -cpp g++ ../c-file/aescrypt.c ../c-file/aeskey.c ../c-file/aestab.c ../c-file/gcm.cpp ../c-file/gfvec.cpp ../c-file/gcm_dpi.cpp -R gcm_test.sv -l logs/gcm_test.log 

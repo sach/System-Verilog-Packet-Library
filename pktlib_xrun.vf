@@ -15,7 +15,16 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 //  include directories/files
 // ----------------------------------------------------------------------
 
-+incdir+hdr_db
-+incdir+hdr_db/include
+-incdir hdr_db
+-incdir hdr_db/include
+-incdir hdr_db/include/gcm-aes/sv-file
+-incdir hdr_db/include/gcm-aes/c-file
+hdr_db/include/gcm-aes/c-file/aescrypt.c
+hdr_db/include/gcm-aes/c-file/aeskey.c
+hdr_db/include/gcm-aes/c-file/aestab.c
+hdr_db/include/gcm-aes/c-file/gcm.cpp
+hdr_db/include/gcm-aes/c-file/gfvec.cpp
+hdr_db/include/gcm-aes/c-file/gcm_dpi.cpp
+
 
 

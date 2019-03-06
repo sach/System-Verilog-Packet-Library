@@ -1,0 +1,3 @@
+#!/bin/sh
+\rm -rf xcelium.d xmsc.log xmsc.log xmvlog.history xmvlog.log xrun.key
+

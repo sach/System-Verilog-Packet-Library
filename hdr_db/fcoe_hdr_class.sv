@@ -182,6 +182,9 @@ class fcoe_hdr_class extends hdr_class; // {
     hdr = {>>{eof, rsvd1}};
     harray.pack_array_8 (hdr, pkt, index);
     `endif
+    `ifdef DEBUG_PKTLIB
+    $display ("    pkt_lib : Packing %s nxt_hdr %s index %0d", hdr_name, nxt_hdr.hdr_name, index); 
+    `endif
   endtask : pack_hdr // }
 
   task unpack_hdr (ref   bit [7:0] pkt   [],

@@ -649,4 +649,91 @@ endfunction : crc32 // }
     reflect = v;
   endfunction : reflect // }
 
+  // function to commpute ECC(32,26) -- Need to paramterized
+  function bit [5:0] ecc_32_26 (bit [25:0] Din,
+                                bit [31:0] corrupt_vector = 32'h0); // {
+      // Flip Din if the vector bit is set
+      for (int i1 =0; i1 < 26; i1++)
+          if (corrupt_vector[i1])
+              Din[i1] = ~Din[i1];
+      ecc_32_26 = {Din[10]^Din[11]^Din[12]^Din[13]^Din[14]^Din[15]^Din[16]^Din[17]^Din[18]^Din[19]^Din[21]^Din[22]^Din[23]^Din[24]^Din[25], // P5
+                   Din[04]^Din[05]^Din[06]^Din[07]^Din[08]^Din[09]^Din[16]^Din[17]^Din[18]^Din[19]^Din[20]^Din[22]^Din[23]^Din[24]^Din[25], // P4
+                   Din[01]^Din[02]^Din[03]^Din[07]^Din[08]^Din[09]^Din[13]^Din[14]^Din[15]^Din[19]^Din[20]^Din[21]^Din[23]^Din[24]^Din[25], // P3
+                   Din[00]^Din[02]^Din[03]^Din[05]^Din[06]^Din[09]^Din[11]^Din[12]^Din[15]^Din[18]^Din[20]^Din[21]^Din[22]^Din[24]^Din[25], // P2
+                   Din[00]^Din[01]^Din[03]^Din[04]^Din[06]^Din[08]^Din[10]^Din[12]^Din[14]^Din[17]^Din[20]^Din[21]^Din[22]^Din[23]^Din[25], // P2
+                   Din[00]^Din[01]^Din[02]^Din[04]^Din[05]^Din[07]^Din[10]^Din[11]^Din[13]^Din[16]^Din[20]^Din[21]^Din[22]^Din[23]^Din[24]};// P0
+      // Flip ECC bit if the vector bit is set
+      for (int i1 =0; i1 < 6; i1++)
+          if (corrupt_vector[i1+26])
+              ecc_32_26[i1] = ~ecc_32_26[i1];
+  endfunction : ecc_32_26 // }
+
+  // function to check ECC(32,26) -- Need to paramterized
+  function bit [31:0] ecc_32_26_check (bit [5:0] ecc_snd,
+                                       bit [5:0] ecc_rcv); // {
+    bit [5:0]  ecc_sd [26];
+    bit [5:0]  ecc_syndrome;
+    int        err_pos [$]; 
+    ecc_32_26_check  = 26'd0;
+    ecc_sd[00] = 6'h07;
+    ecc_sd[01] = 6'h0B;
+    ecc_sd[02] = 6'h0D;
+    ecc_sd[03] = 6'h0E;
+    ecc_sd[04] = 6'h13;
+    ecc_sd[05] = 6'h15;
+    ecc_sd[06] = 6'h16;
+    ecc_sd[07] = 6'h19;
+    ecc_sd[08] = 6'h1A;
+    ecc_sd[09] = 6'h1C;
+    ecc_sd[10] = 6'h23;
+    ecc_sd[11] = 6'h25;
+    ecc_sd[12] = 6'h26;
+    ecc_sd[13] = 6'h29;
+    ecc_sd[14] = 6'h2A;
+    ecc_sd[15] = 6'h2C;
+    ecc_sd[16] = 6'h31;
+    ecc_sd[17] = 6'h32;
+    ecc_sd[18] = 6'h34;
+    ecc_sd[19] = 6'h38;
+    ecc_sd[20] = 6'h1F;
+    ecc_sd[21] = 6'h2F;
+    ecc_sd[22] = 6'h37;
+    ecc_sd[23] = 6'h3B;
+    ecc_sd[24] = 6'h3D;
+    ecc_sd[25] = 6'h3E;
+    ecc_syndrome = ecc_snd ^ ecc_rcv;
+    // 1. If the syndrome is 0, no errors are present - ecc_32_26_check == 26'd0;
+    if (ecc_syndrome == 6'd0)
+        ecc_32_26_check = 26'd0;
+    // 2. If the syndrome has only one bit set, 
+    //    then a single bit error has occurred at the parity bit located at syndrome bit position - ecc_32_26_check[26+ecc_syndrom[onehot]] = 1'b1
+    else if ($countones(ecc_syndrome) === 1)
+    begin // {
+        pos_1_0 (err_pos, ecc_syndrome, 6);
+        ecc_32_26_check[26 + err_pos[0]] = 1'b1;
+    end // }
+    else 
+    begin // {
+        err_pos = ecc_sd.find_first_index with (item == ecc_syndrome); 
+        // 3. If the syndrome matches one of the ecc_sd value, 
+        //    then a single bit error has occurred at that position - ecc_32_26_check[bit_pos] = 1'b1; 
+        if (err_pos.size != 0)
+            ecc_32_26_check[err_pos[0]] = 1'b1;
+        // 4. If the syndrome does not fit any of the other outcomes, 
+        //    then an uncorrectable error has occurred - ecc_32_26_check = 26'hDEAD
+        else
+            ecc_32_26_check = 26'hDEAD;
+    end // }
+  endfunction : ecc_32_26_check // }
+
+  // function find positions of number of 1/0 in a vector
+  function void pos_1_0 (ref   int               idx_1_0 [$],  // output array to strore position
+                         input bit [`VEC_SZ-1:0] bit_vec,      // bit vector to check
+                         input int               vec_sz = 32,  // number of bits in vector
+                         input bit               f1_0 = 1'b1); // find for 1 or 0 {
+    for (int i1 =0; i1 < vec_sz; i1++)
+         if (bit_vec[i1] === f1_0)
+              idx_1_0.push_back(i1);
+  endfunction : pos_1_0 // }
+
 endclass : pktlib_crc_chksm_class // }
